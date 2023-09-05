@@ -1,0 +1,1683 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="uW8bwgMGUwIA01nPfh0oty1rmtmmuVkOVGaS9O0nQUg">
+
+
+
+
+
+
+
+
+  <meta name="baidu-site-verification" content="NeE6tPH3W1">
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico?v=5.1.4">
+
+
+
+
+
+
+
+  <meta name="keywords" content="android,TextView,富文本">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="海的那边" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="前言本篇介绍一下在Android开发过程中使用最多的一个控件-TextView,实现简单的图片加载显示及链接处理。如果你说：没有用过ConstraintLayout、FloatingActionButton、TabLayout等等，那也没多大事。但是如果说你没有用过TextView，那就得佩服你了。 先上效果：  TextView 家族 123456789101112131415161718192">
+<meta name="keywords" content="android,TextView,富文本">
+<meta property="og:type" content="article">
+<meta property="og:title" content="神奇的TextView-实现富文本">
+<meta property="og:url" content="http://www.nhtzj.com/361989272/index.html">
+<meta property="og:site_name" content="海的那边">
+<meta property="og:description" content="前言本篇介绍一下在Android开发过程中使用最多的一个控件-TextView,实现简单的图片加载显示及链接处理。如果你说：没有用过ConstraintLayout、FloatingActionButton、TabLayout等等，那也没多大事。但是如果说你没有用过TextView，那就得佩服你了。 先上效果：  TextView 家族 123456789101112131415161718192">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/05/富文本.png">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/05/TextView子类.jpg">
+<meta property="og:updated_time" content="2020-05-27T15:33:33.809Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="神奇的TextView-实现富文本">
+<meta name="twitter:description" content="前言本篇介绍一下在Android开发过程中使用最多的一个控件-TextView,实现简单的图片加载显示及链接处理。如果你说：没有用过ConstraintLayout、FloatingActionButton、TabLayout等等，那也没多大事。但是如果说你没有用过TextView，那就得佩服你了。 先上效果：  TextView 家族 123456789101112131415161718192">
+<meta name="twitter:image" content="http://www.nhtzj.com/images/2018/05/富文本.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.nhtzj.com/361989272/">
+
+
+
+
+
+  <title>神奇的TextView-实现富文本 | 海的那边</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">海的那边</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">人无远虑，必有近忧</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.nhtzj.com/361989272/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Haitao Ni">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="海的那边">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">神奇的TextView-实现富文本</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-22T13:48:53+08:00">
+                2018-05-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/android/" itemprop="url" rel="index">
+                    <span itemprop="name">android</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/android/view/" itemprop="url" rel="index">
+                    <span itemprop="name">view</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/android/view/TextView/" itemprop="url" rel="index">
+                    <span itemprop="name">TextView</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/361989272/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/361989272/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/361989272/" class="leancloud_visitors" data-flag-title="神奇的TextView-实现富文本">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  3,591
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  18
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>本篇介绍一下在Android开发过程中使用最多的一个控件-<code>TextView</code>,实现简单的图片加载显示及链接处理。<br>如果你说：没有用过<code>ConstraintLayout</code>、<code>FloatingActionButton</code>、<code>TabLayout</code>等等，那也没多大事。但是如果说你没有用过<code>TextView</code>，那就得佩服你了。</p>
+<p>先上效果：</p>
+<p><img src="/images/2018/05/富文本.png" alt="富文本效果"></p>
+<h2 id="TextView-家族"><a href="#TextView-家族" class="headerlink" title="TextView 家族"></a>TextView 家族</h2><p><img src="/images/2018/05/TextView子类.jpg" alt="TextView子类"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line">Targets</span><br><span class="line">TextView</span><br><span class="line">Implementations of TextView</span><br><span class="line">ActionMenuItemView.java</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ActionMenuItemView</span> <span class="keyword">extends</span> <span class="title">AppCompatTextView</span></span></span><br><span class="line"><span class="class"><span class="title">AppCompatAutoCompleteTextView</span>.<span class="title">java</span></span></span><br><span class="line"><span class="class"><span class="title">public</span> <span class="title">class</span> <span class="title">AppCompatAutoCompleteTextView</span> <span class="keyword">extends</span> <span class="title">AutoCompleteTextView</span> <span class="keyword">implements</span></span></span><br><span class="line"><span class="class"><span class="title">AppCompatButton</span>.<span class="title">java</span></span></span><br><span class="line"><span class="class"><span class="title">public</span> <span class="title">class</span> <span class="title">AppCompatButton</span> <span class="keyword">extends</span> <span class="title">Button</span> <span class="keyword">implements</span> <span class="title">TintableBackgroundView</span>,</span></span><br><span class="line"><span class="class"><span class="title">AppCompatCheckBox</span>.<span class="title">java</span></span></span><br><span class="line"><span class="class"><span class="title">public</span> <span class="title">class</span> <span class="title">AppCompatCheckBox</span> <span class="keyword">extends</span> <span class="title">CheckBox</span> <span class="keyword">implements</span> <span class="title">TintableCompoundButton</span> </span>&#123;</span><br><span class="line">AppCompatCheckedTextView.java</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AppCompatCheckedTextView</span> <span class="keyword">extends</span> <span class="title">CheckedTextView</span> </span>&#123;</span><br><span class="line">AppCompatEditText.java</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AppCompatEditText</span> <span class="keyword">extends</span> <span class="title">EditText</span> <span class="keyword">implements</span> <span class="title">TintableBackgroundView</span> </span>&#123;</span><br><span class="line">AppCompatMultiAutoCompleteTextView.java</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AppCompatMultiAutoCompleteTextView</span> <span class="keyword">extends</span> <span class="title">MultiAutoCompleteTextView</span></span></span><br><span class="line"><span class="class"><span class="title">AppCompatRadioButton</span>.<span class="title">java</span></span></span><br><span class="line"><span class="class"><span class="title">public</span> <span class="title">class</span> <span class="title">AppCompatRadioButton</span> <span class="keyword">extends</span> <span class="title">RadioButton</span> <span class="keyword">implements</span> <span class="title">TintableCompoundButton</span> </span>&#123;</span><br><span class="line">AppCompatTextView.java</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AppCompatTextView</span> <span class="keyword">extends</span> <span class="title">TextView</span> <span class="keyword">implements</span> <span class="title">TintableBackgroundView</span>,</span></span><br><span class="line"><span class="class"><span class="title">AutoCompleteTextView</span>.<span class="title">java</span></span></span><br><span class="line"><span class="class"><span class="title">public</span> <span class="title">class</span> <span class="title">AutoCompleteTextView</span> <span class="keyword">extends</span> <span class="title">EditText</span> <span class="keyword">implements</span> <span class="title">Filter</span>.<span class="title">FilterListener</span> </span>&#123;</span><br><span class="line">Button.java</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Button</span> <span class="keyword">extends</span> <span class="title">TextView</span> </span>&#123;</span><br><span class="line">CheckBox.java</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CheckBox</span> <span class="keyword">extends</span> <span class="title">CompoundButton</span> </span>&#123;</span><br><span class="line">CheckedTextView.java</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CheckedTextView</span> <span class="keyword">extends</span> <span class="title">TextView</span> <span class="keyword">implements</span> <span class="title">Checkable</span> </span>&#123;</span><br><span class="line">Chronometer.java</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Chronometer</span> <span class="keyword">extends</span> <span class="title">TextView</span> </span>&#123;</span><br><span class="line">CompoundButton.java</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">CompoundButton</span> <span class="keyword">extends</span> <span class="title">Button</span> <span class="keyword">implements</span> <span class="title">Checkable</span> </span>&#123;</span><br><span class="line">DialogTitle.java</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DialogTitle</span> <span class="keyword">extends</span> <span class="title">TextView</span> </span>&#123;</span><br><span class="line">DigitalClock.java</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DigitalClock</span> <span class="keyword">extends</span> <span class="title">TextView</span> </span>&#123;</span><br><span class="line">EditText.java</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EditText</span> <span class="keyword">extends</span> <span class="title">TextView</span> </span>&#123;</span><br><span class="line">ExtractEditText.java</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ExtractEditText</span> <span class="keyword">extends</span> <span class="title">EditText</span> </span>&#123;</span><br><span class="line">MultiAutoCompleteTextView.java</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MultiAutoCompleteTextView</span> <span class="keyword">extends</span> <span class="title">AutoCompleteTextView</span> </span>&#123;</span><br><span class="line">RadioButton.java</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RadioButton</span> <span class="keyword">extends</span> <span class="title">CompoundButton</span> </span>&#123;</span><br><span class="line">SearchView.java</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">SearchAutoComplete</span> <span class="keyword">extends</span> <span class="title">AppCompatAutoCompleteTextView</span> </span>&#123;</span><br><span class="line">Switch.java</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Switch</span> <span class="keyword">extends</span> <span class="title">CompoundButton</span> </span>&#123;</span><br><span class="line">SwitchCompat.java</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SwitchCompat</span> <span class="keyword">extends</span> <span class="title">CompoundButton</span> </span>&#123;</span><br><span class="line">TextClock.java</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TextClock</span> <span class="keyword">extends</span> <span class="title">TextView</span> </span>&#123;</span><br><span class="line">TextView.java</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TextView</span> <span class="keyword">extends</span> <span class="title">View</span> <span class="keyword">implements</span> <span class="title">ViewTreeObserver</span>.<span class="title">OnPreDrawListener</span> </span>&#123;</span><br><span class="line">ToggleButton.java</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ToggleButton</span> <span class="keyword">extends</span> <span class="title">CompoundButton</span> </span>&#123;</span><br></pre></td></tr></table></figure>
+<p>与<code>TextView</code>有着直接或间接继承关系的有27个，如上述所示。</p>
+<p><code>TextView</code>的父类为<code>View</code>。</p>
+<h2 id="TextView常用的xml属性及相关方法"><a href="#TextView常用的xml属性及相关方法" class="headerlink" title="TextView常用的xml属性及相关方法"></a>TextView常用的xml属性及相关方法</h2><p>TextView的属性有许多，下表展示了部分属性。</p>
+<table>
+<thead>
+<tr>
+<th>xml属性</th>
+<th>相关方法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>android:autoLink</td>
+<td>setAutoLinkMask(int)</td>
+<td>是否将符合指定格式的文本转换为可单击的超链接形式</td>
+</tr>
+<tr>
+<td>android:autoText</td>
+<td>setKeyLinstener(KeyLinstener)</td>
+<td>控制是否将的URL、email等地址自动转换为可单击的链接</td>
+</tr>
+<tr>
+<td>android:linksClickable</td>
+<td>setLinksClickable(boolean)</td>
+<td>控制该文本框的URL、email等链接是否具可以点击</td>
+</tr>
+<tr>
+<td>android:capitalize</td>
+<td>setKeyLinstener(KeyLinstener)</td>
+<td>控制是否将用户输入的文本转换为大写字母</td>
+</tr>
+<tr>
+<td>android:cursorVisible</td>
+<td>setCursorVisiblek(boolean)</td>
+<td>设置该文本框的光标是否可见</td>
+</tr>
+<tr>
+<td>android:drawableBottom</td>
+<td>setCompoundDrawablesWithIntrinsicBounds(Drawable,Drawable,Drawable,Drawable)</td>
+<td>在文本框底端处绘制图像</td>
+</tr>
+<tr>
+<td>android:drawableTop</td>
+<td>setCompoundDrawablesWithIntrinsicBounds(Drawable,Drawable,Drawable,Drawable)</td>
+<td>在文本框顶端处绘制图像</td>
+</tr>
+<tr>
+<td>android:drawableEnd</td>
+<td>setCompoundDrawablesWithIntrinsicBounds(Drawable,Drawable,Drawable,Drawable)</td>
+<td>在文本框结尾处绘制图像</td>
+</tr>
+<tr>
+<td>android:drawableLeft</td>
+<td>setCompoundDrawablesWithIntrinsicBounds(Drawable,Drawable,Drawable,Drawable)</td>
+<td>在文本框左边处绘制图像</td>
+</tr>
+<tr>
+<td>android:drawableRight</td>
+<td>setCompoundDrawablesWithIntrinsicBounds(Drawable,Drawable,Drawable,Drawable)</td>
+<td>在文本框右边处绘制图像</td>
+</tr>
+<tr>
+<td>android:drawablePadding</td>
+<td>setCompoundDrawablesWithIntrinsicBounds(Drawable,Drawable,Drawable,Drawable)</td>
+<td>设置文本框内文本与图形的间距</td>
+</tr>
+<tr>
+<td>android:drawableStart</td>
+<td>setCompoundDrawablesWithIntrinsicBounds(Drawable,Drawable,Drawable,Drawable)</td>
+<td>在文本框开始处绘制图像</td>
+</tr>
+<tr>
+<td>android:editable</td>
+<td></td>
+<td>设置文本框是否允许被编辑</td>
+</tr>
+<tr>
+<td>android:ellipsize</td>
+<td>setEllipsize(TextUitls,TruncateAt)</td>
+<td>当显示文本超过了TextView的宽度时，如何处理文本</td>
+</tr>
+<tr>
+<td>android:ems</td>
+<td>setEms(int)</td>
+<td>设置文本框的宽度</td>
+</tr>
+<tr>
+<td>android:height</td>
+<td>setHeight(int)</td>
+<td>设置文本框的高度</td>
+</tr>
+<tr>
+<td>android:fontFamily</td>
+<td>setTypeface(Typeface)</td>
+<td>设置文本框内文本的字体</td>
+</tr>
+<tr>
+<td>android:gravity</td>
+<td>setGravity(int)</td>
+<td>设置文本框内文本的对齐方式</td>
+</tr>
+<tr>
+<td>android:hint</td>
+<td>setHint(int)</td>
+<td>设置文本框内容为空时，文本框内默认显示的提示文字</td>
+</tr>
+<tr>
+<td>android:inputType</td>
+<td>setRawInputType(int)</td>
+<td>设置文本框输入方式</td>
+</tr>
+<tr>
+<td>android:lines</td>
+<td>setLines(int)</td>
+<td>设置文本框默认占几行</td>
+</tr>
+<tr>
+<td>android:maxEms</td>
+<td>setMaxEms(int)</td>
+<td>设置文本框最大宽度</td>
+</tr>
+<tr>
+<td>android:maxHeight</td>
+<td>setMaxHeight(int)</td>
+<td>设置文本框最大高度</td>
+</tr>
+<tr>
+<td>android:maxLenghth</td>
+<td>setMaxLenghth(int)</td>
+<td>设置文本框最大字符长度</td>
+</tr>
+<tr>
+<td>android:maxWidth</td>
+<td>setMaxWidth(int)</td>
+<td>设置文本框最大宽度</td>
+</tr>
+<tr>
+<td>android:maxLines</td>
+<td>setMaxLines(int)</td>
+<td>设置文本框最多占几行</td>
+</tr>
+<tr>
+<td>android:maxEms</td>
+<td>setMaxEms(int)</td>
+<td>设置文本框最小宽度</td>
+</tr>
+<tr>
+<td>android:minHeight</td>
+<td>setMinHeight(int)</td>
+<td>设置文本框最小高度</td>
+</tr>
+<tr>
+<td>android:minLenghth</td>
+<td>setMinxLenghth(int)</td>
+<td>设置文本框最小长度</td>
+</tr>
+<tr>
+<td>android:minWidth</td>
+<td>setMinWidth(int)</td>
+<td>设置文本框最小宽度</td>
+</tr>
+<tr>
+<td>android:minLines</td>
+<td>setMinLines(int)</td>
+<td>设置文本框最少占几行</td>
+</tr>
+<tr>
+<td>android:passwordd</td>
+<td>setTransformatinMethod(TransformatinMethod)</td>
+<td>设置文本框是一个密码框</td>
+</tr>
+<tr>
+<td>android:phoneNumber</td>
+<td>setKeyListener(KeyListener)</td>
+<td>设置文本框只接受电话号码</td>
+</tr>
+<tr>
+<td>android:scrollHorizontally</td>
+<td>setHorizontallyScrolling(boolean)</td>
+<td>设置文本框不够显示全部内容时是否允许水平滚动</td>
+</tr>
+<tr>
+<td>android:selectAllOnFocus</td>
+<td>setSelectAllOnFocus(boolean)</td>
+<td>如果文本框内的内容可选择，设置是否当它获得焦点时自动选择所有文本</td>
+</tr>
+<tr>
+<td>android:shawdowColor</td>
+<td>setshadowLayer(float,float,float,int)</td>
+<td>设置文本框内文本的阴影的颜色</td>
+</tr>
+<tr>
+<td>android:shawdowDx</td>
+<td>setshadowLayer(float,float,float,int)</td>
+<td>设置文本框内文本的阴影在水平方向的偏移</td>
+</tr>
+<tr>
+<td>android:shawdowDy</td>
+<td>setshadowLayer(float,float,float,int)</td>
+<td>设置文本框内文本的阴影在垂直方向的偏移</td>
+</tr>
+<tr>
+<td>android:shawdowRadius</td>
+<td>setshadowLayer(float,float,float,int)</td>
+<td>设置文本框内文本的阴影的模糊程度，值越大，阴影越模糊</td>
+</tr>
+<tr>
+<td>android:singleLine</td>
+<td>setTransformationMethod()</td>
+<td>设置文本框是否为单行模式</td>
+</tr>
+<tr>
+<td>android:text</td>
+<td>setText(CharSequence)</td>
+<td>设置是否将文本框文本的内容</td>
+</tr>
+<tr>
+<td>android:textAllCaps</td>
+<td>setAllCaps(boolean)</td>
+<td>设置是否将文本框中所有字幕显示为大写字母</td>
+</tr>
+<tr>
+<td>android:textAppearance</td>
+<td></td>
+<td>设置文本框的颜色、字体、大小等样式</td>
+</tr>
+<tr>
+<td>android:textColor</td>
+<td>setTextColor(ColorStateList)</td>
+<td>设置文本框中文本的颜色</td>
+</tr>
+<tr>
+<td>android:textColorHighlight</td>
+<td>setHighlightColor(int)</td>
+<td>设置文本框被选中时的颜色</td>
+</tr>
+<tr>
+<td>android:textColorHint</td>
+<td>setHintTextColor(int)</td>
+<td>设置文本框中提示文本的颜色</td>
+</tr>
+<tr>
+<td>android:textColorLink</td>
+<td>setLinkTextColor(int)</td>
+<td>设置文本框中链接的颜色</td>
+</tr>
+<tr>
+<td>android:textIsSelectable</td>
+<td>setTextSelectedable()</td>
+<td>设置该文本框不能编辑时，文本框内的文本是否可以被选中</td>
+</tr>
+<tr>
+<td>android:textSize</td>
+<td>setTextSize(float)</td>
+<td>设置文本框的字体大小</td>
+</tr>
+<tr>
+<td>android:textStyle</td>
+<td>setTypeface(Typeface)</td>
+<td>设置文本框内字体风格，如粗体、斜体等</td>
+</tr>
+<tr>
+<td>android:width</td>
+<td>setWidth(int)</td>
+<td>设置该文本框的宽度</td>
+</tr>
+</tbody>
+</table>
+<h2 id="加载图片"><a href="#加载图片" class="headerlink" title="加载图片"></a>加载图片</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TextView.setText(CharSequence text)</span><br></pre></td></tr></table></figure>
+<p>由于<code>TextView.setText</code>传入的是<code>CharSequence</code>类型，那就可以配合CharSequence的子类<code>Spanned</code>及<code>Html.fromHtml</code>方法实现图片加载显示的功能。</p>
+<p>具体的代码也很简单</p>
+<p><a name="fHtml"></a><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//使用Html.fromHtml解析标签，</span></span><br><span class="line">       <span class="comment">//asyncImageGetter用于加载img标签图片资源</span></span><br><span class="line">       Spanned spanned = Html.fromHtml(text, asyncImageGetter, <span class="keyword">null</span>);</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">OnImageClickListener</span> </span>&#123;</span><br><span class="line">     <span class="function"><span class="keyword">void</span> <span class="title">imageClicked</span><span class="params">(List&lt;String&gt; imageUrls, <span class="keyword">int</span> position)</span></span>;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 加载图片资源</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> Html.ImageGetter asyncImageGetter = <span class="keyword">new</span> Html.ImageGetter() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> Drawable <span class="title">getDrawable</span><span class="params">(String source)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">final</span> URLDrawable urlDrawable = <span class="keyword">new</span> URLDrawable(getContext());</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (source.contains(<span class="string">"storage/emulated"</span>) || source.toLowerCase().contains(<span class="string">"/sdcard/"</span>)) &#123;</span><br><span class="line">                source = <span class="string">"file://"</span> + source;</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (source.startsWith(<span class="string">"http://"</span>)) &#123;</span><br><span class="line"><span class="comment">//                source = source;</span></span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                source = <span class="string">"http://www.nhtzj.com"</span> + source;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            mLoader.loadImage(source, options, <span class="keyword">new</span> SimpleImageLoadingListener() &#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onLoadingStarted</span><span class="params">(String imageUri, View view)</span> </span>&#123;</span><br><span class="line">                    urlDrawable.setBounds(placeHolder.getBounds());</span><br><span class="line">                    urlDrawable.setDrawable(placeHolder);</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onLoadingFailed</span><span class="params">(String imageUri, View view, FailReason failReason)</span> </span>&#123;</span><br><span class="line">                    urlDrawable.setBounds(errorImage.getBounds());</span><br><span class="line">                    urlDrawable.setDrawable(errorImage);</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onLoadingComplete</span><span class="params">(String imageUri, View view, Bitmap loadedImage)</span> </span>&#123;</span><br><span class="line">                    <span class="keyword">super</span>.onLoadingComplete(imageUri, view, loadedImage);</span><br><span class="line"></span><br><span class="line">                    <span class="keyword">int</span> width;</span><br><span class="line">                    <span class="keyword">int</span> height;</span><br><span class="line"></span><br><span class="line">                    <span class="comment">//Bitmap转成Drawable</span></span><br><span class="line">                    Drawable drawable = <span class="keyword">new</span> BitmapDrawable(getContext().getResources(), loadedImage);</span><br><span class="line"></span><br><span class="line">                    <span class="keyword">float</span> imgH = (<span class="keyword">float</span>) loadedImage.getHeight();</span><br><span class="line">                    <span class="keyword">float</span> imgW = (<span class="keyword">float</span>) loadedImage.getWidth();</span><br><span class="line"></span><br><span class="line">                    <span class="comment">//根据需求调整图片大小，</span></span><br><span class="line">                    <span class="comment">//我这边是将图片调整为适应屏幕宽度</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//                    if (imgW &gt; viewWidth) &#123;</span></span><br><span class="line">                    width = viewWidth;</span><br><span class="line">                    height = (<span class="keyword">int</span>) (width * (imgH / imgW));</span><br><span class="line"><span class="comment">//                    &#125; else &#123;</span></span><br><span class="line"><span class="comment">//                        width = (int) imgW;</span></span><br><span class="line"><span class="comment">//                        height = (int) imgH;</span></span><br><span class="line"><span class="comment">//                    &#125;</span></span><br><span class="line">                    drawable.setBounds(<span class="number">0</span>, <span class="number">0</span>, width, height);</span><br><span class="line">                    urlDrawable.setBounds(<span class="number">0</span>, <span class="number">0</span>, screenWidth, height + <span class="number">5</span>);</span><br><span class="line">                    urlDrawable.setDrawable(drawable);</span><br><span class="line">                    RichText.<span class="keyword">this</span>.setText(getText());</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onLoadingCancelled</span><span class="params">(String imageUri, View view)</span> </span>&#123;</span><br><span class="line">                    <span class="keyword">super</span>.onLoadingCancelled(imageUri, view);</span><br><span class="line">                    urlDrawable.setBounds(errorImage.getBounds());</span><br><span class="line">                    urlDrawable.setDrawable(errorImage);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> urlDrawable;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br></pre></td></tr></table></figure>
+<p><code>asyncImageGetter</code>为<code>Html.ImageGetter</code> 接口的一个实例，用于加载文本中的图片。</p>
+<p>实现其中<code>getDrawable</code>方法，该方法的参数<code>String source</code>为<code>img</code>标签上的图片地址。</p>
+<p>我这边使用了Universal Image Loader去加载图片。</p>
+<h2 id="设置图片点击回调"><a href="#设置图片点击回调" class="headerlink" title="设置图片点击回调"></a>设置图片点击回调</h2><p>这个有点问题，请大家帮忙解决下。</p>
+<p>就是点击图片的位置position不正确。</p>
+<p>代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">SpannableStringBuilder spannableStringBuilder;</span><br><span class="line"> <span class="keyword">if</span> (spanned <span class="keyword">instanceof</span> SpannableStringBuilder) &#123;</span><br><span class="line">     spannableStringBuilder = (SpannableStringBuilder) spanned;</span><br><span class="line"> &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">     spannableStringBuilder = <span class="keyword">new</span> SpannableStringBuilder(spanned);</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//获取img标签，设置图片的点击事件及回调</span></span><br><span class="line">       ImageSpan[] imageSpans = spannableStringBuilder.getSpans(<span class="number">0</span>, spannableStringBuilder.length(), ImageSpan.class);</span><br><span class="line">       <span class="keyword">final</span> List&lt;String&gt; imageUrls = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line"></span><br><span class="line">       <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>, size = imageSpans.length; i &lt; size; i++) &#123;</span><br><span class="line">           ImageSpan imageSpan = imageSpans[i];</span><br><span class="line">           <span class="keyword">final</span> String imageUrl = imageSpan.getSource();</span><br><span class="line">           <span class="keyword">int</span> start = spannableStringBuilder.getSpanStart(imageSpan);</span><br><span class="line">           <span class="keyword">int</span> end = spannableStringBuilder.getSpanEnd(imageSpan);</span><br><span class="line">           imageUrls.add(imageUrl);</span><br><span class="line"></span><br><span class="line">           <span class="keyword">final</span> <span class="keyword">int</span> iFinal = i;</span><br><span class="line">           ClickableSpan clickableSpan = <span class="keyword">new</span> ClickableSpan() &#123;</span><br><span class="line">               <span class="meta">@Override</span></span><br><span class="line">               <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View widget)</span> </span>&#123;</span><br><span class="line">                   <span class="keyword">if</span> (onImageClickListener != <span class="keyword">null</span>) &#123;</span><br><span class="line">                       onImageClickListener.imageClicked(imageUrls, iFinal);</span><br><span class="line">                   &#125;</span><br><span class="line">               &#125;</span><br><span class="line">           &#125;;</span><br><span class="line"></span><br><span class="line">           <span class="comment">//去除在图片间默认的点击效果</span></span><br><span class="line">           ClickableSpan[] clickableSpans = spannableStringBuilder.getSpans(start, end, ClickableSpan.class);</span><br><span class="line">           <span class="keyword">if</span> (clickableSpans != <span class="keyword">null</span> &amp;&amp; clickableSpans.length != <span class="number">0</span>) &#123;</span><br><span class="line">               <span class="keyword">for</span> (ClickableSpan cs : clickableSpans) &#123;</span><br><span class="line">                   spannableStringBuilder.removeSpan(cs);</span><br><span class="line">               &#125;</span><br><span class="line">           &#125;</span><br><span class="line"></span><br><span class="line">           spannableStringBuilder.setSpan(clickableSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);</span><br><span class="line">       &#125;</span><br></pre></td></tr></table></figure>
+<p>先将<a href="#fHtml">加载图片-fromHtml</a>中返回的<code>spanned</code>转成<code>SpannableStringBuilder</code>，用以添加点击回调<code>ClickableSpan</code>。<br>之后便是从<code>spannableStringBuilder</code>中获取img标签，设置图片的点击事件及回调。<br>代码中也写了部分注释，便于理解。</p>
+<p>这段代码就是会产生点击图片回调的position会错位，请大神们帮忙看看。</p>
+<h2 id="设置链接点击事件及回调"><a href="#设置链接点击事件及回调" class="headerlink" title="设置链接点击事件及回调"></a>设置链接点击事件及回调</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">OnUrlClickListener</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">urlClicked</span><span class="params">(String url)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">//获取a标签，设置点击事件及回调</span></span><br><span class="line">     URLSpan[] urls = spannableStringBuilder.getSpans(<span class="number">0</span>, spannableStringBuilder.length(), URLSpan.class);</span><br><span class="line">     <span class="keyword">for</span> (URLSpan span : urls) &#123;</span><br><span class="line">         setLinkClickable(spannableStringBuilder, span);</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 设置链接点击回调</span></span><br><span class="line"><span class="comment">  *</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@param</span> clickableHtmlBuilder</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@param</span> urlSpan</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"> <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">setLinkClickable</span><span class="params">(SpannableStringBuilder clickableHtmlBuilder, URLSpan urlSpan)</span> </span>&#123;</span><br><span class="line">     <span class="keyword">int</span> start = clickableHtmlBuilder.getSpanStart(urlSpan);</span><br><span class="line">     <span class="keyword">int</span> end = clickableHtmlBuilder.getSpanEnd(urlSpan);</span><br><span class="line">     <span class="keyword">int</span> flags = clickableHtmlBuilder.getSpanFlags(urlSpan);</span><br><span class="line">     <span class="keyword">final</span> String url = urlSpan.getURL();</span><br><span class="line">     ClickableSpan clickableSpan = <span class="keyword">new</span> ClickableSpan() &#123;</span><br><span class="line">         <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View view)</span> </span>&#123;</span><br><span class="line">             onUrlClickListener.urlClicked(url);</span><br><span class="line">         &#125;</span><br><span class="line">     &#125;;</span><br><span class="line">     <span class="comment">//将原有链接点击效果去除，因为TextView会调用URLSpan.onClick()方法进行网页跳转</span></span><br><span class="line">     clickableHtmlBuilder.removeSpan(urlSpan);</span><br><span class="line">     clickableHtmlBuilder.setSpan(clickableSpan, start, end, flags);</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>URLSpan源码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">URLSpan</span> <span class="keyword">extends</span> <span class="title">ClickableSpan</span> <span class="keyword">implements</span> <span class="title">ParcelableSpan</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">   ···</span><br><span class="line">       </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View widget)</span> </span>&#123;</span><br><span class="line">        Uri uri = Uri.parse(getURL());</span><br><span class="line">        Context context = widget.getContext();</span><br><span class="line">        Intent intent = <span class="keyword">new</span> Intent(Intent.ACTION_VIEW, uri);</span><br><span class="line">        intent.putExtra(Browser.EXTRA_APPLICATION_ID, context.getPackageName());</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            context.startActivity(intent);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (ActivityNotFoundException e) &#123;</span><br><span class="line">            Log.w(<span class="string">"URLSpan"</span>, <span class="string">"Actvity was not found for intent, "</span> + intent.toString());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="完整代码"><a href="#完整代码" class="headerlink" title="完整代码"></a>完整代码</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br></pre></td><td class="code"><pre><span class="line">&lt;pre&gt;</span><br><span class="line"> * author : Haitao</span><br><span class="line"> * blog   : https:<span class="comment">//www.nhtzj.com</span></span><br><span class="line"> * time   : <span class="number">2018</span>/<span class="number">5</span>/<span class="number">21</span></span><br><span class="line"> * desc   : 简单富文本</span><br><span class="line"> * version: <span class="number">2.0</span></span><br><span class="line"> * &lt;/pre&gt;</span><br><span class="line"> */</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RichText</span> <span class="keyword">extends</span> <span class="title">AppCompatTextView</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> ImageLoader mLoader;</span><br><span class="line">    <span class="keyword">private</span> DisplayImageOptions options;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> screenWidth;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> viewWidth;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> widthExp;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Drawable placeHolder, errorImage;<span class="comment">//占位图、出错图</span></span><br><span class="line">    <span class="keyword">private</span> OnImageClickListener onImageClickListener;<span class="comment">//图片点击回调</span></span><br><span class="line">    <span class="keyword">private</span> OnUrlClickListener onUrlClickListener;<span class="comment">//URL点击回调</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">RichText</span><span class="params">(Context context)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>(context, <span class="keyword">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">RichText</span><span class="params">(Context context, AttributeSet attrs)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>(context, attrs, <span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">RichText</span><span class="params">(Context context, AttributeSet attrs, <span class="keyword">int</span> defStyleAttr)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(context, attrs, defStyleAttr);</span><br><span class="line"></span><br><span class="line">        init(context, attrs);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">(Context context, AttributeSet attrs)</span> </span>&#123;</span><br><span class="line">        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RichText);</span><br><span class="line">        placeHolder = typedArray.getDrawable(R.styleable.RichText_placeHolder);</span><br><span class="line">        errorImage = typedArray.getDrawable(R.styleable.RichText_errorImage);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (placeHolder == <span class="keyword">null</span>) &#123;</span><br><span class="line">            placeHolder = <span class="keyword">new</span> ColorDrawable(Color.GRAY);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (errorImage == <span class="keyword">null</span>) &#123;</span><br><span class="line">            errorImage = <span class="keyword">new</span> ColorDrawable(Color.GRAY);</span><br><span class="line">        &#125;</span><br><span class="line">        typedArray.recycle();</span><br><span class="line"></span><br><span class="line">        mLoader = ImageLoader.getInstance();</span><br><span class="line">        options = <span class="keyword">new</span> DisplayImageOptions.Builder()</span><br><span class="line">                .showImageForEmptyUri(R.drawable.icon_pic_rec)</span><br><span class="line">                .showImageOnFail(R.drawable.icon_pic_rec)</span><br><span class="line">                .resetViewBeforeLoading(<span class="keyword">true</span>)</span><br><span class="line">                .cacheOnDisc(<span class="keyword">true</span>)</span><br><span class="line">                .imageScaleType(ImageScaleType.IN_SAMPLE_INT)</span><br><span class="line">                .bitmapConfig(Bitmap.Config.RGB_565)</span><br><span class="line">                .displayer(<span class="keyword">new</span> FadeInBitmapDisplayer(<span class="number">300</span>))</span><br><span class="line">                .build();</span><br><span class="line"></span><br><span class="line">        screenWidth = (<span class="keyword">int</span>) TDevice.getScreenWidth();</span><br><span class="line">        viewWidth = (<span class="keyword">int</span>) (screenWidth - TDevice.dp2px(<span class="number">15</span>));</span><br><span class="line">        screenWidth = (<span class="keyword">int</span>) (screenWidth - TDevice.dp2px(<span class="number">25</span>));</span><br><span class="line"></span><br><span class="line">        <span class="comment">//设置Textview内的链接可点击，且Textview可滑动</span></span><br><span class="line">        setMovementMethod(LinkMovementMethod.getInstance());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onMeasure</span><span class="params">(<span class="keyword">int</span> widthMeasureSpec, <span class="keyword">int</span> heightMeasureSpec)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onMeasure(widthMeasureSpec, heightMeasureSpec);</span><br><span class="line">        <span class="keyword">int</span> widthMode = MeasureSpec.getMode(widthMeasureSpec);</span><br><span class="line">        <span class="keyword">int</span> widthSize = MeasureSpec.getSize(widthMeasureSpec);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (widthMode == MeasureSpec.EXACTLY) &#123;</span><br><span class="line">            <span class="comment">// Parent has told us how big to be. So be it.</span></span><br><span class="line">            widthExp = widthSize;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            widthExp = widthSize;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onDetachedFromWindow</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onDetachedFromWindow();</span><br><span class="line">        <span class="keyword">this</span>.setText(<span class="keyword">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 设置要显示的富文本内容</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> text 内容</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setRichText</span><span class="params">(String text)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//使用Html.fromHtml解析标签，</span></span><br><span class="line">        <span class="comment">//asyncImageGetter用于加载img标签图片资源</span></span><br><span class="line">        Spanned spanned = Html.fromHtml(text, asyncImageGetter, <span class="keyword">null</span>);</span><br><span class="line">        SpannableStringBuilder spannableStringBuilder;</span><br><span class="line">        <span class="keyword">if</span> (spanned <span class="keyword">instanceof</span> SpannableStringBuilder) &#123;</span><br><span class="line">            spannableStringBuilder = (SpannableStringBuilder) spanned;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            spannableStringBuilder = <span class="keyword">new</span> SpannableStringBuilder(spanned);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//获取a标签，设置点击事件及回调</span></span><br><span class="line">        URLSpan[] urls = spannableStringBuilder.getSpans(<span class="number">0</span>, spannableStringBuilder.length(), URLSpan.class);</span><br><span class="line">        <span class="keyword">for</span> (URLSpan span : urls) &#123;</span><br><span class="line">            setLinkClickable(spannableStringBuilder, span);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//获取img标签，设置图片的点击事件及回调</span></span><br><span class="line">        ImageSpan[] imageSpans = spannableStringBuilder.getSpans(<span class="number">0</span>, spannableStringBuilder.length(), ImageSpan.class);</span><br><span class="line">        <span class="keyword">final</span> List&lt;String&gt; imageUrls = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>, size = imageSpans.length; i &lt; size; i++) &#123;</span><br><span class="line">            ImageSpan imageSpan = imageSpans[i];</span><br><span class="line">            <span class="keyword">final</span> String imageUrl = imageSpan.getSource();</span><br><span class="line">            <span class="keyword">int</span> start = spannableStringBuilder.getSpanStart(imageSpan);</span><br><span class="line">            <span class="keyword">int</span> end = spannableStringBuilder.getSpanEnd(imageSpan);</span><br><span class="line">            imageUrls.add(imageUrl);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">final</span> <span class="keyword">int</span> iFinal = i;</span><br><span class="line">            ClickableSpan clickableSpan = <span class="keyword">new</span> ClickableSpan() &#123;</span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View widget)</span> </span>&#123;</span><br><span class="line">                    <span class="keyword">if</span> (onImageClickListener != <span class="keyword">null</span>) &#123;</span><br><span class="line">                        onImageClickListener.imageClicked(imageUrls, iFinal);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//去除在图片间默认的点击效果</span></span><br><span class="line">            ClickableSpan[] clickableSpans = spannableStringBuilder.getSpans(start, end, ClickableSpan.class);</span><br><span class="line">            <span class="keyword">if</span> (clickableSpans != <span class="keyword">null</span> &amp;&amp; clickableSpans.length != <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="keyword">for</span> (ClickableSpan cs : clickableSpans) &#123;</span><br><span class="line">                    spannableStringBuilder.removeSpan(cs);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            spannableStringBuilder.setSpan(clickableSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">super</span>.setText(spanned);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 设置链接点击回调</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> clickableHtmlBuilder</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> urlSpan</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">setLinkClickable</span><span class="params">(SpannableStringBuilder clickableHtmlBuilder, URLSpan urlSpan)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> start = clickableHtmlBuilder.getSpanStart(urlSpan);</span><br><span class="line">        <span class="keyword">int</span> end = clickableHtmlBuilder.getSpanEnd(urlSpan);</span><br><span class="line">        <span class="keyword">int</span> flags = clickableHtmlBuilder.getSpanFlags(urlSpan);</span><br><span class="line">        <span class="keyword">final</span> String url = urlSpan.getURL();</span><br><span class="line">        ClickableSpan clickableSpan = <span class="keyword">new</span> ClickableSpan() &#123;</span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View view)</span> </span>&#123;</span><br><span class="line">                onUrlClickListener.urlClicked(url);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">        <span class="comment">//将原有链接点击效果去除，因为TextView会调用URLSpan.onClick()方法进行网页跳转</span></span><br><span class="line">        clickableHtmlBuilder.removeSpan(urlSpan);</span><br><span class="line">        clickableHtmlBuilder.setSpan(clickableSpan, start, end, flags);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 加载图片资源</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> Html.ImageGetter asyncImageGetter = <span class="keyword">new</span> Html.ImageGetter() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> Drawable <span class="title">getDrawable</span><span class="params">(String source)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">final</span> URLDrawable urlDrawable = <span class="keyword">new</span> URLDrawable(getContext());</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (source.contains(<span class="string">"storage/emulated"</span>) || source.toLowerCase().contains(<span class="string">"/sdcard/"</span>)) &#123;</span><br><span class="line">                source = <span class="string">"file://"</span> + source;</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (source.startsWith(<span class="string">"http://"</span>)) &#123;</span><br><span class="line"><span class="comment">//                source = source;</span></span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                source = <span class="string">"http://www.nhtzj.com"</span> + source;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            mLoader.loadImage(source, options, <span class="keyword">new</span> SimpleImageLoadingListener() &#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onLoadingStarted</span><span class="params">(String imageUri, View view)</span> </span>&#123;</span><br><span class="line">                    urlDrawable.setBounds(placeHolder.getBounds());</span><br><span class="line">                    urlDrawable.setDrawable(placeHolder);</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onLoadingFailed</span><span class="params">(String imageUri, View view, FailReason failReason)</span> </span>&#123;</span><br><span class="line">                    urlDrawable.setBounds(errorImage.getBounds());</span><br><span class="line">                    urlDrawable.setDrawable(errorImage);</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onLoadingComplete</span><span class="params">(String imageUri, View view, Bitmap loadedImage)</span> </span>&#123;</span><br><span class="line">                    <span class="keyword">super</span>.onLoadingComplete(imageUri, view, loadedImage);</span><br><span class="line"></span><br><span class="line">                    <span class="keyword">int</span> width;</span><br><span class="line">                    <span class="keyword">int</span> height;</span><br><span class="line"></span><br><span class="line">                    <span class="comment">//Bitmap转成Drawable</span></span><br><span class="line">                    Drawable drawable = <span class="keyword">new</span> BitmapDrawable(getContext().getResources(), loadedImage);</span><br><span class="line"></span><br><span class="line">                    <span class="keyword">float</span> imgH = (<span class="keyword">float</span>) loadedImage.getHeight();</span><br><span class="line">                    <span class="keyword">float</span> imgW = (<span class="keyword">float</span>) loadedImage.getWidth();</span><br><span class="line"></span><br><span class="line">                    <span class="comment">//根据需求调整图片大小，</span></span><br><span class="line">                    <span class="comment">//我这边是将图片调整为适应屏幕宽度</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//                    if (imgW &gt; viewWidth) &#123;</span></span><br><span class="line">                    width = viewWidth;</span><br><span class="line">                    height = (<span class="keyword">int</span>) (width * (imgH / imgW));</span><br><span class="line"><span class="comment">//                    &#125; else &#123;</span></span><br><span class="line"><span class="comment">//                        width = (int) imgW;</span></span><br><span class="line"><span class="comment">//                        height = (int) imgH;</span></span><br><span class="line"><span class="comment">//                    &#125;</span></span><br><span class="line">                    drawable.setBounds(<span class="number">0</span>, <span class="number">0</span>, width, height);</span><br><span class="line">                    urlDrawable.setBounds(<span class="number">0</span>, <span class="number">0</span>, screenWidth, height + <span class="number">5</span>);</span><br><span class="line">                    urlDrawable.setDrawable(drawable);</span><br><span class="line">                    RichText.<span class="keyword">this</span>.setText(getText());</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onLoadingCancelled</span><span class="params">(String imageUri, View view)</span> </span>&#123;</span><br><span class="line">                    <span class="keyword">super</span>.onLoadingCancelled(imageUri, view);</span><br><span class="line">                    urlDrawable.setBounds(errorImage.getBounds());</span><br><span class="line">                    urlDrawable.setDrawable(errorImage);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> urlDrawable;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 缩放图片</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> bitmap</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> scale</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> Bitmap <span class="title">small</span><span class="params">(Bitmap bitmap, <span class="keyword">float</span> scale)</span> </span>&#123;</span><br><span class="line">        Matrix matrix = <span class="keyword">new</span> Matrix();</span><br><span class="line">        matrix.postScale(scale, scale); <span class="comment">//长和宽放大缩小的比例</span></span><br><span class="line">        <span class="keyword">return</span> Bitmap.createBitmap(bitmap, <span class="number">0</span>, <span class="number">0</span>, bitmap.getWidth(), bitmap.getHeight(), matrix, <span class="keyword">true</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">URLDrawable</span> <span class="keyword">extends</span> <span class="title">BitmapDrawable</span> </span>&#123;</span><br><span class="line">        <span class="keyword">private</span> Drawable drawable;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">URLDrawable</span><span class="params">(Context context)</span> </span>&#123;</span><br><span class="line"><span class="comment">//			drawable = context.getResources().getDrawable(R.drawable.icon_pic_rec);</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">draw</span><span class="params">(Canvas canvas)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (drawable != <span class="keyword">null</span>)</span><br><span class="line">                drawable.draw(canvas);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setDrawable</span><span class="params">(Drawable drawable)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.drawable = drawable;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 设置加载等待图</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> placeHolder</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setPlaceHolder</span><span class="params">(Drawable placeHolder)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.placeHolder = placeHolder;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 设置加载错误图</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> errorImage</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setErrorImage</span><span class="params">(Drawable errorImage)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.errorImage = errorImage;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 设置图片点击回调</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> onImageClickListener</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setOnImageClickListener</span><span class="params">(OnImageClickListener onImageClickListener)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.onImageClickListener = onImageClickListener;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 设置链接点击回调</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> onUrlClickListener</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setOnUrlClickListenerListener</span><span class="params">(OnUrlClickListener onUrlClickListener)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.onUrlClickListener = onUrlClickListener;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">OnImageClickListener</span> </span>&#123;</span><br><span class="line">        <span class="function"><span class="keyword">void</span> <span class="title">imageClicked</span><span class="params">(List&lt;String&gt; imageUrls, <span class="keyword">int</span> position)</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">OnUrlClickListener</span> </span>&#123;</span><br><span class="line">        <span class="function"><span class="keyword">void</span> <span class="title">urlClicked</span><span class="params">(String url)</span></span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p><a href="https://gitee.com/goldsea/learn/blob/master/app/src/main/java/com/nhtzj/learnapplication/widget/eichtext/RichText.java" target="_blank" rel="noopener">RichText 点击查看源码</a></p>
+<h2 id="推荐"><a href="#推荐" class="headerlink" title="推荐"></a>推荐</h2><p>最后推荐一个不错的富文本框架</p>
+<p><a href="https://github.com/zzhoujay/RichText" target="_blank" rel="noopener"><strong>RichText</strong></a></p>
+<p>Android平台下的富文本解析器，支持Html和Markdown</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持是对我最大的鼓励！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Haitao Ni 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.png" alt="Haitao Ni 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/android/" rel="tag"># android</a>
+          
+            <a href="/tags/TextView/" rel="tag"># TextView</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/310044164/" rel="next" title="Android获取应用是否开启通知栏及跳转到设置界面">
+                <i class="fa fa-chevron-left"></i> Android获取应用是否开启通知栏及跳转到设置界面
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/351309786/" rel="prev" title="从源码角度彻底搞懂LinkedList">
+                从源码角度彻底搞懂LinkedList <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar" rel="external nofollow">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar/avatar.png" alt="Haitao Ni">
+            
+              <p class="site-author-name" itemprop="name">Haitao Ni</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">79</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">49</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">85</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:haitao_ni@nhtzj.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TextView-家族"><span class="nav-number">2.</span> <span class="nav-text">TextView 家族</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TextView常用的xml属性及相关方法"><span class="nav-number">3.</span> <span class="nav-text">TextView常用的xml属性及相关方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#加载图片"><span class="nav-number">4.</span> <span class="nav-text">加载图片</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#设置图片点击回调"><span class="nav-number">5.</span> <span class="nav-text">设置图片点击回调</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#设置链接点击事件及回调"><span class="nav-number">6.</span> <span class="nav-text">设置链接点击事件及回调</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#完整代码"><span class="nav-number">7.</span> <span class="nav-text">完整代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#代码"><span class="nav-number">8.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#推荐"><span class="nav-number">9.</span> <span class="nav-text">推荐</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2023</span>
+
+
+  <div class="powered-by"><a class="theme-link" target="_blank" href="https://beian.miit.gov.cn/" rel="external nofollow" title="工业和信息化部ICP/IP地址/域名信息备案管理系统">浙ICP备17020869号</a></div>
+
+
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Haitao Ni</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'gaKW5YWAvf7NBOlU9eFbxN8O-gzGzoHsz',
+        appKey: 'susRHyMS8Fq1XyKXg0r9ad85',
+        placeholder: '填上邮箱可以收到我的回复哦 (*^ω^*)~~',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+
+//新增以下代码即可，可以移除.info下所有子节点。
+var infoEle = document.querySelector('#comments .info');
+if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0){
+  infoEle.childNodes.forEach(function(item) {
+    item.parentNode.removeChild(item);
+  });
+}
+
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("gaKW5YWAvf7NBOlU9eFbxN8O-gzGzoHsz", "susRHyMS8Fq1XyKXg0r9ad85");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+
+
+  
+
+  
+
+</body>
+</html>

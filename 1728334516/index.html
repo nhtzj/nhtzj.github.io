@@ -1,0 +1,1471 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="uW8bwgMGUwIA01nPfh0oty1rmtmmuVkOVGaS9O0nQUg">
+
+
+
+
+
+
+
+
+  <meta name="baidu-site-verification" content="NeE6tPH3W1">
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico?v=5.1.4">
+
+
+
+
+
+
+
+  <meta name="keywords" content="新浪行情,行情接口,分时图,K线图">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="海的那边" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="行情接口 http://hq.sinajs.cn/list=股票代码  以同花顺（股票代码：300033，股票市场：sz，深圳）为例，如果需要获取该股票的最新行情，只需如下调用接口： http://hq.sinajs.cn/list=sz300033  该接口会返回一串文本，比如： 1var hq_str_sz300033=&quot;同花顺,52.100,53.150,50.990,52.400,50.8">
+<meta name="keywords" content="新浪行情,行情接口,分时图,K线图">
+<meta property="og:type" content="article">
+<meta property="og:title" content="新浪行情">
+<meta property="og:url" content="http://www.nhtzj.com/1728334516/index.html">
+<meta property="og:site_name" content="海的那边">
+<meta property="og:description" content="行情接口 http://hq.sinajs.cn/list=股票代码  以同花顺（股票代码：300033，股票市场：sz，深圳）为例，如果需要获取该股票的最新行情，只需如下调用接口： http://hq.sinajs.cn/list=sz300033  该接口会返回一串文本，比如： 1var hq_str_sz300033=&quot;同花顺,52.100,53.150,50.990,52.400,50.8">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://image.sinajs.cn/newchart/min/n/sz300033.gif">
+<meta property="og:image" content="http://image.sinajs.cn/newchart/daily/n/sz300033.gif">
+<meta property="og:image" content="http://image.sinajs.cn/newchart/monthly/n/sz300033.gif">
+<meta property="og:updated_time" content="2018-05-23T09:32:24.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="新浪行情">
+<meta name="twitter:description" content="行情接口 http://hq.sinajs.cn/list=股票代码  以同花顺（股票代码：300033，股票市场：sz，深圳）为例，如果需要获取该股票的最新行情，只需如下调用接口： http://hq.sinajs.cn/list=sz300033  该接口会返回一串文本，比如： 1var hq_str_sz300033=&quot;同花顺,52.100,53.150,50.990,52.400,50.8">
+<meta name="twitter:image" content="http://image.sinajs.cn/newchart/min/n/sz300033.gif">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.nhtzj.com/1728334516/">
+
+
+
+
+
+  <title>新浪行情 | 海的那边</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">海的那边</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">人无远虑，必有近忧</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.nhtzj.com/1728334516/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Haitao Ni">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="海的那边">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">新浪行情</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-03T14:52:31+08:00">
+                2018-04-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/android/" itemprop="url" rel="index">
+                    <span itemprop="name">android</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/android/股票/" itemprop="url" rel="index">
+                    <span itemprop="name">股票</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/android/股票/新浪行情/" itemprop="url" rel="index">
+                    <span itemprop="name">新浪行情</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/1728334516/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/1728334516/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/1728334516/" class="leancloud_visitors" data-flag-title="新浪行情">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  4,125
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  23
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="行情接口"><a href="#行情接口" class="headerlink" title="行情接口"></a>行情接口</h2><blockquote>
+<p><a href="http://hq.sinajs.cn/list=股票代码" target="_blank" rel="noopener">http://hq.sinajs.cn/list=股票代码</a></p>
+</blockquote>
+<p>以同花顺（股票代码：300033，股票市场：sz，深圳）为例，如果需要获取该股票的最新行情，只需如下调用接口： <a href="http://hq.sinajs.cn/list=sz300033" target="_blank" rel="noopener">http://hq.sinajs.cn/list=sz300033</a> </p>
+<p>该接口会返回一串文本，比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var hq_str_sz300033=<span class="string">"同花顺,52.100,53.150,50.990,52.400,50.880,50.990,51.000,4592538,235557372.010,2284,50.990,400,50.950,300,50.940,200,50.930,3900,50.920,1200,51.000,1300,51.270,10300,51.280,400,51.290,3902,51.300,2018-04-03,13:18:54,00"</span>;</span><br></pre></td></tr></table></figure>
+<p>该字符串由多个数据用逗号”,”拼接，按照程序员的思路，顺序号从0开始。 0:“同花顺”，股票名称； </p>
+<p>1:“52.100”，今日开盘价； </p>
+<p>2:“53.150”，昨日收盘价； </p>
+<p>3:“50.990”，当前价格； </p>
+<p>4:“52.400”，今日最高价； </p>
+<p>5:“50.880”，今日最低价； </p>
+<p>6:“50.990”，竞买价，即“买一”报价；</p>
+<p>7:“51.000”，竞卖价，即“卖一”报价； </p>
+<p>8:“4592538”，成交的股票数，由于股票交易以一百股为基本单位，所以在使用时，通常把该值除以一百；</p>
+<p>9:“235557372.010”，成交金额，单位为“元”； </p>
+<p>10:“2284”，“买一”申请4695股，即47手； </p>
+<p>11:“50.990”，“买一”报价； </p>
+<p>12:“400”，“买二”； </p>
+<p>13:“50.950”，“买二”； </p>
+<p>14:“300”，“买三”； </p>
+<p>15:“50.940”，“买三”； </p>
+<p>16:“200”，“买四”； </p>
+<p>17:“50.930”，“买四”； </p>
+<p>18:“3900”，“买五”； </p>
+<p>19:“50.920”，“买五”； </p>
+<p>20:“1200”，“卖一”申报3100股，即31手； </p>
+<p>21:“51.000”，“卖一”报价 </p>
+<p>(22, 23), (24, 25), (26,27), (28, 29)分别为“卖二”至“卖四的情况” </p>
+<p>30:“2018-04-03”，日期； 31:“13:18:54”，时间； </p>
+<p>如需查询多个股票，只需要将股票代码用逗号拼接后调用该接口。 比如查询同花顺（股票代码：300033，股票市场：sz，深圳），贵州茅台（股票代码：600252，股票市场：sh，上海），复星医药（股票代码：600196，股票市场：sh，上海） <a href="http://hq.sinajs.cn/list=sz300033,sh600252,sh600196" target="_blank" rel="noopener">http://hq.sinajs.cn/list=sz300033,sh600252,sh600196</a></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">var hq_str_sz300033=<span class="string">"同花顺,52.100,53.150,51.090,52.400,50.880,51.080,51.090,4880945,250301808.510,10293,51.080,5900,51.070,1700,51.050,2300,51.040,200,51.030,49100,51.090,3047,51.100,1100,51.150,2000,51.180,300,51.250,2018-04-03,13:36:12,00"</span>;</span><br><span class="line">var hq_str_sh600252=<span class="string">"中恒集团,3.960,4.000,3.920,3.970,3.910,3.910,3.920,12745747,50199960.000,781400,3.910,789000,3.900,285600,3.890,337700,3.880,172300,3.870,297200,3.920,224400,3.930,144347,3.940,658503,3.950,390348,3.960,2018-04-03,13:36:14,00"</span>;</span><br><span class="line">var hq_str_sh600196=<span class="string">"复星医药,43.800,44.360,43.460,44.670,43.430,43.460,43.480,10789333,473126781.000,3900,43.460,9550,43.450,13400,43.440,22645,43.430,3300,43.420,12000,43.480,2500,43.490,6400,43.500,1500,43.520,600,43.530,2018-04-03,13:36:14,00"</span>;</span><br></pre></td></tr></table></figure>
+<p>返回的股票数据，股票与股票之间有“\n”换行符进行换行。返回股票行情数据的顺序与接口中拼接的股票代码顺序一致。而且不会去除重复股票代码。 </p>
+<p>比如： <a href="http://hq.sinajs.cn/list=sz300033,sz300033,sh600196" target="_blank" rel="noopener">http://hq.sinajs.cn/list=sz300033,sz300033,sh600196</a></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">var hq_str_sz300033=<span class="string">"同花顺,52.100,53.150,51.650,52.400,50.880,51.590,51.650,5112490,262191072.590,200,51.590,800,51.580,1000,51.570,4100,51.550,1100,51.540,1500,51.650,300,51.660,1200,51.670,500,51.680,2000,51.690,2018-04-03,13:40:42,00"</span>;</span><br><span class="line">var hq_str_sz300033=<span class="string">"同花顺,52.100,53.150,51.650,52.400,50.880,51.590,51.650,5112490,262191072.590,200,51.590,800,51.580,1000,51.570,4100,51.550,1100,51.540,1500,51.650,300,51.660,1200,51.670,500,51.680,2000,51.690,2018-04-03,13:40:42,00"</span>;</span><br><span class="line">var hq_str_sh600196=<span class="string">"复星医药,43.800,44.360,43.480,44.670,43.410,43.440,43.480,10962328,480641133.000,2500,43.440,7500,43.430,7400,43.420,27400,43.410,35100,43.400,6200,43.480,1200,43.500,200,43.510,400,43.530,100,43.570,2018-04-03,13:40:41,00"</span>;</span><br></pre></td></tr></table></figure>
+<p>会返回两次同花顺的行情数据。</p>
+<h3 id="大盘指数的数据会有所差别"><a href="#大盘指数的数据会有所差别" class="headerlink" title="大盘指数的数据会有所差别"></a>大盘指数的数据会有所差别</h3><p>三大指数的代码如下：</p>
+<blockquote>
+<p>上证指数：s_sh000001 </p>
+<p>深证成指：s_sz399001 </p>
+<p>创业板指：s_sz399006</p>
+</blockquote>
+<p>接口与股票行情接口一致，单返回数据内容有巨大差别。 <a href="http://hq.sinajs.cn/list=s_sh000001,s_sz399001,s_sz399006" target="_blank" rel="noopener">http://hq.sinajs.cn/list=s_sh000001,s_sz399001,s_sz399006</a> </p>
+<p>返回数据如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">var hq_str_s_sh000001=<span class="string">"上证指数,3129.3559,-33.8231,-1.07,1093759,13684785"</span>;</span><br><span class="line">var hq_str_s_sz399001=<span class="string">"深证成指,10705.22,-147.728,-1.36,150649760,21374199"</span>;</span><br><span class="line">var hq_str_s_sz399006=<span class="string">"创业板指,1862.29,-37.966,-2.00,15198600,2675426"</span>;</span><br></pre></td></tr></table></figure>
+<p>数据含义分别为：指数名称，当前点数，当前价格，涨跌率，成交量（手），成交额（万元）；</p>
+<h2 id="分时图"><a href="#分时图" class="headerlink" title="分时图"></a>分时图</h2><h3 id="gif形式"><a href="#gif形式" class="headerlink" title="gif形式"></a>gif形式</h3><blockquote>
+<p><a href="http://image.sinajs.cn/newchart/min/n/*.gif" target="_blank" rel="noopener">http://image.sinajs.cn/newchart/min/n/*.gif</a></p>
+</blockquote>
+<p>其中*代表股票代码。 </p>
+<p>比如：同花顺的分时图 </p>
+<p><a href="http://image.sinajs.cn/newchart/min/n/sz300033.gif" target="_blank" rel="noopener">http://image.sinajs.cn/newchart/min/n/sz300033.gif</a> <img src="http://image.sinajs.cn/newchart/min/n/sz300033.gif" alt="分时图"></p>
+<h3 id="数据格式"><a href="#数据格式" class="headerlink" title="数据格式"></a>数据格式</h3><blockquote>
+<p><a href="http://vip.stock.finance.sina.com.cn/quotes\_service/view/CN\_TransListV2.php?symbol=股票代码&amp;rn=时间戳" target="_blank" rel="noopener">http://vip.stock.finance.sina.com.cn/quotes\_service/view/CN\_TransListV2.php?symbol=股票代码&amp;rn=时间戳</a></p>
+</blockquote>
+<p>其中</p>
+<p>symbol为股票代码， </p>
+<p>rn为请求的时间戳。 </p>
+<p>该接口一次只能请求一个股票的分时图。 </p>
+<p>以同花顺为例： <a href="http://vip.stock.finance.sina.com.cn/quotes_service/view/CN_TransListV2.php?symbol=sz300033&amp;rn=1522736353052" target="_blank" rel="noopener">http://vip.stock.finance.sina.com.cn/quotes_service/view/CN_TransListV2.php?symbol=sz300033&amp;rn=1522736353052</a> </p>
+<p>返回数据如下（由于数据过多，这里已经删除大部分数据）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var trade_item_list = <span class="keyword">new</span> Array(); trade_item_list[<span class="number">0</span>] = <span class="keyword">new</span> Array(<span class="string">'14:19:51'</span>, <span class="string">'100'</span>, <span class="string">'51.300'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">1</span>] = <span class="keyword">new</span> Array(<span class="string">'14:19:48'</span>, <span class="string">'1000'</span>, <span class="string">'51.300'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2</span>] = <span class="keyword">new</span> Array(<span class="string">'14:19:45'</span>, <span class="string">'200'</span>, <span class="string">'51.290'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">3</span>] = <span class="keyword">new</span> Array(<span class="string">'14:19:42'</span>, <span class="string">'300'</span>, <span class="string">'51.300'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">4</span>] = <span class="keyword">new</span> Array(<span class="string">'14:19:39'</span>, <span class="string">'200'</span>, <span class="string">'51.300'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">5</span>] = <span class="keyword">new</span> Array(<span class="string">'14:19:36'</span>, <span class="string">'100'</span>, <span class="string">'51.300'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">6</span>] = <span class="keyword">new</span> Array(<span class="string">'14:19:30'</span>, <span class="string">'1000'</span>, <span class="string">'51.300'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">7</span>] = <span class="keyword">new</span> Array(<span class="string">'14:19:24'</span>, <span class="string">'300'</span>, <span class="string">'51.300'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">8</span>] = <span class="keyword">new</span> Array(<span class="string">'14:19:21'</span>, <span class="string">'300'</span>, <span class="string">'51.290'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">9</span>] = <span class="keyword">new</span> Array(<span class="string">'14:19:18'</span>, <span class="string">'100'</span>, <span class="string">'51.290'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">10</span>] = <span class="keyword">new</span> Array(<span class="string">'14:19:15'</span>, <span class="string">'400'</span>, <span class="string">'51.300'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">11</span>] = <span class="keyword">new</span> Array(<span class="string">'14:19:09'</span>, <span class="string">'1000'</span>, <span class="string">'51.300'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">12</span>] = <span class="keyword">new</span> Array(<span class="string">'14:19:03'</span>, <span class="string">'500'</span>, <span class="string">'51.300'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">13</span>] = <span class="keyword">new</span> Array(<span class="string">'14:18:57'</span>, <span class="string">'1400'</span>, <span class="string">'51.300'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">14</span>] = <span class="keyword">new</span> Array(<span class="string">'14:18:54'</span>, <span class="string">'2800'</span>, <span class="string">'51.300'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">15</span>] = <span class="keyword">new</span> Array(<span class="string">'14:18:48'</span>, <span class="string">'2600'</span>, <span class="string">'51.290'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">16</span>] = <span class="keyword">new</span> Array(<span class="string">'14:18:39'</span>, <span class="string">'1500'</span>, <span class="string">'51.290'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">17</span>] = <span class="keyword">new</span> Array(<span class="string">'14:18:33'</span>, <span class="string">'100'</span>, <span class="string">'51.290'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">18</span>] = <span class="keyword">new</span> Array(<span class="string">'14:18:30'</span>, <span class="string">'300'</span>, <span class="string">'51.290'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">19</span>] = <span class="keyword">new</span> Array(<span class="string">'14:18:27'</span>, <span class="string">'800'</span>, <span class="string">'51.290'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">20</span>] = <span class="keyword">new</span> Array(<span class="string">'14:18:21'</span>, <span class="string">'1000'</span>, <span class="string">'51.300'</span>, <span class="string">'UP'</span>);   trade_item_list[<span class="number">2510</span>] = <span class="keyword">new</span> Array(<span class="string">'09:38:27'</span>, <span class="string">'3900'</span>, <span class="string">'51.550'</span>, <span class="string">'EQUAL'</span>); trade_item_list[<span class="number">2511</span>] = <span class="keyword">new</span> Array(<span class="string">'09:38:24'</span>, <span class="string">'11900'</span>, <span class="string">'51.500'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2512</span>] = <span class="keyword">new</span> Array(<span class="string">'09:38:21'</span>, <span class="string">'2700'</span>, <span class="string">'51.600'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2513</span>] = <span class="keyword">new</span> Array(<span class="string">'09:38:18'</span>, <span class="string">'6200'</span>, <span class="string">'51.500'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2514</span>] = <span class="keyword">new</span> Array(<span class="string">'09:38:15'</span>, <span class="string">'6100'</span>, <span class="string">'51.600'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2515</span>] = <span class="keyword">new</span> Array(<span class="string">'09:38:12'</span>, <span class="string">'5800'</span>, <span class="string">'51.600'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2516</span>] = <span class="keyword">new</span> Array(<span class="string">'09:38:09'</span>, <span class="string">'1500'</span>, <span class="string">'51.600'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2517</span>] = <span class="keyword">new</span> Array(<span class="string">'09:38:06'</span>, <span class="string">'2200'</span>, <span class="string">'51.700'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2518</span>] = <span class="keyword">new</span> Array(<span class="string">'09:38:03'</span>, <span class="string">'3500'</span>, <span class="string">'51.600'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2519</span>] = <span class="keyword">new</span> Array(<span class="string">'09:38:00'</span>, <span class="string">'1908'</span>, <span class="string">'51.700'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2520</span>] = <span class="keyword">new</span> Array(<span class="string">'09:37:57'</span>, <span class="string">'3192'</span>, <span class="string">'51.700'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2521</span>] = <span class="keyword">new</span> Array(<span class="string">'09:37:54'</span>, <span class="string">'3800'</span>, <span class="string">'51.710'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2522</span>] = <span class="keyword">new</span> Array(<span class="string">'09:37:51'</span>, <span class="string">'3600'</span>, <span class="string">'51.750'</span>, <span class="string">'EQUAL'</span>); trade_item_list[<span class="number">2523</span>] = <span class="keyword">new</span> Array(<span class="string">'09:37:48'</span>, <span class="string">'3400'</span>, <span class="string">'51.710'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2524</span>] = <span class="keyword">new</span> Array(<span class="string">'09:37:45'</span>, <span class="string">'3400'</span>, <span class="string">'51.800'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2525</span>] = <span class="keyword">new</span> Array(<span class="string">'09:37:42'</span>, <span class="string">'11800'</span>, <span class="string">'51.800'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2526</span>] = <span class="keyword">new</span> Array(<span class="string">'09:37:39'</span>, <span class="string">'1900'</span>, <span class="string">'51.890'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2527</span>] = <span class="keyword">new</span> Array(<span class="string">'09:37:36'</span>, <span class="string">'2900'</span>, <span class="string">'51.800'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2528</span>] = <span class="keyword">new</span> Array(<span class="string">'09:37:33'</span>, <span class="string">'3700'</span>, <span class="string">'51.900'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2529</span>] = <span class="keyword">new</span> Array(<span class="string">'09:37:30'</span>, <span class="string">'10000'</span>, <span class="string">'51.900'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2530</span>] = <span class="keyword">new</span> Array(<span class="string">'09:37:27'</span>, <span class="string">'1300'</span>, <span class="string">'51.850'</span>, <span class="string">'EQUAL'</span>); trade_item_list[<span class="number">2531</span>] = <span class="keyword">new</span> Array(<span class="string">'09:37:24'</span>, <span class="string">'5600'</span>, <span class="string">'51.810'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2532</span>] = <span class="keyword">new</span> Array(<span class="string">'09:37:21'</span>, <span class="string">'4800'</span>, <span class="string">'51.900'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2533</span>] = <span class="keyword">new</span> Array(<span class="string">'09:37:18'</span>, <span class="string">'12200'</span>, <span class="string">'51.900'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2534</span>] = <span class="keyword">new</span> Array(<span class="string">'09:37:15'</span>, <span class="string">'3600'</span>, <span class="string">'51.930'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2535</span>] = <span class="keyword">new</span> Array(<span class="string">'09:37:12'</span>, <span class="string">'2800'</span>, <span class="string">'51.900'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2536</span>] = <span class="keyword">new</span> Array(<span class="string">'09:37:09'</span>, <span class="string">'2300'</span>, <span class="string">'51.900'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2537</span>] = <span class="keyword">new</span> Array(<span class="string">'09:37:06'</span>, <span class="string">'100'</span>, <span class="string">'51.930'</span>, <span class="string">'EQUAL'</span>); trade_item_list[<span class="number">2538</span>] = <span class="keyword">new</span> Array(<span class="string">'09:37:03'</span>, <span class="string">'67400'</span>, <span class="string">'51.900'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2539</span>] = <span class="keyword">new</span> Array(<span class="string">'09:37:00'</span>, <span class="string">'600'</span>, <span class="string">'51.980'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2540</span>] = <span class="keyword">new</span> Array(<span class="string">'09:36:57'</span>, <span class="string">'1200'</span>, <span class="string">'51.940'</span>, <span class="string">'EQUAL'</span>); trade_item_list[<span class="number">2541</span>] = <span class="keyword">new</span> Array(<span class="string">'09:36:54'</span>, <span class="string">'5000'</span>, <span class="string">'51.930'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2542</span>] = <span class="keyword">new</span> Array(<span class="string">'09:36:51'</span>, <span class="string">'400'</span>, <span class="string">'51.980'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2543</span>] = <span class="keyword">new</span> Array(<span class="string">'09:36:48'</span>, <span class="string">'200'</span>, <span class="string">'52.000'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2544</span>] = <span class="keyword">new</span> Array(<span class="string">'09:36:45'</span>, <span class="string">'200'</span>, <span class="string">'52.010'</span>, <span class="string">'EQUAL'</span>); trade_item_list[<span class="number">2545</span>] = <span class="keyword">new</span> Array(<span class="string">'09:36:42'</span>, <span class="string">'12900'</span>, <span class="string">'52.030'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2546</span>] = <span class="keyword">new</span> Array(<span class="string">'09:36:39'</span>, <span class="string">'300'</span>, <span class="string">'52.010'</span>, <span class="string">'EQUAL'</span>); trade_item_list[<span class="number">2547</span>] = <span class="keyword">new</span> Array(<span class="string">'09:36:36'</span>, <span class="string">'15200'</span>, <span class="string">'52.040'</span>, <span class="string">'EQUAL'</span>); trade_item_list[<span class="number">2548</span>] = <span class="keyword">new</span> Array(<span class="string">'09:36:33'</span>, <span class="string">'7800'</span>, <span class="string">'52.010'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2549</span>] = <span class="keyword">new</span> Array(<span class="string">'09:36:30'</span>, <span class="string">'1100'</span>, <span class="string">'52.070'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2550</span>] = <span class="keyword">new</span> Array(<span class="string">'09:36:27'</span>, <span class="string">'4300'</span>, <span class="string">'52.010'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2551</span>] = <span class="keyword">new</span> Array(<span class="string">'09:36:24'</span>, <span class="string">'200'</span>, <span class="string">'52.030'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2552</span>] = <span class="keyword">new</span> Array(<span class="string">'09:36:21'</span>, <span class="string">'1900'</span>, <span class="string">'52.030'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2553</span>] = <span class="keyword">new</span> Array(<span class="string">'09:36:18'</span>, <span class="string">'1700'</span>, <span class="string">'52.040'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2554</span>] = <span class="keyword">new</span> Array(<span class="string">'09:36:15'</span>, <span class="string">'1300'</span>, <span class="string">'52.080'</span>, <span class="string">'EQUAL'</span>); trade_item_list[<span class="number">2555</span>] = <span class="keyword">new</span> Array(<span class="string">'09:36:12'</span>, <span class="string">'9100'</span>, <span class="string">'52.110'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2556</span>] = <span class="keyword">new</span> Array(<span class="string">'09:36:09'</span>, <span class="string">'4600'</span>, <span class="string">'52.110'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2557</span>] = <span class="keyword">new</span> Array(<span class="string">'09:36:06'</span>, <span class="string">'1100'</span>, <span class="string">'52.110'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2558</span>] = <span class="keyword">new</span> Array(<span class="string">'09:36:03'</span>, <span class="string">'1200'</span>, <span class="string">'52.110'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2559</span>] = <span class="keyword">new</span> Array(<span class="string">'09:36:00'</span>, <span class="string">'1700'</span>, <span class="string">'52.120'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2560</span>] = <span class="keyword">new</span> Array(<span class="string">'09:35:57'</span>, <span class="string">'800'</span>, <span class="string">'52.130'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2561</span>] = <span class="keyword">new</span> Array(<span class="string">'09:35:54'</span>, <span class="string">'2000'</span>, <span class="string">'52.100'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2562</span>] = <span class="keyword">new</span> Array(<span class="string">'09:35:51'</span>, <span class="string">'1000'</span>, <span class="string">'52.110'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2563</span>] = <span class="keyword">new</span> Array(<span class="string">'09:35:48'</span>, <span class="string">'900'</span>, <span class="string">'52.110'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2564</span>] = <span class="keyword">new</span> Array(<span class="string">'09:35:45'</span>, <span class="string">'1800'</span>, <span class="string">'52.100'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2565</span>] = <span class="keyword">new</span> Array(<span class="string">'09:35:39'</span>, <span class="string">'2300'</span>, <span class="string">'52.110'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2566</span>] = <span class="keyword">new</span> Array(<span class="string">'09:35:36'</span>, <span class="string">'500'</span>, <span class="string">'52.170'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2567</span>] = <span class="keyword">new</span> Array(<span class="string">'09:35:33'</span>, <span class="string">'6900'</span>, <span class="string">'52.110'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2568</span>] = <span class="keyword">new</span> Array(<span class="string">'09:35:30'</span>, <span class="string">'200'</span>, <span class="string">'52.170'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2569</span>] = <span class="keyword">new</span> Array(<span class="string">'09:35:27'</span>, <span class="string">'2000'</span>, <span class="string">'52.170'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2570</span>] = <span class="keyword">new</span> Array(<span class="string">'09:35:24'</span>, <span class="string">'3100'</span>, <span class="string">'52.170'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2571</span>] = <span class="keyword">new</span> Array(<span class="string">'09:35:21'</span>, <span class="string">'6000'</span>, <span class="string">'52.100'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2572</span>] = <span class="keyword">new</span> Array(<span class="string">'09:35:18'</span>, <span class="string">'1200'</span>, <span class="string">'52.100'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2573</span>] = <span class="keyword">new</span> Array(<span class="string">'09:35:15'</span>, <span class="string">'1300'</span>, <span class="string">'52.070'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2574</span>] = <span class="keyword">new</span> Array(<span class="string">'09:35:12'</span>, <span class="string">'2600'</span>, <span class="string">'52.070'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2575</span>] = <span class="keyword">new</span> Array(<span class="string">'09:35:09'</span>, <span class="string">'3000'</span>, <span class="string">'52.110'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2576</span>] = <span class="keyword">new</span> Array(<span class="string">'09:35:06'</span>, <span class="string">'100'</span>, <span class="string">'52.100'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2577</span>] = <span class="keyword">new</span> Array(<span class="string">'09:35:03'</span>, <span class="string">'900'</span>, <span class="string">'52.100'</span>, <span class="string">'EQUAL'</span>); trade_item_list[<span class="number">2578</span>] = <span class="keyword">new</span> Array(<span class="string">'09:35:00'</span>, <span class="string">'2600'</span>, <span class="string">'52.070'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2579</span>] = <span class="keyword">new</span> Array(<span class="string">'09:34:57'</span>, <span class="string">'600'</span>, <span class="string">'52.110'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2580</span>] = <span class="keyword">new</span> Array(<span class="string">'09:34:54'</span>, <span class="string">'600'</span>, <span class="string">'52.100'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2581</span>] = <span class="keyword">new</span> Array(<span class="string">'09:34:51'</span>, <span class="string">'7500'</span>, <span class="string">'52.110'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2582</span>] = <span class="keyword">new</span> Array(<span class="string">'09:34:48'</span>, <span class="string">'6800'</span>, <span class="string">'52.210'</span>, <span class="string">'EQUAL'</span>); trade_item_list[<span class="number">2583</span>] = <span class="keyword">new</span> Array(<span class="string">'09:34:45'</span>, <span class="string">'2800'</span>, <span class="string">'52.200'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2584</span>] = <span class="keyword">new</span> Array(<span class="string">'09:34:42'</span>, <span class="string">'3800'</span>, <span class="string">'52.200'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2585</span>] = <span class="keyword">new</span> Array(<span class="string">'09:34:36'</span>, <span class="string">'5800'</span>, <span class="string">'52.200'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2586</span>] = <span class="keyword">new</span> Array(<span class="string">'09:34:33'</span>, <span class="string">'200'</span>, <span class="string">'52.230'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2587</span>] = <span class="keyword">new</span> Array(<span class="string">'09:34:27'</span>, <span class="string">'1500'</span>, <span class="string">'52.230'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2588</span>] = <span class="keyword">new</span> Array(<span class="string">'09:34:24'</span>, <span class="string">'3400'</span>, <span class="string">'52.190'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2589</span>] = <span class="keyword">new</span> Array(<span class="string">'09:34:21'</span>, <span class="string">'1100'</span>, <span class="string">'52.200'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2590</span>] = <span class="keyword">new</span> Array(<span class="string">'09:34:18'</span>, <span class="string">'9600'</span>, <span class="string">'52.200'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2591</span>] = <span class="keyword">new</span> Array(<span class="string">'09:34:15'</span>, <span class="string">'1100'</span>, <span class="string">'52.230'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2592</span>] = <span class="keyword">new</span> Array(<span class="string">'09:34:12'</span>, <span class="string">'1000'</span>, <span class="string">'52.230'</span>, <span class="string">'EQUAL'</span>); trade_item_list[<span class="number">2593</span>] = <span class="keyword">new</span> Array(<span class="string">'09:34:09'</span>, <span class="string">'3400'</span>, <span class="string">'52.250'</span>, <span class="string">'EQUAL'</span>); trade_item_list[<span class="number">2594</span>] = <span class="keyword">new</span> Array(<span class="string">'09:34:06'</span>, <span class="string">'1600'</span>, <span class="string">'52.300'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2595</span>] = <span class="keyword">new</span> Array(<span class="string">'09:34:03'</span>, <span class="string">'1100'</span>, <span class="string">'52.300'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2596</span>] = <span class="keyword">new</span> Array(<span class="string">'09:34:00'</span>, <span class="string">'1300'</span>, <span class="string">'52.300'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2597</span>] = <span class="keyword">new</span> Array(<span class="string">'09:33:57'</span>, <span class="string">'7900'</span>, <span class="string">'52.300'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2598</span>] = <span class="keyword">new</span> Array(<span class="string">'09:33:54'</span>, <span class="string">'4500'</span>, <span class="string">'52.320'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2599</span>] = <span class="keyword">new</span> Array(<span class="string">'09:33:51'</span>, <span class="string">'5500'</span>, <span class="string">'52.400'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2600</span>] = <span class="keyword">new</span> Array(<span class="string">'09:33:48'</span>, <span class="string">'2100'</span>, <span class="string">'52.380'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2601</span>] = <span class="keyword">new</span> Array(<span class="string">'09:33:45'</span>, <span class="string">'500'</span>, <span class="string">'52.380'</span>, <span class="string">'EQUAL'</span>); trade_item_list[<span class="number">2602</span>] = <span class="keyword">new</span> Array(<span class="string">'09:33:42'</span>, <span class="string">'1700'</span>, <span class="string">'52.400'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2603</span>] = <span class="keyword">new</span> Array(<span class="string">'09:33:39'</span>, <span class="string">'1300'</span>, <span class="string">'52.400'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2604</span>] = <span class="keyword">new</span> Array(<span class="string">'09:33:33'</span>, <span class="string">'400'</span>, <span class="string">'52.400'</span>, <span class="string">'EQUAL'</span>); trade_item_list[<span class="number">2605</span>] = <span class="keyword">new</span> Array(<span class="string">'09:33:27'</span>, <span class="string">'100'</span>, <span class="string">'52.300'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2606</span>] = <span class="keyword">new</span> Array(<span class="string">'09:33:24'</span>, <span class="string">'300'</span>, <span class="string">'52.230'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2607</span>] = <span class="keyword">new</span> Array(<span class="string">'09:33:21'</span>, <span class="string">'4800'</span>, <span class="string">'52.210'</span>, <span class="string">'EQUAL'</span>); trade_item_list[<span class="number">2608</span>] = <span class="keyword">new</span> Array(<span class="string">'09:33:18'</span>, <span class="string">'1300'</span>, <span class="string">'52.200'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2609</span>] = <span class="keyword">new</span> Array(<span class="string">'09:33:12'</span>, <span class="string">'3500'</span>, <span class="string">'52.200'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2610</span>] = <span class="keyword">new</span> Array(<span class="string">'09:33:09'</span>, <span class="string">'16000'</span>, <span class="string">'52.200'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2611</span>] = <span class="keyword">new</span> Array(<span class="string">'09:33:06'</span>, <span class="string">'1500'</span>, <span class="string">'52.200'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2612</span>] = <span class="keyword">new</span> Array(<span class="string">'09:33:03'</span>, <span class="string">'4100'</span>, <span class="string">'52.180'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2613</span>] = <span class="keyword">new</span> Array(<span class="string">'09:33:00'</span>, <span class="string">'4900'</span>, <span class="string">'52.200'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2614</span>] = <span class="keyword">new</span> Array(<span class="string">'09:32:57'</span>, <span class="string">'10500'</span>, <span class="string">'52.180'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2615</span>] = <span class="keyword">new</span> Array(<span class="string">'09:32:54'</span>, <span class="string">'600'</span>, <span class="string">'52.190'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2616</span>] = <span class="keyword">new</span> Array(<span class="string">'09:32:51'</span>, <span class="string">'6300'</span>, <span class="string">'52.180'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2617</span>] = <span class="keyword">new</span> Array(<span class="string">'09:32:48'</span>, <span class="string">'11000'</span>, <span class="string">'52.180'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2618</span>] = <span class="keyword">new</span> Array(<span class="string">'09:32:45'</span>, <span class="string">'1300'</span>, <span class="string">'52.180'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2619</span>] = <span class="keyword">new</span> Array(<span class="string">'09:32:42'</span>, <span class="string">'7700'</span>, <span class="string">'52.170'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2620</span>] = <span class="keyword">new</span> Array(<span class="string">'09:32:39'</span>, <span class="string">'300'</span>, <span class="string">'52.180'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2621</span>] = <span class="keyword">new</span> Array(<span class="string">'09:32:36'</span>, <span class="string">'2400'</span>, <span class="string">'52.170'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2622</span>] = <span class="keyword">new</span> Array(<span class="string">'09:32:33'</span>, <span class="string">'100'</span>, <span class="string">'52.180'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2623</span>] = <span class="keyword">new</span> Array(<span class="string">'09:32:27'</span>, <span class="string">'1500'</span>, <span class="string">'52.180'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2624</span>] = <span class="keyword">new</span> Array(<span class="string">'09:32:24'</span>, <span class="string">'10500'</span>, <span class="string">'52.070'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2625</span>] = <span class="keyword">new</span> Array(<span class="string">'09:32:21'</span>, <span class="string">'800'</span>, <span class="string">'52.110'</span>, <span class="string">'EQUAL'</span>); trade_item_list[<span class="number">2626</span>] = <span class="keyword">new</span> Array(<span class="string">'09:32:18'</span>, <span class="string">'2800'</span>, <span class="string">'52.100'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2627</span>] = <span class="keyword">new</span> Array(<span class="string">'09:32:15'</span>, <span class="string">'1700'</span>, <span class="string">'52.110'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2628</span>] = <span class="keyword">new</span> Array(<span class="string">'09:32:12'</span>, <span class="string">'300'</span>, <span class="string">'52.100'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2629</span>] = <span class="keyword">new</span> Array(<span class="string">'09:32:09'</span>, <span class="string">'4300'</span>, <span class="string">'52.100'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2630</span>] = <span class="keyword">new</span> Array(<span class="string">'09:32:06'</span>, <span class="string">'3000'</span>, <span class="string">'52.100'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2631</span>] = <span class="keyword">new</span> Array(<span class="string">'09:32:00'</span>, <span class="string">'108'</span>, <span class="string">'52.080'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2632</span>] = <span class="keyword">new</span> Array(<span class="string">'09:31:57'</span>, <span class="string">'7800'</span>, <span class="string">'52.080'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2633</span>] = <span class="keyword">new</span> Array(<span class="string">'09:31:54'</span>, <span class="string">'1700'</span>, <span class="string">'52.000'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2634</span>] = <span class="keyword">new</span> Array(<span class="string">'09:31:51'</span>, <span class="string">'500'</span>, <span class="string">'52.030'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2635</span>] = <span class="keyword">new</span> Array(<span class="string">'09:31:48'</span>, <span class="string">'8700'</span>, <span class="string">'52.080'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2636</span>] = <span class="keyword">new</span> Array(<span class="string">'09:31:45'</span>, <span class="string">'500'</span>, <span class="string">'52.030'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2637</span>] = <span class="keyword">new</span> Array(<span class="string">'09:31:42'</span>, <span class="string">'600'</span>, <span class="string">'52.030'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2638</span>] = <span class="keyword">new</span> Array(<span class="string">'09:31:39'</span>, <span class="string">'2000'</span>, <span class="string">'51.930'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2639</span>] = <span class="keyword">new</span> Array(<span class="string">'09:31:36'</span>, <span class="string">'5700'</span>, <span class="string">'52.000'</span>, <span class="string">'EQUAL'</span>); trade_item_list[<span class="number">2640</span>] = <span class="keyword">new</span> Array(<span class="string">'09:31:33'</span>, <span class="string">'3600'</span>, <span class="string">'52.030'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2641</span>] = <span class="keyword">new</span> Array(<span class="string">'09:31:30'</span>, <span class="string">'2800'</span>, <span class="string">'52.030'</span>, <span class="string">'EQUAL'</span>); trade_item_list[<span class="number">2642</span>] = <span class="keyword">new</span> Array(<span class="string">'09:31:27'</span>, <span class="string">'8200'</span>, <span class="string">'51.930'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2643</span>] = <span class="keyword">new</span> Array(<span class="string">'09:31:24'</span>, <span class="string">'2500'</span>, <span class="string">'52.050'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2644</span>] = <span class="keyword">new</span> Array(<span class="string">'09:31:21'</span>, <span class="string">'1100'</span>, <span class="string">'52.050'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2645</span>] = <span class="keyword">new</span> Array(<span class="string">'09:31:18'</span>, <span class="string">'900'</span>, <span class="string">'52.030'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2646</span>] = <span class="keyword">new</span> Array(<span class="string">'09:31:15'</span>, <span class="string">'1500'</span>, <span class="string">'52.030'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2647</span>] = <span class="keyword">new</span> Array(<span class="string">'09:31:12'</span>, <span class="string">'1100'</span>, <span class="string">'52.030'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2648</span>] = <span class="keyword">new</span> Array(<span class="string">'09:31:09'</span>, <span class="string">'11500'</span>, <span class="string">'52.030'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2649</span>] = <span class="keyword">new</span> Array(<span class="string">'09:31:06'</span>, <span class="string">'600'</span>, <span class="string">'51.930'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2650</span>] = <span class="keyword">new</span> Array(<span class="string">'09:31:03'</span>, <span class="string">'500'</span>, <span class="string">'51.920'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2651</span>] = <span class="keyword">new</span> Array(<span class="string">'09:31:00'</span>, <span class="string">'5900'</span>, <span class="string">'51.920'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2652</span>] = <span class="keyword">new</span> Array(<span class="string">'09:30:57'</span>, <span class="string">'7700'</span>, <span class="string">'51.920'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2653</span>] = <span class="keyword">new</span> Array(<span class="string">'09:30:54'</span>, <span class="string">'7000'</span>, <span class="string">'51.920'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2654</span>] = <span class="keyword">new</span> Array(<span class="string">'09:30:51'</span>, <span class="string">'2200'</span>, <span class="string">'51.920'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2655</span>] = <span class="keyword">new</span> Array(<span class="string">'09:30:48'</span>, <span class="string">'6400'</span>, <span class="string">'51.920'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2656</span>] = <span class="keyword">new</span> Array(<span class="string">'09:30:45'</span>, <span class="string">'9900'</span>, <span class="string">'51.900'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2657</span>] = <span class="keyword">new</span> Array(<span class="string">'09:30:42'</span>, <span class="string">'3600'</span>, <span class="string">'52.010'</span>, <span class="string">'EQUAL'</span>); trade_item_list[<span class="number">2658</span>] = <span class="keyword">new</span> Array(<span class="string">'09:30:39'</span>, <span class="string">'9300'</span>, <span class="string">'52.080'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2659</span>] = <span class="keyword">new</span> Array(<span class="string">'09:30:36'</span>, <span class="string">'7900'</span>, <span class="string">'52.060'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2660</span>] = <span class="keyword">new</span> Array(<span class="string">'09:30:33'</span>, <span class="string">'7200'</span>, <span class="string">'51.920'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2661</span>] = <span class="keyword">new</span> Array(<span class="string">'09:30:30'</span>, <span class="string">'7800'</span>, <span class="string">'52.060'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2662</span>] = <span class="keyword">new</span> Array(<span class="string">'09:30:27'</span>, <span class="string">'4300'</span>, <span class="string">'52.060'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2663</span>] = <span class="keyword">new</span> Array(<span class="string">'09:30:24'</span>, <span class="string">'7400'</span>, <span class="string">'51.920'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2664</span>] = <span class="keyword">new</span> Array(<span class="string">'09:30:21'</span>, <span class="string">'3800'</span>, <span class="string">'52.000'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2665</span>] = <span class="keyword">new</span> Array(<span class="string">'09:30:18'</span>, <span class="string">'7400'</span>, <span class="string">'52.050'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2666</span>] = <span class="keyword">new</span> Array(<span class="string">'09:30:15'</span>, <span class="string">'8500'</span>, <span class="string">'52.000'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2667</span>] = <span class="keyword">new</span> Array(<span class="string">'09:30:12'</span>, <span class="string">'2300'</span>, <span class="string">'52.000'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2668</span>] = <span class="keyword">new</span> Array(<span class="string">'09:30:09'</span>, <span class="string">'2700'</span>, <span class="string">'52.000'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2669</span>] = <span class="keyword">new</span> Array(<span class="string">'09:30:06'</span>, <span class="string">'44100'</span>, <span class="string">'51.990'</span>, <span class="string">'DOWN'</span>); trade_item_list[<span class="number">2670</span>] = <span class="keyword">new</span> Array(<span class="string">'09:30:03'</span>, <span class="string">'9000'</span>, <span class="string">'52.100'</span>, <span class="string">'UP'</span>); trade_item_list[<span class="number">2671</span>] = <span class="keyword">new</span> Array(<span class="string">'09:25:03'</span>, <span class="string">'21100'</span>, <span class="string">'52.100'</span>, <span class="string">'EQUAL'</span>); var trade_INVOL_OUTVOL=[<span class="number">2615432.5</span>,<span class="number">3118257.5</span>];</span><br></pre></td></tr></table></figure>
+<p>数据含义分别为：时间，当前成交量，当前价格，涨跌符号。 </p>
+<p>某分钟的价格取该分钟内的最后一个价格。</p>
+<p>比如：09:30分的价格有从09:30:03到09:30:57共19个价格，则09:30的价格取09:30:57的价格51.920。 </p>
+<p>某分钟的成交量为该分钟内所有成交量的和。比如09:30分的成交量为从09:30:03到09:30:57共19个成交量之和。 </p>
+<p>某分钟的持有量为该分钟内所有持有量的和。当前持有量=当前成交量*涨跌符号；（UP为1，DOWN为-1，EQUAL为0）。</p>
+<p>某分钟的持有量为正，则柱状图为红色；为负，则柱状图为绿色；为0，则柱状图为灰色。 </p>
+<p>以下为小编使用正则处理该数据的代码： </p>
+<p>由于该接口返回的数据是从现在往前排列，所以最后的ArrayList需要调用Collections.reverse(list)方法反转一下。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br></pre></td><td class="code"><pre><span class="line">    <span class="function"><span class="keyword">public</span> ArrayList&lt;NewMinutesBean&gt; <span class="title">parseSinaMinutes</span><span class="params">(String str)</span> </span>&#123;</span><br><span class="line">        ArrayList&lt;NewMinutesBean&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        <span class="keyword">if</span> (TextUtils.isEmpty(str)) &#123;</span><br><span class="line">            <span class="keyword">return</span> list;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        String time, preTime = <span class="keyword">null</span>, upDownFlag;</span><br><span class="line">        <span class="keyword">float</span> priceCur;</span><br><span class="line">        <span class="keyword">long</span> numCur;</span><br><span class="line">        <span class="keyword">long</span> holdingVol, holdingVolFlag;</span><br><span class="line"></span><br><span class="line">        NewMinutesBean minutesBean = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">        String sinaRegex = <span class="string">"(\\('(.*?')\\, '(\\d*?)'\\, '(.*?)'\\, '(\\w*?)'\\));"</span>;</span><br><span class="line">        Pattern pattern = Pattern.compile(sinaRegex, Pattern.CASE_INSENSITIVE);</span><br><span class="line">        Matcher matcher = pattern.matcher(str);</span><br><span class="line">        <span class="keyword">int</span> index = <span class="number">0</span>;</span><br><span class="line">        String startTime = <span class="string">"09:30"</span>;</span><br><span class="line">        String endTime = <span class="string">"15:00"</span>;</span><br><span class="line">        <span class="keyword">long</span> millisStart = hourToMillis(startTime);</span><br><span class="line">        <span class="keyword">long</span> millisEnd = hourToMillis(endTime);</span><br><span class="line">        <span class="keyword">while</span> (matcher.find()) &#123;</span><br><span class="line">            time = matcher.group(<span class="number">2</span>).substring(<span class="number">0</span>, <span class="number">5</span>);</span><br><span class="line">            <span class="keyword">if</span> (index == <span class="number">240</span> &amp;&amp; !time.equalsIgnoreCase(preTime)) &#123;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">long</span> millisNow = hourToMillis(time);</span><br><span class="line">            <span class="keyword">if</span> (millisNow &gt; millisEnd) &#123;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            upDownFlag = matcher.group(<span class="number">5</span>);</span><br><span class="line">            <span class="keyword">switch</span> (upDownFlag) &#123;</span><br><span class="line">                <span class="keyword">case</span> <span class="string">"UP"</span>:</span><br><span class="line">                    holdingVolFlag = <span class="number">1</span>;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">case</span> <span class="string">"DOWN"</span>:</span><br><span class="line">                    holdingVolFlag = -<span class="number">1</span>;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">case</span> <span class="string">"EQUAL"</span>:</span><br><span class="line">                    holdingVolFlag = <span class="number">0</span>;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">default</span>:</span><br><span class="line">                    holdingVolFlag = <span class="number">0</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            priceCur = NumberUtils.parseFloat(matcher.group(<span class="number">4</span>));</span><br><span class="line">            numCur = NumberUtils.parseLong(matcher.group(<span class="number">3</span>));</span><br><span class="line">            holdingVol = numCur * holdingVolFlag;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (!time.equalsIgnoreCase(preTime) &amp;&amp; millisNow &gt;= millisStart) &#123;</span><br><span class="line">                minutesBean = <span class="keyword">new</span> NewMinutesBean(time, priceCur, numCur, holdingVol);</span><br><span class="line">                list.add(minutesBean);</span><br><span class="line">                <span class="keyword">if</span> (index == <span class="number">0</span>) &#123;</span><br><span class="line">                    lowestPrice = hightestPrice = priceCur;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (priceCur &gt; hightestPrice) &#123;</span><br><span class="line">                    hightestPrice = priceCur;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (priceCur &lt; lowestPrice) &#123;</span><br><span class="line">                    lowestPrice = priceCur;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                index++;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">if</span> (minutesBean != <span class="keyword">null</span>) &#123;</span><br><span class="line">                    minutesBean.setTradingVol(minutesBean.getTradingVol() + numCur);</span><br><span class="line">                    <span class="keyword">if</span> (millisNow &gt;= millisStart)</span><br><span class="line">                        minutesBean.setHoldingVol(minutesBean.getHoldingVol() + holdingVol);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            preTime = time;</span><br><span class="line">        &#125;</span><br><span class="line"><span class="comment">//反转数据</span></span><br><span class="line">        Collections.reverse(list);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> list;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">   </span><br><span class="line">    SimpleDateFormat dataFormat;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">long</span> <span class="title">hourToMillis</span><span class="params">(String startTime)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(dataFormat==<span class="keyword">null</span>)&#123;</span><br><span class="line">            dataFormat = <span class="keyword">new</span> SimpleDateFormat(<span class="string">"yyyy-MM-dd HH:mm"</span>, Locale.getDefault());</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span>  dataFormat.parse(<span class="string">"2018-04-02 "</span>+startTime).getTime();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>NewMinutesBean.java<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NewMinutesBean</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String time;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">float</span> price;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">long</span> tradingVol;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">long</span> holdingVol;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">NewMinutesBean</span><span class="params">(String time)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.time = time;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">NewMinutesBean</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">NewMinutesBean</span><span class="params">(String time, <span class="keyword">float</span> price, <span class="keyword">long</span> tradingVol, <span class="keyword">long</span> holdingVol)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.time = time;</span><br><span class="line">        <span class="keyword">this</span>.price = price;</span><br><span class="line">        <span class="keyword">this</span>.tradingVol = tradingVol;</span><br><span class="line">        <span class="keyword">this</span>.holdingVol = holdingVol;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getTime</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> time;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setTime</span><span class="params">(String time)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.time = time;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">float</span> <span class="title">getPrice</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> price;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setPrice</span><span class="params">(<span class="keyword">float</span> price)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.price = price;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">getTradingVol</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> tradingVol;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setTradingVol</span><span class="params">(<span class="keyword">long</span> tradingVol)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.tradingVol = tradingVol;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">getHoldingVol</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> holdingVol;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setHoldingVol</span><span class="params">(<span class="keyword">long</span> holdingVol)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.holdingVol = holdingVol;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"NewMinutesBean&#123;"</span> +</span><br><span class="line">                <span class="string">"time='"</span> + time + <span class="string">'\''</span> +</span><br><span class="line">                <span class="string">", price="</span> + price +</span><br><span class="line">                <span class="string">", tradingVol="</span> + tradingVol +</span><br><span class="line">                <span class="string">", holdingVol="</span> + holdingVol +</span><br><span class="line">                <span class="string">'&#125;'</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="K线图"><a href="#K线图" class="headerlink" title="K线图"></a>K线图</h2><p>对于股票的K线图的获取可以通过请求<a href="http://image.sinajs.cn/newchart/…/n/_.gif此URL获取" target="_blank" rel="noopener">http://image.sinajs.cn/newchart/…/n/_.gif此URL获取</a>. _</p>
+<p>_其中_代表股票代码， …代表K线图类型。 </p>
+<p>详见如下： </p>
+<p>日K：daily </p>
+<p>周K：weekly </p>
+<p>月K：monthly </p>
+<p>查看日K线图：</p>
+<p><a href="http://image.sinajs.cn/newchart/daily/n/sz300033.gif" target="_blank" rel="noopener">http://image.sinajs.cn/newchart/daily/n/sz300033.gif</a> <img src="http://image.sinajs.cn/newchart/daily/n/sz300033.gif" alt="日K"> </p>
+<p>查看周K线图： </p>
+<p><a href="http://image.sinajs.cn/newchart/weekly/n/sz300033.gif" target="_blank" rel="noopener">http://image.sinajs.cn/newchart/weekly/n/sz300033.gif</a>  </p>
+<p>查看月K线图： <a href="http://image.sinajs.cn/newchart/monthly/n/sz300033.gif" target="_blank" rel="noopener">http://image.sinajs.cn/newchart/monthly/n/sz300033.gif</a> <img src="http://image.sinajs.cn/newchart/monthly/n/sz300033.gif" alt="月K"></p>
+<h2 id="最近二十天左右的每5分钟数据"><a href="#最近二十天左右的每5分钟数据" class="headerlink" title="最近二十天左右的每5分钟数据"></a>最近二十天左右的每5分钟数据</h2><p><a href="http://money.finance.sina.com.cn/quotes_service/api/json_v2.php/CN_MarketData.getKLineData?symbol=sz300033&amp;scale=5&amp;ma=5&amp;datalen=1023" target="_blank" rel="noopener">http://money.finance.sina.com.cn/quotes_service/api/json_v2.php/CN_MarketData.getKLineData?symbol=sz300033&amp;scale=5&amp;ma=5&amp;datalen=1023</a> （参数：股票编号、分钟间隔（5、15、30、60）、均值（5、10、15、20、25）、查询个数点（最大值242））</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持是对我最大的鼓励！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Haitao Ni 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.png" alt="Haitao Ni 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/android/" rel="tag"># android</a>
+          
+            <a href="/tags/股票/" rel="tag"># 股票</a>
+          
+            <a href="/tags/行情/" rel="tag"># 行情</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/3768358896/" rel="next" title="定时、轮询">
+                <i class="fa fa-chevron-left"></i> 定时、轮询
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/3800276053/" rel="prev" title="文章收集">
+                文章收集 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar" rel="external nofollow">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar/avatar.png" alt="Haitao Ni">
+            
+              <p class="site-author-name" itemprop="name">Haitao Ni</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">79</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">49</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">85</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:haitao_ni@nhtzj.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#行情接口"><span class="nav-number">1.</span> <span class="nav-text">行情接口</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#大盘指数的数据会有所差别"><span class="nav-number">1.1.</span> <span class="nav-text">大盘指数的数据会有所差别</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#分时图"><span class="nav-number">2.</span> <span class="nav-text">分时图</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#gif形式"><span class="nav-number">2.1.</span> <span class="nav-text">gif形式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据格式"><span class="nav-number">2.2.</span> <span class="nav-text">数据格式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#K线图"><span class="nav-number">3.</span> <span class="nav-text">K线图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#最近二十天左右的每5分钟数据"><span class="nav-number">4.</span> <span class="nav-text">最近二十天左右的每5分钟数据</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2023</span>
+
+
+  <div class="powered-by"><a class="theme-link" target="_blank" href="https://beian.miit.gov.cn/" rel="external nofollow" title="工业和信息化部ICP/IP地址/域名信息备案管理系统">浙ICP备17020869号</a></div>
+
+
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Haitao Ni</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'gaKW5YWAvf7NBOlU9eFbxN8O-gzGzoHsz',
+        appKey: 'susRHyMS8Fq1XyKXg0r9ad85',
+        placeholder: '填上邮箱可以收到我的回复哦 (*^ω^*)~~',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+
+//新增以下代码即可，可以移除.info下所有子节点。
+var infoEle = document.querySelector('#comments .info');
+if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0){
+  infoEle.childNodes.forEach(function(item) {
+    item.parentNode.removeChild(item);
+  });
+}
+
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("gaKW5YWAvf7NBOlU9eFbxN8O-gzGzoHsz", "susRHyMS8Fq1XyKXg0r9ad85");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+
+
+  
+
+  
+
+</body>
+</html>

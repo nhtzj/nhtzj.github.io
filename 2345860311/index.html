@@ -1,0 +1,1631 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="uW8bwgMGUwIA01nPfh0oty1rmtmmuVkOVGaS9O0nQUg">
+
+
+
+
+
+
+
+
+  <meta name="baidu-site-verification" content="NeE6tPH3W1">
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico?v=5.1.4">
+
+
+
+
+
+
+
+  <meta name="keywords" content="hexo,next,主题自定义">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="海的那边" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="前言前篇Hexo初次使用及部署到云服务器详细指南介绍了Hexo相关的一些配置。本篇就趁热打铁，整理介绍一下Hexo上热度非常高的一款主题NexT。 NexT安装Hexo 安装主题的方式非常简单，只需要将主题文件拷贝至站点目录的 themes 目录下， 然后修改下配置文件即可。主题文件的下载主要有两种：  NexT主题zip文件下载，解压到站点目录的 themes 目录下 Git 克隆最新版本  小">
+<meta name="keywords" content="hexo,next,主题自定义">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo使用NexT主题及配置">
+<meta property="og:url" content="http://www.nhtzj.com/2345860311/index.html">
+<meta property="og:site_name" content="海的那边">
+<meta property="og:description" content="前言前篇Hexo初次使用及部署到云服务器详细指南介绍了Hexo相关的一些配置。本篇就趁热打铁，整理介绍一下Hexo上热度非常高的一款主题NexT。 NexT安装Hexo 安装主题的方式非常简单，只需要将主题文件拷贝至站点目录的 themes 目录下， 然后修改下配置文件即可。主题文件的下载主要有两种：  NexT主题zip文件下载，解压到站点目录的 themes 目录下 Git 克隆最新版本  小">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/05/valine界面.png">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/05/valine%20原始图.png">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/05/Google%E9%AA%8C%E8%AF%81-HTML%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0.png">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/05/Google%E9%AA%8C%E8%AF%81-HTML%E6%A0%87%E8%AE%B0.png">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/05/提交sitemap.png">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/05/robots测试工具.png">
+<meta property="og:updated_time" content="2018-11-08T09:58:42.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hexo使用NexT主题及配置">
+<meta name="twitter:description" content="前言前篇Hexo初次使用及部署到云服务器详细指南介绍了Hexo相关的一些配置。本篇就趁热打铁，整理介绍一下Hexo上热度非常高的一款主题NexT。 NexT安装Hexo 安装主题的方式非常简单，只需要将主题文件拷贝至站点目录的 themes 目录下， 然后修改下配置文件即可。主题文件的下载主要有两种：  NexT主题zip文件下载，解压到站点目录的 themes 目录下 Git 克隆最新版本  小">
+<meta name="twitter:image" content="http://www.nhtzj.com/images/2018/05/valine界面.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.nhtzj.com/2345860311/">
+
+
+
+
+
+  <title>Hexo使用NexT主题及配置 | 海的那边</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">海的那边</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">人无远虑，必有近忧</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.nhtzj.com/2345860311/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Haitao Ni">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="海的那边">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">Hexo使用NexT主题及配置</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-14T13:48:44+08:00">
+                2018-05-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/hexo/" itemprop="url" rel="index">
+                    <span itemprop="name">hexo</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2345860311/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2345860311/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2345860311/" class="leancloud_visitors" data-flag-title="Hexo使用NexT主题及配置">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  4,284
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  17
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>前篇<a href="/798806741">Hexo初次使用及部署到云服务器详细指南</a>介绍了Hexo相关的一些配置。<br>本篇就趁热打铁，整理介绍一下Hexo上热度非常高的一款主题<a href="https://theme-next.iissnan.com/" target="_blank" rel="noopener">NexT</a>。</p>
+<h2 id="NexT安装"><a href="#NexT安装" class="headerlink" title="NexT安装"></a>NexT安装</h2><p>Hexo 安装主题的方式非常简单，只需要将主题文件拷贝至站点目录的 themes 目录下， 然后修改下配置文件即可。<br>主题文件的下载主要有两种：</p>
+<ul>
+<li>NexT主题zip文件下载，解压到站点目录的 themes 目录下</li>
+<li>Git 克隆最新版本</li>
+</ul>
+<p>小编使用的安装方式是第二种。</p>
+<ol>
+<li><p>进入本地博客根目录<br> 小编的博客根目录为<code>/Users/nht/WorkSpace/blog/hexo</code><br> 该目录下有如下文件</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">➜  hexo <span class="built_in">pwd</span></span><br><span class="line">/Users/nht/WorkSpace/blog/hexo</span><br><span class="line">➜  hexo ls</span><br><span class="line">_config.yml       node_modules      public            themes</span><br><span class="line">db.json           package-lock.json scaffolds</span><br><span class="line">debug.log         package.json      <span class="built_in">source</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>前往 NexT 版本 <a href="https://github.com/iissnan/hexo-theme-next" target="_blank" rel="noopener">页面</a></p>
+</li>
+<li><p>下载最新稳定版</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ mkdir themes/next</span><br><span class="line">$ curl -s https://api.github.com/repos/iissnan/hexo-theme-next/releases/latest | grep tarball_url | cut -d <span class="string">'"'</span> -f 4 | wget -i - -O- | tar -zx -C themes/next --strip-components=1</span><br></pre></td></tr></table></figure>
+<p> 这样，NexT的最新稳定版代码就通过Git下载到<code>themes/next</code> 目录下了。<br> 如果想要切换NexT的版本，可以按如下步骤：</p>
+<pre><code>1. 进入NexT主题文件目录，`cd themes/next` 
+2. 查看当前有哪些版本，`git tag` 
+3. 切换至指定tag代码，比如切换至最新版`v5.1.4` ,`git checkout tags/v5.1.4` 
+</code></pre></li>
+<li><p>修改 站点配置文件<code>_config.yml</code> </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">theme: next</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>配置完成，运行博客站点查看</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo g &amp;&amp; hexo s</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="NexT主题配置"><a href="#NexT主题配置" class="headerlink" title="NexT主题配置"></a>NexT主题配置</h2><p>在 Hexo 中有两份主要的配置文件，其名称都是 <code>_config.yml</code>。 其中，一份位于站点根目录下，主要包含 Hexo 本身的配置；另一份位于主题目录下，这份配置由主题作者提供，主要用于配置主题相关的选项。</p>
+<p>为了描述方便，在以下说明中，将前者称为 <span class="label label-primary">站点配置文件</span>， 后者称为 <span class="label label-info">主题配置文件</span>。</p>
+<h3 id="选择-Scheme"><a href="#选择-Scheme" class="headerlink" title="选择 Scheme"></a>选择 Scheme</h3><p>Scheme 是 NexT 提供的一种特性，借助于 Scheme，NexT 为你提供多种不同的外观。目前 NexT 支持三种 Scheme，他们是：</p>
+<ul>
+<li>Muse - 默认 Scheme，这是 NexT 最初的版本，黑白主调，大量留白</li>
+<li>Mist - Muse 的紧凑版本，整洁有序的单栏外观</li>
+<li>Pisces - 双栏 Scheme，小家碧玉似的清新</li>
+<li>Gemini-双栏 Scheme，另一种样式</li>
+</ul>
+<p>小编当前使用的是<code>Gemini</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"># ---------------------------------------------------------------</span><br><span class="line"># Scheme Settings</span><br><span class="line"># ---------------------------------------------------------------</span><br><span class="line"></span><br><span class="line"># Schemes</span><br><span class="line"># scheme: Muse</span><br><span class="line"># scheme: Mist</span><br><span class="line"># scheme: Pisces</span><br><span class="line">scheme: Gemini</span><br></pre></td></tr></table></figure></p>
+<h3 id="设置-「语言」"><a href="#设置-「语言」" class="headerlink" title="设置 「语言」"></a>设置 「语言」</h3><p>编辑 <span class="label label-primary">站点配置文件</span>， 将 language 设置成你所需要的语言。建议明确设置你所需要的语言，例如选用简体中文，配置如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">language: zh-Hans</span><br></pre></td></tr></table></figure>
+<p>目前 NexT 支持的语言如以下表格所示：</p>
+<table>
+<thead>
+<tr>
+<th>语言</th>
+<th>代码</th>
+<th>设定示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>English</td>
+<td>en</td>
+<td>language: en</td>
+</tr>
+<tr>
+<td>简体中文</td>
+<td>zh-Hans</td>
+<td>language: zh-Hans</td>
+</tr>
+<tr>
+<td>Français</td>
+<td>fr-FR</td>
+<td>language: fr-FR</td>
+</tr>
+<tr>
+<td>Português</td>
+<td>pt</td>
+<td>language: pt or language: pt-BR</td>
+</tr>
+<tr>
+<td>繁體中文</td>
+<td>zh-hk 或者 zh-tw</td>
+<td>language: zh-hk</td>
+</tr>
+<tr>
+<td>Русский язык</td>
+<td>ru</td>
+<td>language: ru</td>
+</tr>
+<tr>
+<td>Deutsch</td>
+<td>de</td>
+<td>language: de</td>
+</tr>
+<tr>
+<td>日本語</td>
+<td>ja</td>
+<td>language: ja</td>
+</tr>
+<tr>
+<td>Indonesian</td>
+<td>id</td>
+<td>language: id</td>
+</tr>
+<tr>
+<td>Korean</td>
+<td>ko</td>
+<td>language: ko</td>
+</tr>
+</tbody>
+</table>
+<h3 id="设置-「菜单」"><a href="#设置-「菜单」" class="headerlink" title="设置 「菜单」"></a>设置 「菜单」</h3><p>点击查看官方文档 <a href="https://theme-next.iissnan.com/getting-started.html#menu-settings" target="_blank" rel="noopener">设置 「菜单」</a></p>
+<h3 id="设置-「侧栏」"><a href="#设置-「侧栏」" class="headerlink" title="设置 「侧栏」"></a>设置 「侧栏」</h3><p>点击查看官方文档 <a href="https://theme-next.iissnan.com/getting-started.html#sidebar-settings" target="_blank" rel="noopener">设置 「侧栏」</a></p>
+<h3 id="设置-「头像」"><a href="#设置-「头像」" class="headerlink" title="设置 「头像」"></a>设置 「头像」</h3><p>点击查看官方文档 <a href="https://theme-next.iissnan.com/getting-started.html#avatar-setting" target="_blank" rel="noopener">设置 「头像」</a></p>
+<h3 id="设置-「作者昵称」"><a href="#设置-「作者昵称」" class="headerlink" title="设置 「作者昵称」"></a>设置 「作者昵称」</h3><p>点击查看官方文档 <a href="https://theme-next.iissnan.com/getting-started.html#author-setting" target="_blank" rel="noopener">设置 「作者昵称」</a></p>
+<h3 id="设置-「站点描述」"><a href="#设置-「站点描述」" class="headerlink" title="设置 「站点描述」"></a>设置 「站点描述」</h3><p>点击查看官方文档 <a href="https://theme-next.iissnan.com/getting-started.html#description-setting" target="_blank" rel="noopener">设置 「站点描述」</a></p>
+<h2 id="进阶-amp-修改"><a href="#进阶-amp-修改" class="headerlink" title="进阶&amp;修改"></a>进阶&amp;修改</h2><h3 id="设置摘录"><a href="#设置摘录" class="headerlink" title="设置摘录"></a>设置摘录</h3><p>默认情况下，首页上显示的是文章的所有内容，可以将NexT主题的<code>_config.yml</code>文件中的<code>auto_excerpt</code>字段下的<code>enable</code>改为<code>true</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># Automatically Excerpt. Not recommend.</span><br><span class="line"># Please use &lt;!-- more --&gt; in the post to control excerpt accurately.</span><br><span class="line">auto_excerpt:</span><br><span class="line">  enable: false</span><br><span class="line">  length: 150</span><br></pre></td></tr></table></figure>
+<h3 id="阅读次数统计（LeanCloud）"><a href="#阅读次数统计（LeanCloud）" class="headerlink" title="阅读次数统计（LeanCloud）"></a>阅读次数统计（LeanCloud）</h3><p>在注册完成LeanCloud帐号并验证邮箱之后，我们就可以登录我们的LeanCloud帐号，进行一番配置之后拿到<code>AppID</code>以及<code>AppKey</code> 这两个参数即可正常使用文章阅读量统计的功能了。</p>
+<h4 id="配置LeanCloud"><a href="#配置LeanCloud" class="headerlink" title="配置LeanCloud"></a>配置<a href="https://leancloud.cn/" target="_blank" rel="noopener">LeanCloud</a></h4><ol>
+<li>创建应用。输入应用名称，选择应用计价方案（开发版）</li>
+<li>进入刚创建的应用</li>
+<li>点击最左侧<code>存储</code> 标签</li>
+<li>点击<code>数据</code>  项</li>
+<li>点击<code>创建 Class</code>项</li>
+<li>输入Class 名称 <code>Counter</code> ，设置数据条目的默认 <a href="https://leancloud.cn/docs/data_security.html" target="_blank" rel="noopener">ACL 权限 </a>为<code>无限制</code>  </li>
+<li>点击<code>创建</code> 按钮<br>创建完成之后，左侧数据栏应该会多出一栏名为<code>Counter</code>的栏目</li>
+<li>点击最左侧<code>设置</code> 标签</li>
+<li><p>点击<code>应用Key</code>  项<br>可以看到<code>App ID</code>、<code>App Key</code>、<code>App ID</code> 三项<br>复制<code>App ID</code>以及<code>App Key</code>并在NexT主题的<code>_config.yml</code>文件中我们相应的位置填入即可，正确配置之后文件内容像这个样子:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># Show number of visitors to each article.</span><br><span class="line"># You can visit https://leancloud.cn get AppID and AppKey.</span><br><span class="line">leancloud_visitors:</span><br><span class="line">  enable: true</span><br><span class="line">  app_id: gaKW5SWAvf7NBolU9wFbxN8O-gzGxoHsz</span><br><span class="line">  app_key: susRJyHS8Fq1SyKXg0r9ad65</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>这个时候重新生成部署Hexo博客，应该就可以正常使用文章阅读量统计的功能了。需要特别说明的是：记录文章访问量的唯一标识符是文章的<code>发布日期</code>以及<code>文章的标题</code>，因此请确保这两个数值组合的唯一性，如果你更改了这两个数值，会造成文章阅读数值的清零重计。</p>
+<h4 id="后台管理"><a href="#后台管理" class="headerlink" title="后台管理"></a>后台管理</h4><p>当你配置部分完成之后，初始的文章统计量显示为0，但是这个时候我们LeanCloud对应的应用的<code>Counter</code>表中并没有相应的记录，只是单纯的显示为0而已，当博客文章在配置好阅读量统计服务之后第一次打开时，便会自动向服务器发送数据来创建一条数据，该数据会被记录在对应的应用的<code>Counter</code>表中。</p>
+<p>我们可以修改其中的<code>time</code>字段的数值来达到修改某一篇文章的访问量的目的（博客文章访问量快递提升人气的装逼利器）。双击具体的数值，修改之后回车即可保存。</p>
+<ul>
+<li><code>url</code>字段被当作唯一<code>ID</code>来使用，因此如果你不知道带来的后果的话请不要修改。</li>
+<li><code>title</code>字段显示的是博客文章的标题，用于后台管理的时候区分文章之用，没有什么实际作用。</li>
+<li>其他字段皆为自动生成，具体作用请查阅LeanCloud官方文档，如果你不知道有什么作用请不要随意修改。</li>
+</ul>
+<h4 id="Web安全"><a href="#Web安全" class="headerlink" title="Web安全"></a>Web安全</h4><p>因为AppID以及AppKey是暴露在外的，因此如果一些别用用心之人知道了之后用于其它目的是得不偿失的，为了确保只用于我们自己的博客，建议开启Web安全选项，这样就只能通过我们自己的域名才有权访问后台的数据了，可以进一步提升安全性。</p>
+<ol>
+<li>选择应用的<code>设置</code>的<code>安全中心</code>选项卡</li>
+<li>在<code>Web 安全域名</code>中填入我们自己的博客域名，来确保数据调用的安全</li>
+</ol>
+<p><a name="comment_system"></a></p>
+<h3 id="添加评论系统"><a href="#添加评论系统" class="headerlink" title="添加评论系统"></a>添加评论系统</h3><p>NexT 支持多款评论系统，包括Disqus，Facebook Comments，HyperComments ，网易云跟帖，来必力，Valine 等</p>
+<blockquote>
+<p>如需取消某个 页面/文章 的评论，在 md 文件的 <a href="https://hexo.io/docs/front-matter.html" target="_blank" rel="noopener">front-matter </a>中增加 <code>comments: false</code></p>
+</blockquote>
+<p>小编由于阅读次数统计用了LearnCloud，所以评论系统使用了<a href="https://valine.js.org/" target="_blank" rel="noopener">Valine</a>。</p>
+<p>Valine一款快速、简洁且高效的无后端评论系统。</p>
+<p>如需集成其他评论系统，请查阅官方文档 <a href="https://theme-next.iissnan.com/third-party-services.html#comment-system" target="_blank" rel="noopener">评论系统</a>。</p>
+<p><img src="/images/2018/05/valine界面.png" alt="Valine界面"></p>
+<h4 id="具体操作"><a href="#具体操作" class="headerlink" title="具体操作"></a>具体操作</h4><ol>
+<li><p>登录LeanCloud，获取之前创建好的app的<code>App ID</code>和<code>App Key</code> </p>
+</li>
+<li><p>修改 <span class="label label-info">主题配置文件</span>，将<code>App ID</code>和<code>App Key</code> 填入，<code>enable</code>改为<code>true</code> 。具体代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"># Valine.</span><br><span class="line"># You can get your appid and appkey from https://leancloud.cn</span><br><span class="line"># more info please open https://valine.js.org</span><br><span class="line">valine:</span><br><span class="line">  enable: true</span><br><span class="line">  appid:  gaKW5SWAvf7NBolU9wFbxN8O-gzGxoHsz</span><br><span class="line">  appkey: susRJyHS8Fq1SyKXg0r9ad65</span><br><span class="line">  notify: false # mail notifier , https://github.com/xCss/Valine/wiki</span><br><span class="line">  verify: false # Verification code</span><br><span class="line">  placeholder: 您的评论可以一针见血 (*^ω^*)~~ # comment box placeholder</span><br><span class="line">  avatar: mm # gravatar style</span><br><span class="line">  guest_info: nick,mail,link # custom comment header</span><br><span class="line">  pageSize: 10 # pagination size</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h4 id="隐藏-Powered-By-Valine"><a href="#隐藏-Powered-By-Valine" class="headerlink" title="隐藏 Powered By Valine"></a>隐藏 Powered By Valine</h4><p>Valine默认样式如下：</p>
+<p><img src="/images/2018/05/valine 原始图.png" alt="valine 原始图"></p>
+<p>其中<code>Code 403</code> 是因为给LeanCloud添加了<code>Web 安全域名</code>，而本地调试无法加进去，这个在正式平台上是不会有的。</p>
+<p>对于有些许强迫症的小编而言，怎么能忍受这个呢！<br>必须隐藏掉！<br>必须隐藏掉！<br>必须隐藏掉！</p>
+<p>查看Elements可以看到这个div，那么我只要移除这个div下的所有子节点，就可以去掉这个Powered By了。修改对应的文件valine.swig（路径：站点跟路径/themes/next/layout/_third-party/comments/valine.swig），直接上代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">	···</span><br><span class="line">    new Valine(&#123;</span><br><span class="line">        ···</span><br><span class="line">        pageSize:&apos;&#123;&#123; theme.valine.pageSize &#125;&#125;&apos; || 10,</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">//新增以下代码即可，可以移除.info下所有子节点。</span><br><span class="line">var infoEle = document.querySelector(&apos;#comments .info&apos;);</span><br><span class="line">if (infoEle &amp;&amp; infoEle.childNodes &amp;&amp; infoEle.childNodes.length &gt; 0)&#123;</span><br><span class="line">  infoEle.childNodes.forEach(function(item) &#123;</span><br><span class="line">    item.parentNode.removeChild(item);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">  &lt;/script&gt;</span><br><span class="line">&#123;% endif %&#125;</span><br></pre></td></tr></table></figure>
+<p>Ok~大功告成</p>
+<p>赶紧去看看效果吧～</p>
+<h3 id="修改页面底部显示内容"><a href="#修改页面底部显示内容" class="headerlink" title="修改页面底部显示内容"></a>修改页面底部显示内容</h3><h4 id="隐藏”NexT-Pisces-v5-1-4”"><a href="#隐藏”NexT-Pisces-v5-1-4”" class="headerlink" title="隐藏”NexT.Pisces v5.1.4”"></a>隐藏”NexT.Pisces v5.1.4”</h4><p>修改<span class="label label-info">主题配置文件</span>。</p>
+<p>将<code>footer</code>内的<code>theme</code>内的<code>enable</code>改为<code>false</code>即可。</p>
+<h4 id="添加备案号"><a href="#添加备案号" class="headerlink" title="添加备案号"></a>添加备案号</h4><p>我的备案号为<code>浙ICP备17020869号</code></p>
+<p>大家可以替换为你们的备案号。</p>
+<p>打开文件<code>博客根目录/themes/next/layout/_partials/footer.swig</code></p>
+<p>替换<code>{ % if theme.footer.powered %}</code>和<code>{ % endif %}</code>之间的显示内容为如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;% if theme.footer.powered %&#125;</span><br><span class="line">  &lt;div class=&quot;powered-by&quot;&gt;&#123;#</span><br><span class="line">  #&#125;&#123;&#123; __(&apos;footer.powered&apos;,  &apos;&lt;a class=&quot;theme-link&quot; target=&quot;_blank&quot; href=&quot;http://www.miitbeian.gov.cn/&quot; rel=&quot;external nofollow&quot; title=&quot;工业和信息化部ICP/IP地址/域名信息备案管理系统&quot;&gt;浙ICP备17020869号&lt;/a&gt;&apos;) &#125;&#125;&#123;#</span><br><span class="line">#&#125;&lt;/div&gt;</span><br><span class="line">&#123;% endif %&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="显示返回顶部和当前阅读进度"><a href="#显示返回顶部和当前阅读进度" class="headerlink" title="显示返回顶部和当前阅读进度"></a>显示返回顶部和当前阅读进度</h3><p>修改 <span class="label label-info">主题配置文件</span>，将<code>b2t</code>和<code>scrollpercent</code>两个字段设为<code>true</code>即可。</p>
+<p><code>b2t</code>的功能只适用于 <code>Pisces</code> 和<code>Gemini</code>这两个NexT的主题样式。</p>
+<p>由于<code>scrollpercent</code>是显示在<code>b2t</code>按钮上面的，所以如果需要显示<code>scrollpercent</code>就必须将<code>b2t</code>也同时设为<code>true</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># Back to top in sidebar (only for Pisces | Gemini).</span><br><span class="line">b2t: true</span><br><span class="line"></span><br><span class="line"># Scroll percent label in b2t button.</span><br><span class="line">scrollpercent: true</span><br></pre></td></tr></table></figure>
+<h3 id="添加css样式"><a href="#添加css样式" class="headerlink" title="添加css样式"></a>添加css样式</h3><p>可以看到上文中的<span class="label label-primary">站点配置文件</span>和 <span class="label label-info">主题配置文件</span>使用了自己编写的css样式。</p>
+<p>这里就和大家简单说明一下如何实现添加自定义的css样式。</p>
+<p>其实很简单，NexT主题已经给我们做好了准备，您只需要到<code>本地博客地址/themes/next/source/css/_custom/</code>打开custom.styl文件，编写css样式就OK了。之后就可以在博客文章中使用了。</p>
+<p><strong>custom.styl</strong></p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">// Custom styles.</span><br><span class="line"></span><br><span class="line"><span class="selector-class">.label</span> &#123;</span><br><span class="line">    <span class="attribute">display</span>: inline;</span><br><span class="line">    <span class="attribute">padding</span>: .<span class="number">2em</span> .<span class="number">6em</span> .<span class="number">3em</span>;</span><br><span class="line">    <span class="attribute">font-size</span>: <span class="number">75%</span>;</span><br><span class="line">    <span class="attribute">font-weight</span>: <span class="number">700</span>;</span><br><span class="line">    <span class="attribute">line-height</span>: <span class="number">1</span>;</span><br><span class="line">    <span class="attribute">color</span>: <span class="number">#fff</span>;</span><br><span class="line">    <span class="attribute">text-align</span>: center;</span><br><span class="line">    <span class="attribute">white-space</span>: nowrap;</span><br><span class="line">    <span class="attribute">vertical-align</span>: baseline;</span><br><span class="line">    <span class="attribute">border-radius</span>: <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.label-primary</span> &#123;</span><br><span class="line">    <span class="attribute">background-color</span>: <span class="number">#2780e3</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="selector-class">.label-info</span> &#123;</span><br><span class="line">    <span class="attribute">background-color</span>: <span class="number">#9954bb</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>使用：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;span class=&quot;label label-primary&quot;&gt;站点配置文件&lt;/span&gt;</span><br><span class="line">&lt;span class=&quot;label label-info&quot;&gt;主题配置文件&lt;/span&gt;</span><br></pre></td></tr></table></figure>
+<p><strong>效果：</strong><br><span class="label label-primary">站点配置文件</span><br><span class="label label-info">主题配置文件</span></p>
+<h2 id="提交Baidu和Google收录"><a href="#提交Baidu和Google收录" class="headerlink" title="提交Baidu和Google收录"></a>提交Baidu和Google收录</h2><p>一个网站的SEO对一个网站非常重要，<a href="https://baike.baidu.com/item/SEO/102990?fr=aladdin" target="_blank" rel="noopener">SEO</a>指的是搜索引擎优化。通过搜索引擎优化，可以提高网站的网站关键词排名以及博客文章的曝光度。一般来说，我们针对百度和Google这两个搜索引擎进行优化，提高对网站资源的索引量，使我们的文章更容易被发现。虽然我的博客的主要读者是我自己，但也不妨碍我做些优化，对吧！接下来向大家展示如何使博客被百度和Google收录。</p>
+<h3 id="搜索引擎收录本站点"><a href="#搜索引擎收录本站点" class="headerlink" title="搜索引擎收录本站点"></a>搜索引擎收录本站点</h3><p>若未被搜索引擎收录，则需进行以下配置，首先要让搜索引擎先验证我们对网站的所有权，Google和Baidu搜索引擎提交的入口分别为：</p>
+<ul>
+<li><a href="https://www.google.com/webmasters/tools/home?hl=zh-CN" target="_blank" rel="noopener">Google Search Console</a></li>
+<li><a href="http://ziyuan.baidu.com/site/siteadd" target="_blank" rel="noopener">百度站长平台</a></li>
+</ul>
+<p>这两个搜索引擎支持多种验证方式，这里介绍其中的两种：</p>
+<ul>
+<li>HTML 文件上传</li>
+<li>HTML 标记</li>
+</ul>
+<p>这里就以Google为例，Baidu配置也一样的。</p>
+<h4 id="HTML-文件上传"><a href="#HTML-文件上传" class="headerlink" title="HTML 文件上传"></a>HTML 文件上传</h4><p><img src="/images/2018/05/Google%E9%AA%8C%E8%AF%81-HTML%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0.png" alt="Google验证-HTML文件上传"></p>
+<p>第一步之后，将下载的HTML验证文件放入<code>站点/source/</code>路径下，并打开此验证文件，在其最上面添加以下代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">layout: false</span><br><span class="line">---</span><br></pre></td></tr></table></figure>
+<p>以告诉Hexo不要将此文件加入到生成的sitemap中。</p>
+<p>发布之后，再继续进行第3步。</p>
+<h4 id="HTML-标记"><a href="#HTML-标记" class="headerlink" title="HTML 标记"></a>HTML 标记</h4><p>小编当前的Next版本为5.1.4，该版本已经集成了<code>HTML 标记</code>的验证方式。</p>
+<ol>
+<li><p>查看原标记,将其中<code>content</code>字段引号内的内容拷贝出来<br><img src="/images/2018/05/Google%E9%AA%8C%E8%AF%81-HTML%E6%A0%87%E8%AE%B0.png" alt="Google验证-HTML标记"></p>
+</li>
+<li><p>修改<span class="label label-info">主题配置文件</span>。<br>搜索<code>google_site_verification</code>,将上述拷贝的内容复制在该值后面。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># Google Webmaster tools verification setting</span><br><span class="line"># See: https://www.google.com/webmasters/</span><br><span class="line">google_site_verification: uW8bwgMGUwIA01nPfItoty1rmtmmuVkOVTeS9O0nAUg</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>发布后点击该页面上的确认按钮以验证。</p>
+</li>
+</ol>
+<h4 id="Baidu-添加HTML标记"><a href="#Baidu-添加HTML标记" class="headerlink" title="Baidu 添加HTML标记"></a>Baidu 添加HTML标记</h4><p>关于添加Baidu的HTML标记，NexT主题也集成了,可以在<code>站点跟路径/themes/next/layout/_partials/head.swig</code>文件中看到百度的字段</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;% if theme.baidu_site_verification %&#125;</span><br><span class="line">  &lt;meta name=&quot;baidu-site-verification&quot; content=&quot;&#123;&#123; theme.baidu_site_verification &#125;&#125;&quot; /&gt;</span><br><span class="line">&#123;% endif %&#125;</span><br></pre></td></tr></table></figure>
+<p>但是没有在 <span class="label label-info">主题配置文件</span>中添加<code>baidu_site_verification</code>字段。</p>
+<p>所以需要自己添加该字段</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">baidu_site_verification: NeR7tPD3G2</span><br></pre></td></tr></table></figure>
+<h3 id="站点地图"><a href="#站点地图" class="headerlink" title="站点地图"></a>站点地图</h3><p>站点地图即<a href="https://baike.baidu.com/item/sitemap/6241567?fr=aladdin" target="_blank" rel="noopener">sitemap</a>， 是一个页面，上面放置了网站上需要搜索引擎抓取的所有页面的链接。站点地图可以告诉搜索引擎网站上有哪些可供抓取的网页，以便搜索引擎可以更加智能地抓取网站。</p>
+<h4 id="生成站点地图"><a href="#生成站点地图" class="headerlink" title="生成站点地图"></a>生成站点地图</h4><ol>
+<li><p>安装插件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cnpm install hexo-generator-sitemap --save</span><br><span class="line">cnpm install hexo-generator-baidu-sitemap --save</span><br></pre></td></tr></table></figure>
+<p>hexo-generator-sitemap:Google站点地图生成插件</p>
+<p>hexo-generator-baidu-sitemap：Baidu站点地图生成插件</p>
+</li>
+<li><p>修改<span class="label label-info">主题配置文件</span><br>若没有搜到<code>sitemap</code>、<code>baidusitemap</code> 两个字段，则在文件末尾填上如下内容：用于指定站点地图</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># Google sitemap</span><br><span class="line">sitemap:</span><br><span class="line">    path: sitemap.xml</span><br><span class="line">baidusitemap:</span><br><span class="line">    path: baidusitemap.xml</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>运行本地站点。<br>可发现 <code>站点/public/</code> 文件夹下生成了<code>sitemap.xml</code>和<code>baidusitemap.xml</code> 两个文件。</p>
+</li>
+<li><p>发布站点。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo g -d</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h4 id="添加robots-txt"><a href="#添加robots-txt" class="headerlink" title="添加robots.txt"></a>添加robots.txt</h4><p>robots.txt（统一小写）是一种存放于网站根目录下的ASCII编码的文本文件，它的作用是告诉搜索引擎此网站中哪些内容是可以被爬取的，哪些是禁止爬取的。<br> 在 <code>source</code> 目录下增加 <code>rebots.txt</code> 文件，网站生成后在网站的根目录(<code>站点目录/public/</code>)下。<br> <strong>（请将域名改为自己的网站）</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">User-agent: *</span><br><span class="line">Allow: /</span><br><span class="line">Allow: /archives/</span><br><span class="line">Allow: /tags/</span><br><span class="line">Allow: /categories/</span><br><span class="line"></span><br><span class="line">Disallow: /vendors/</span><br><span class="line">Disallow: /js/</span><br><span class="line">Disallow: /css/</span><br><span class="line">Disallow: /fonts/</span><br><span class="line">Disallow: /vendors/</span><br><span class="line">Disallow: /fancybox/</span><br><span class="line"></span><br><span class="line">Sitemap: http://www.nhtzj.com/sitemap.xml</span><br><span class="line">Sitemap: http://www.nhtzj.com/baidusitemap.xml</span><br></pre></td></tr></table></figure>
+<h4 id="搜索引擎添加站点地图"><a href="#搜索引擎添加站点地图" class="headerlink" title="搜索引擎添加站点地图"></a>搜索引擎添加站点地图</h4><p>添加站点地图，方便搜索引擎抓取站点内容。</p>
+<p>以添加到Google为例。</p>
+<p><img src="/images/2018/05/提交sitemap.png" alt="提交sitemap"></p>
+<ol>
+<li>进入<code>站点地图</code></li>
+<li>点击<code>添加/测试站点地图</code></li>
+<li>输入<code>sitemap.xml</code></li>
+<li>点击<code>提交</code></li>
+</ol>
+<p>在提交前可以先<code>测试</code>一下，看看站点地图有没有问题。之后再<code>提交</code> 。</p>
+<p>此刻，点击<code>robots.txt测试工具</code>，会发现我们的<code>robots.txt</code>文件也被上传到Google了。并且可以对站点下的网页进行 拦截/抓取 的测试。</p>
+<p><img src="/images/2018/05/robots测试工具.png" alt="robots测试工具"></p>
+<p>Baidu添加sitemap的地址在：<code>数据引入-链接提交（自动提交-sitemap）</code>  。</p>
+<h3 id="Url持久化"><a href="#Url持久化" class="headerlink" title="Url持久化"></a>Url持久化</h3><p>我们可以发现hexo默认生成的文章地址路径是 </p>
+<blockquote>
+<p>网站名称/年/月/日/文章名称</p>
+</blockquote>
+<p>它的url结构超过了三层，太深了,对搜索爬虫是很不友好的。</p>
+<p>推荐使用hexo-abbrlink，将连接持久化（不会因为修改文章MarkDown文件名而改变文章地址）。</p>
+<ol>
+<li><p>安装 hexo-abbrlink</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cnpm install hexo-abbrlink --save</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>配置 <span class="label label-primary">站点配置文件</span></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">permalink: :abbrlink/</span><br><span class="line">permalink_defaults:</span><br><span class="line"># abbrlink config</span><br><span class="line">abbrlink:</span><br><span class="line">  alg: crc32  # 算法：crc16(default) and crc32</span><br><span class="line">  rep: dec    # 进制：dec(default) and hex</span><br></pre></td></tr></table></figure>
+<p>小编是直接将一级目录设为了文章名，二级格式为<code>permalink: archives/:abbrlink.html</code> ,其中<code>archives</code> 可自行修改</p>
+</li>
+<li><p>部署一下，就可以看到你的链接变了</p>
+</li>
+</ol>
+<h3 id="添加-nofollow-标签"><a href="#添加-nofollow-标签" class="headerlink" title="添加 nofollow 标签"></a>添加 nofollow 标签</h3><p>给非友情链接的出站链接添加「nofollow」标签，nofollow 标签是由谷歌领头创新的一个「反垃圾链接」的标签，并被百度、yahoo 等各大搜索引擎广泛支持，引用 nofollow 标签的目的是：用于指示搜索引擎不要追踪（即抓取）网页上的带有 nofollow 属性的任何出站链接，以减少垃圾链接的分散网站权重。</p>
+<p>首先修改 footer.swig（your-hexo-site\themes\next\layout\_partials)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&apos;&lt;a class=&quot;theme-link&quot; href=&quot;http://hexo.io&quot;&gt;Hexo&lt;/a&gt;&apos;) &#125;&#125;</span><br><span class="line">改成</span><br><span class="line">&#123;&#123; __(&apos;footer.powered&apos;, &apos;&lt;a class=&quot;theme-link&quot; href=&quot;http://hexo.io&quot; rel=&quot;external nofollow&quot;&gt;Hexo&lt;/a&gt;&apos;) &#125;&#125;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;a class=&quot;theme-link&quot; href=&quot;https://github.com/iissnan/hexo-theme-next&quot;&gt;</span><br><span class="line">改成</span><br><span class="line">&lt;a class=&quot;theme-link&quot; href=&quot;https://github.com/iissnan/hexo-theme-next&quot; rel=&quot;external nofollow&quot;&gt;</span><br></pre></td></tr></table></figure>
+<p>再修改 <code>sidebar.swig</code>（your-hexo-site\themes\next\layout\_macro）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;a href=&quot;&#123;&#123; link &#125;&#125;&quot; target=&quot;_blank&quot;&gt;&#123;&#123; name &#125;&#125;&lt;/a&gt;</span><br><span class="line">改成</span><br><span class="line">&lt;a href=&quot;&#123;&#123; link &#125;&#125;&quot; target=&quot;_blank&quot; rel=&quot;external nofollow&quot;&gt;&#123;&#123; name &#125;&#125;&lt;/a&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;a href=&quot;http://creativecommons.org/licenses/&#123;&#123; theme.creative_commons &#125;&#125;/4.0&quot; class=&quot;cc-opacity&quot; target=&quot;_blank&quot;&gt;</span><br><span class="line">改成</span><br><span class="line">&lt;a href=&quot;http://creativecommons.org/licenses/&#123;&#123; theme.creative_commons &#125;&#125;/4.0&quot; class=&quot;cc-opacity&quot; target=&quot;_blank&quot; rel=&quot;external nofollow&quot;&gt;</span><br></pre></td></tr></table></figure>
+<p>总得来说，就是将所有可能的外链地址填上<code>rel=&quot;external nofollow&quot;</code>字段，提示搜索引擎不要将这类链接收录。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持是对我最大的鼓励！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Haitao Ni 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.png" alt="Haitao Ni 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/hexo/" rel="tag"># hexo</a>
+          
+            <a href="/tags/next/" rel="tag"># next</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/798806741/" rel="next" title="Hexo初次使用及部署到云服务器详细指南">
+                <i class="fa fa-chevron-left"></i> Hexo初次使用及部署到云服务器详细指南
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/567145189/" rel="prev" title="MIUI神隐模式讲解及使用">
+                MIUI神隐模式讲解及使用 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar" rel="external nofollow">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar/avatar.png" alt="Haitao Ni">
+            
+              <p class="site-author-name" itemprop="name">Haitao Ni</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">79</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">49</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">85</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:haitao_ni@nhtzj.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NexT安装"><span class="nav-number">2.</span> <span class="nav-text">NexT安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NexT主题配置"><span class="nav-number">3.</span> <span class="nav-text">NexT主题配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#选择-Scheme"><span class="nav-number">3.1.</span> <span class="nav-text">选择 Scheme</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设置-「语言」"><span class="nav-number">3.2.</span> <span class="nav-text">设置 「语言」</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设置-「菜单」"><span class="nav-number">3.3.</span> <span class="nav-text">设置 「菜单」</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设置-「侧栏」"><span class="nav-number">3.4.</span> <span class="nav-text">设置 「侧栏」</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设置-「头像」"><span class="nav-number">3.5.</span> <span class="nav-text">设置 「头像」</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设置-「作者昵称」"><span class="nav-number">3.6.</span> <span class="nav-text">设置 「作者昵称」</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设置-「站点描述」"><span class="nav-number">3.7.</span> <span class="nav-text">设置 「站点描述」</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#进阶-amp-修改"><span class="nav-number">4.</span> <span class="nav-text">进阶&amp;修改</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#设置摘录"><span class="nav-number">4.1.</span> <span class="nav-text">设置摘录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#阅读次数统计（LeanCloud）"><span class="nav-number">4.2.</span> <span class="nav-text">阅读次数统计（LeanCloud）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#配置LeanCloud"><span class="nav-number">4.2.1.</span> <span class="nav-text">配置LeanCloud</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#后台管理"><span class="nav-number">4.2.2.</span> <span class="nav-text">后台管理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Web安全"><span class="nav-number">4.2.3.</span> <span class="nav-text">Web安全</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#添加评论系统"><span class="nav-number">4.3.</span> <span class="nav-text">添加评论系统</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#具体操作"><span class="nav-number">4.3.1.</span> <span class="nav-text">具体操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#隐藏-Powered-By-Valine"><span class="nav-number">4.3.2.</span> <span class="nav-text">隐藏 Powered By Valine</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#修改页面底部显示内容"><span class="nav-number">4.4.</span> <span class="nav-text">修改页面底部显示内容</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#隐藏”NexT-Pisces-v5-1-4”"><span class="nav-number">4.4.1.</span> <span class="nav-text">隐藏”NexT.Pisces v5.1.4”</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#添加备案号"><span class="nav-number">4.4.2.</span> <span class="nav-text">添加备案号</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#显示返回顶部和当前阅读进度"><span class="nav-number">4.5.</span> <span class="nav-text">显示返回顶部和当前阅读进度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#添加css样式"><span class="nav-number">4.6.</span> <span class="nav-text">添加css样式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#提交Baidu和Google收录"><span class="nav-number">5.</span> <span class="nav-text">提交Baidu和Google收录</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#搜索引擎收录本站点"><span class="nav-number">5.1.</span> <span class="nav-text">搜索引擎收录本站点</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#HTML-文件上传"><span class="nav-number">5.1.1.</span> <span class="nav-text">HTML 文件上传</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#HTML-标记"><span class="nav-number">5.1.2.</span> <span class="nav-text">HTML 标记</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Baidu-添加HTML标记"><span class="nav-number">5.1.3.</span> <span class="nav-text">Baidu 添加HTML标记</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#站点地图"><span class="nav-number">5.2.</span> <span class="nav-text">站点地图</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#生成站点地图"><span class="nav-number">5.2.1.</span> <span class="nav-text">生成站点地图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#添加robots-txt"><span class="nav-number">5.2.2.</span> <span class="nav-text">添加robots.txt</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#搜索引擎添加站点地图"><span class="nav-number">5.2.3.</span> <span class="nav-text">搜索引擎添加站点地图</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Url持久化"><span class="nav-number">5.3.</span> <span class="nav-text">Url持久化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#添加-nofollow-标签"><span class="nav-number">5.4.</span> <span class="nav-text">添加 nofollow 标签</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2023</span>
+
+
+  <div class="powered-by"><a class="theme-link" target="_blank" href="https://beian.miit.gov.cn/" rel="external nofollow" title="工业和信息化部ICP/IP地址/域名信息备案管理系统">浙ICP备17020869号</a></div>
+
+
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Haitao Ni</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'gaKW5YWAvf7NBOlU9eFbxN8O-gzGzoHsz',
+        appKey: 'susRHyMS8Fq1XyKXg0r9ad85',
+        placeholder: '填上邮箱可以收到我的回复哦 (*^ω^*)~~',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+
+//新增以下代码即可，可以移除.info下所有子节点。
+var infoEle = document.querySelector('#comments .info');
+if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0){
+  infoEle.childNodes.forEach(function(item) {
+    item.parentNode.removeChild(item);
+  });
+}
+
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("gaKW5YWAvf7NBOlU9eFbxN8O-gzGzoHsz", "susRHyMS8Fq1XyKXg0r9ad85");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+
+
+  
+
+  
+
+</body>
+</html>

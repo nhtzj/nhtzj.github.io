@@ -1,0 +1,1469 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="uW8bwgMGUwIA01nPfh0oty1rmtmmuVkOVGaS9O0nQUg">
+
+
+
+
+
+
+
+
+  <meta name="baidu-site-verification" content="NeE6tPH3W1">
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico?v=5.1.4">
+
+
+
+
+
+
+
+  <meta name="keywords" content="Activity启动模式,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="海的那边" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="launchMode简介Activity启动模式，即Activity启动的方式。 lauchMode可以配置在清单文件AndroidManifest.xml文件中。 也可通过java代码动态配置。 知识储备任务栈（Task）在讲解Activity启动模式前，先讲解下Activity的管理方式：任务栈（Task），这有利于我们理解Activity启动模式。  采用任务栈任务栈（Task）的形式管理A">
+<meta name="keywords" content="Activity启动模式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Activity启动模式（一）之 launchMode">
+<meta property="og:url" content="http://www.nhtzj.com/1459607507/index.html">
+<meta property="og:site_name" content="海的那边">
+<meta property="og:description" content="launchMode简介Activity启动模式，即Activity启动的方式。 lauchMode可以配置在清单文件AndroidManifest.xml文件中。 也可通过java代码动态配置。 知识储备任务栈（Task）在讲解Activity启动模式前，先讲解下Activity的管理方式：任务栈（Task），这有利于我们理解Activity启动模式。  采用任务栈任务栈（Task）的形式管理A">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/04/栈-先进后出.png">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/04/standard-task.png">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/04/singleTop流程图.png">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/04/singleTask流程图.png">
+<meta property="og:updated_time" content="2018-11-19T08:42:41.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Activity启动模式（一）之 launchMode">
+<meta name="twitter:description" content="launchMode简介Activity启动模式，即Activity启动的方式。 lauchMode可以配置在清单文件AndroidManifest.xml文件中。 也可通过java代码动态配置。 知识储备任务栈（Task）在讲解Activity启动模式前，先讲解下Activity的管理方式：任务栈（Task），这有利于我们理解Activity启动模式。  采用任务栈任务栈（Task）的形式管理A">
+<meta name="twitter:image" content="http://www.nhtzj.com/images/2018/04/栈-先进后出.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.nhtzj.com/1459607507/">
+
+
+
+
+
+  <title>Activity启动模式（一）之 launchMode | 海的那边</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">海的那边</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">人无远虑，必有近忧</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.nhtzj.com/1459607507/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Haitao Ni">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="海的那边">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">Activity启动模式（一）之 launchMode</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-19T16:15:19+08:00">
+                2018-04-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/android/" itemprop="url" rel="index">
+                    <span itemprop="name">android</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/android/启动模式/" itemprop="url" rel="index">
+                    <span itemprop="name">启动模式</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/1459607507/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/1459607507/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/1459607507/" class="leancloud_visitors" data-flag-title="Activity启动模式（一）之 launchMode">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2,321
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  11
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="launchMode简介"><a href="#launchMode简介" class="headerlink" title="launchMode简介"></a>launchMode简介</h2><p>Activity启动模式，即Activity启动的方式。 lauchMode可以配置在清单文件AndroidManifest.xml文件中。 也可通过java代码动态配置。</p>
+<h2 id="知识储备"><a href="#知识储备" class="headerlink" title="知识储备"></a>知识储备</h2><h3 id="任务栈（Task）"><a href="#任务栈（Task）" class="headerlink" title="任务栈（Task）"></a>任务栈（Task）</h3><p>在讲解Activity启动模式前，先讲解下Activity的管理方式：任务栈（Task），这有利于我们理解Activity启动模式。</p>
+<ul>
+<li>采用任务栈任务栈（Task）的形式管理Activity</li>
+<li>任务栈采用“先进后出”的栈结构</li>
+<li>每按一次Back键或finish一个Activity，就有一个栈顶的Activity出栈</li>
+</ul>
+<p><img src="/images/2018/04/栈-先进后出.png" alt="任务栈-先进后出"></p>
+<h3 id="终端使用adb-shell指令"><a href="#终端使用adb-shell指令" class="headerlink" title="终端使用adb shell指令"></a>终端使用adb shell指令</h3><p>Android还为开发者提供了adb(Android Debug Bridge)，这是非常强大的调试工具。最常用的自然是logcat来显示日志记录。另外一个很强大的指令就是这里要提到的dumpsys。dumpsys还可以添加不同的参数来指示需要输出哪一类Service的信息。对于本文提到的内容，需要查看的就是activity。</p>
+<blockquote>
+<p>adb shell dumpsys activity<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"> ACTIVITY MANAGER PENDING INTENTS (dumpsys activity intents)    //注意一下</span><br><span class="line">  * PendingIntentRecord&#123;c8486ed com.xiaomi.xmsf startService&#125;</span><br><span class="line">  * PendingIntentRecord&#123;dd7d922 com.xiaomi.xmsf startService&#125;</span><br><span class="line">  * PendingIntentRecord&#123;b5bffb3 android broadcastIntent&#125;</span><br><span class="line"> // 省略 N 行 ...</span><br><span class="line"></span><br><span class="line">ACTIVITY MANAGER BROADCAST STATE (dumpsys activity broadcasts)  //注意一下</span><br><span class="line">  Historical broadcasts [foreground]:</span><br><span class="line">  <span class="comment">#0: BroadcastRecord&#123;88e1b3a u-1 android.intent.action.TIME_TICK&#125;</span></span><br><span class="line">    act=android.intent.action.TIME_TICK flg=0x50000014 (has extras)</span><br><span class="line">    extras: Bundle[&#123;android.intent.extra.ALARM_COUNT=1&#125;]</span><br><span class="line">  <span class="comment">#1: BroadcastRecord&#123;9a973eb u-1 android.intent.action.TIME_TICK&#125;</span></span><br><span class="line">    act=android.intent.action.TIME_TICK flg=0x50000014 (has extras)</span><br><span class="line">    extras: Bundle[&#123;android.intent.extra.ALARM_COUNT=1&#125;]</span><br><span class="line"> // 省略 N 行 ...</span><br><span class="line"></span><br><span class="line">ACTIVITY MANAGER CONTENT PROVIDERS (dumpsys activity providers) //注意一下</span><br><span class="line">  Published single-user content providers (by class):</span><br><span class="line">  * ContentProviderRecord&#123;2af5291 u0 com.android.providers.telephony/.TelephonyProvider&#125;</span><br><span class="line">    proc=ProcessRecord&#123;108d60f 4086:com.android.phone/1001&#125;</span><br><span class="line">    singleton=<span class="literal">true</span></span><br><span class="line">    authority=telephony</span><br><span class="line">  // 省略 N 行 ...</span><br><span class="line"></span><br><span class="line">ACTIVITY MANAGER URI PERMISSIONS (dumpsys activity permissions) //注意一下</span><br><span class="line">  Granted Uri Permissions:</span><br><span class="line">  * UID 1000 holds:</span><br><span class="line">    UriPermission&#123;e61888e 0 @ content://downloads/all_downloads/125&#125;</span><br><span class="line">    UriPermission&#123;2f698af 0 @ content://downloads/all_downloads/126&#125;</span><br><span class="line"> // 省略 N 行 ...</span><br><span class="line"></span><br><span class="line">ACTIVITY MANAGER SERVICES (dumpsys activity services)   //注意一下</span><br><span class="line">  User 0 active services:</span><br><span class="line">  * ServiceRecord&#123;2e1e671 u0 com.android.bluetooth/.hid.HidService&#125;</span><br><span class="line">    app=ProcessRecord&#123;b328630 4915:com.android.bluetooth/1002&#125;</span><br><span class="line">    created=-3d15h37m1s744ms started=<span class="literal">true</span> connections=1</span><br><span class="line">    Connections:</span><br><span class="line">      act=android.bluetooth.IBluetoothInputDevice -&gt; 2989:com.android.systemui/1000</span><br><span class="line"> // 省略 N 行 ...</span><br><span class="line"></span><br><span class="line">ACTIVITY MANAGER RECENT TASKS (dumpsys activity recents)    //注意一下</span><br><span class="line">  Recent tasks:</span><br><span class="line">  * Recent <span class="comment">#0: TaskRecord&#123;f3e16fb #1558 A=com.nhtzj.appb U=0 sz=1&#125;</span></span><br><span class="line">  * Recent <span class="comment">#1: TaskRecord&#123;663d296 #1405 A=com.miui.home U=0 sz=1&#125;</span></span><br><span class="line">  * Recent <span class="comment">#2: TaskRecord&#123;1a325b8 #1557 A=com.nhtzj.learnapplication U=0 sz=1&#125;</span></span><br><span class="line">  * Recent <span class="comment">#3: TaskRecord&#123;141234a #1427 A=.delinstalledapk U=0 sz=0&#125;</span></span><br><span class="line">  * Recent <span class="comment">#4: TaskRecord&#123;6b8c2bb #1425 A=com.miui.packageinstaller U=0 sz=0&#125;</span></span><br><span class="line">  * Recent <span class="comment">#5: TaskRecord&#123;fa213d8 #1406 A=android.task.stk.StkLauncherActivity U=0 sz=0&#125;</span></span><br><span class="line"> // 省略 N 行 ...</span><br><span class="line"></span><br><span class="line">ACTIVITY MANAGER ACTIVITIES (dumpsys activity activities)   //注意一下</span><br><span class="line">Display <span class="comment">#0 (activities from top to bottom):</span></span><br><span class="line">  Stack <span class="comment">#23:</span></span><br><span class="line">    Task id <span class="comment">#1558</span></span><br><span class="line">      TaskRecord&#123;f3e16fb <span class="comment">#1558 A=com.nhtzj.appb U=0 sz=1&#125;</span></span><br><span class="line">      Intent &#123; act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10200000 cmp=com.nhtzj.appb/.sample.MainActivity (has extras) &#125;</span><br><span class="line">        Hist <span class="comment">#0: ActivityRecord&#123;e4adca6 u0 com.nhtzj.appb/.sample.MainActivity t1558&#125;</span></span><br><span class="line">          Intent &#123; act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10200000 cmp=com.nhtzj.appb/.sample.MainActivity bnds=[76,625][258,807] (has extras) &#125;</span><br><span class="line">          ProcessRecord&#123;36e1c21 9302:com.nhtzj.appb/u0a267&#125;</span><br><span class="line"> // 省略 N 行 ...</span><br><span class="line"></span><br><span class="line">ACTIVITY MANAGER RUNNING PROCESSES (dumpsys activity processes) //注意一下</span><br><span class="line">  Isolated process list (sorted by uid):</span><br><span class="line">    Isolated <span class="comment"># 0: ProcessRecord&#123;284e1aa 2979:WebViewLoader-armeabi-v7a/1037&#125;</span></span><br><span class="line"></span><br><span class="line">  UID states:</span><br><span class="line">    UID 1000: UidRecord&#123;2d2119b 1000 P  procs:13&#125;</span><br><span class="line">    UID 1001: UidRecord&#123;db0e938 1001 P  procs:2&#125;</span><br><span class="line"> // 省略 N 行 ...</span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<p>该命令返回一大串内容，但也能清晰看出它们比较详细的分类 </p>
+<p>每一个类别都有一个括号内容，给出了更加详细的指令来查看该类别下更多具体内容。 </p>
+<p>比如本次用到的类别：ACTIVITY MANAGER ACTIVITIES (dumpsys activity activities) </p>
+<p>括号内的dumpsys activity activities为activity的详细指令。 </p>
+<p>因此再来尝试指令：</p>
+<blockquote>
+<p>db shell dumpsys activity activities<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">ACTIVITY MANAGER ACTIVITIES (dumpsys activity activities)</span><br><span class="line">Display <span class="comment">#0 (activities from top to bottom):</span></span><br><span class="line">  Stack <span class="comment">#12:</span></span><br><span class="line">    Task id <span class="comment">#1302</span></span><br><span class="line">    * TaskRecord&#123;5fb98dc <span class="comment">#1302 A=com.nhtzj.learnapplication U=0 sz=3&#125;</span></span><br><span class="line">      userId=0 effectiveUid=u0a238 mCallingUid=2000 mCallingPackage=null</span><br><span class="line">      affinity=com.nhtzj.learnapplication</span><br><span class="line">      intent=&#123;act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10000000 cmp=com.nhtzj.learnapplication/.activity.main.MainActivity&#125;</span><br><span class="line">      realActivity=com.nhtzj.learnapplication/.activity.main.MainActivity</span><br><span class="line">      autoRemoveRecents=<span class="literal">false</span> isPersistable=<span class="literal">true</span> numFullscreen=3 taskType=0 mTaskToReturnTo=1</span><br><span class="line">      rootWasReset=<span class="literal">false</span> mNeverRelinquishIdentity=<span class="literal">true</span> mReuseTask=<span class="literal">false</span> mLockTaskAuth=LOCK_TASK_AUTH_PINNABLE</span><br><span class="line">      Activities=[ActivityRecord&#123;772a6cc u0 com.nhtzj.learnapplication/.activity.main.MainActivity t1302&#125;, ActivityRecord&#123;182f696 u0 com.nhtzj.learnapplication/.activity.sample.lanchmode.standard.StandardActivity t1302&#125;, ActivityRecord&#123;d4a426e u0 com.nhtzj.learnapplication/.activity.sample.lanchmode.standard.StandardActivity t1302&#125;]</span><br><span class="line">      askedCompatMode=<span class="literal">false</span> inRecents=<span class="literal">true</span> isAvailable=<span class="literal">true</span></span><br><span class="line">      lastThumbnail=null lastThumbnailFile=/data/system/recent_images/1302_task_thumbnail.png</span><br><span class="line">      stackId=12</span><br><span class="line">      hasBeenVisible=<span class="literal">true</span> mResizeable=<span class="literal">false</span> firstActiveTime=1524119334682 lastActiveTime=1524119334682 (inactive <span class="keyword">for</span> 147s)</span><br><span class="line">      * Hist <span class="comment">#2: ActivityRecord&#123;d4a426e u0 com.nhtzj.learnapplication/.activity.sample.lanchmode.standard.StandardActivity t1302&#125;</span></span><br><span class="line">          packageName=com.nhtzj.learnapplication processName=com.nhtzj.learnapplication</span><br><span class="line">          launchedFromUid=10238 launchedFromPackage=com.nhtzj.learnapplication userId=0</span><br><span class="line">          app=ProcessRecord&#123;32912fe 28815:com.nhtzj.learnapplication/u0a238&#125;</span><br><span class="line">          Intent &#123; cmp=com.nhtzj.learnapplication/.activity.sample.lanchmode.standard.StandardActivity &#125;</span><br><span class="line">          frontOfTask=<span class="literal">false</span> task=TaskRecord&#123;5fb98dc <span class="comment">#1302 A=com.nhtzj.learnapplication U=0 sz=3&#125;</span></span><br><span class="line">          taskAffinity=com.nhtzj.learnapplication</span><br><span class="line">          realActivity=com.nhtzj.learnapplication/.activity.sample.lanchmode.standard.StandardActivity</span><br><span class="line">          baseDir=/data/app/com.nhtzj.learnapplication-2/base.apk</span><br><span class="line">          dataDir=/data/user/0/com.nhtzj.learnapplication</span><br><span class="line">          stateNotNeeded=<span class="literal">false</span> componentSpecified=<span class="literal">true</span> mActivityType=0</span><br><span class="line">          compat=&#123;480dpi&#125; labelRes=0x0 icon=0x7f0b0000 theme=0x7f0d0005</span><br><span class="line">          config=&#123;1.0 460mcc7mnc zh_CN ldltr sw360dp w360dp h576dp 480dpi nrml port finger -keyb/v/h -nav/h s.41 themeChanged=0 themeChangedFlags=0&#125;</span><br><span class="line">          stackConfigOverride=&#123;1.0 ?mcc?mnc ?locale ?layoutDir ?swdp ?wdp ?hdp ?density ?lsize ?long ?orien ?uimode ?night ?touch ?keyb/?/? ?nav/? themeChanged=0 themeChangedFlags=0&#125;</span><br><span class="line">          taskDescription: iconFilename=null label=<span class="string">"null"</span> color=ff3f51b5</span><br><span class="line">          launchFailed=<span class="literal">false</span> launchCount=1 lastLaunchTime=-2m27s763ms</span><br><span class="line">          haveState=<span class="literal">false</span> icicle=null</span><br><span class="line">          state=RESUMED stopped=<span class="literal">false</span> delayedResume=<span class="literal">false</span> finishing=<span class="literal">false</span></span><br><span class="line">          keysPaused=<span class="literal">false</span> inHistory=<span class="literal">true</span> visible=<span class="literal">true</span> sleeping=<span class="literal">false</span> idle=<span class="literal">true</span></span><br><span class="line">          fullscreen=<span class="literal">true</span> noDisplay=<span class="literal">false</span> immersive=<span class="literal">false</span> launchMode=0</span><br><span class="line">          frozenBeforeDestroy=<span class="literal">false</span> forceNewConfig=<span class="literal">false</span></span><br><span class="line">          mActivityType=APPLICATION_ACTIVITY_TYPE</span><br><span class="line">          waitingVisible=<span class="literal">false</span> nowVisible=<span class="literal">true</span> lastVisibleTime=-2m27s389ms</span><br><span class="line">          realComponentName=com.nhtzj.learnapplication/.activity.sample.lanchmode.standard.StandardActivity</span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<p>整个log显示了当前所有在运行的任务栈，它们的id分别是什么。对于每个Task，也有Activity数量等信息，同时也列出了其中的Activity列表，并且对于每个Activity也有比较详细的描述，比如启动它的Intent的内容。 </p>
+<p>如果觉得内容过多，只想看看栈的内容，也可以直接跳到”Running activities (most recent first)”那部分，比较简洁而又明了的列出了栈中得Activity列表，就能知道当按下返回键的时候会应该会回到哪个Activity以后是要退出程序。 </p>
+<p><a name="simplera"></a><br>对于”Running activities”的内容在dumpsys activity中就有，并不需要dumpsys activity activities，也可以用下边的指令来限制仅输出”Running activities”列表：</p>
+<blockquote>
+<p>adb shell dumpsys activity activities | sed -En -e ‘/Running activities/,/Run #0/p’<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">➜  ~ adb shell dumpsys activity activities | sed -En -e <span class="string">'/Running activities/,/Run #0/p'</span></span><br><span class="line">    Running activities (most recent first):</span><br><span class="line">      TaskRecord&#123;5fb98dc <span class="comment">#1302 A=com.nhtzj.learnapplication U=0 sz=3&#125;</span></span><br><span class="line">        Run <span class="comment">#2: ActivityRecord&#123;d4a426e u0 com.nhtzj.learnapplication/.activity.sample.lanchmode.standard.StandardActivity t1302&#125;</span></span><br><span class="line">        Run <span class="comment">#1: ActivityRecord&#123;182f696 u0 com.nhtzj.learnapplication/.activity.sample.lanchmode.standard.StandardActivity t1302&#125;</span></span><br><span class="line">        Run <span class="comment">#0: ActivityRecord&#123;772a6cc u0 com.nhtzj.learnapplication/.activity.main.MainActivity t1302&#125;</span></span><br><span class="line">    Running activities (most recent first):</span><br><span class="line">      TaskRecord&#123;77ff1c8 <span class="comment">#4 A=com.miui.home U=0 sz=1&#125;</span></span><br><span class="line">        Run <span class="comment">#0: ActivityRecord&#123;98a1459 u0 com.miui.home/.launcher.Launcher t4&#125;</span></span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<p>其中，TaskRecord中的“A=”的值，即为taskAffinity设定的值。 taskAffinity的说明，请参考下文<a href="http://blog.nhtzj.com/2018/activity启动模式之-taskaffinity" target="_blank" rel="noopener">Activity启动模式之 taskAffinity</a></p>
+<h2 id="四大启动模式"><a href="#四大启动模式" class="headerlink" title="四大启动模式"></a>四大启动模式</h2><table>
+<thead>
+<tr>
+<th style="text-align:center">code</th>
+<th style="text-align:center">简介</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">standard</td>
+<td style="text-align:center">标准模式</td>
+</tr>
+<tr>
+<td style="text-align:center">singleTop</td>
+<td style="text-align:center">栈顶复用模式</td>
+</tr>
+<tr>
+<td style="text-align:center">singleTask</td>
+<td style="text-align:center">栈内复用模式</td>
+</tr>
+<tr>
+<td style="text-align:center">singleInstance</td>
+<td style="text-align:center">单例模式</td>
+</tr>
+</tbody>
+</table>
+<h2 id="具体介绍"><a href="#具体介绍" class="headerlink" title="具体介绍"></a>具体介绍</h2><p>点击查看：<a href="https://gitee.com/goldsea/learn/tree/master/app/src/main/java/com/nhtzj/learnapplication/activity/sample/lanchmode/normal" target="_blank" rel="noopener">lanchMode测试源码</a></p>
+<h3 id="标准模式（standard）"><a href="#标准模式（standard）" class="headerlink" title="标准模式（standard）"></a>标准模式（standard）</h3><p>标准模式,每次启动Activity都会创建一个新的Activity实例,并且将其压入任务栈栈顶,而不管这个Activity是否已经存在。并且存在于 启动它的Activity实例所在的task之中。 </p>
+<p>标准模式为activity的默认启动方式，在清单文件中可以不写明。即默认为“standard”。 </p>
+<p>清单文件配置</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">   <span class="tag">&lt;<span class="name">activity</span></span></span><br><span class="line"><span class="tag"><span class="attr">android:name</span>=<span class="string">".activity.sample.lanchmode.standard.StandardActivity"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:label</span>=<span class="string">"启动模式-standard"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:launchMode</span>=<span class="string">"standard"</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+<p>或 不写明<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">activity</span></span></span><br><span class="line"><span class="tag">      <span class="attr">android:name</span>=<span class="string">".activity.sample.lanchmode.standard.StandardActivity"</span></span></span><br><span class="line"><span class="tag">     <span class="attr">android:label</span>=<span class="string">"启动模式-standard"</span>/&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>task中的形式如下： <img src="/images/2018/04/standard-task.png" alt="standard-task"></p>
+<h3 id="栈顶复用模式（singleTop）"><a href="#栈顶复用模式（singleTop）" class="headerlink" title="栈顶复用模式（singleTop）"></a>栈顶复用模式（singleTop）</h3><ul>
+<li>如果需要新建的Activity位于任务栈栈顶，那么此Activity的实例就不会重建，而是重用栈顶的实例( 调用实例的 onNewIntent() 、不调用onCreate()和onStart())。</li>
+<li>否则就会创建该Activity新的实例，并放入栈顶</li>
+</ul>
+<p>流程图如下： <img src="/images/2018/04/singleTop流程图.png" alt="singleTop流程图"></p>
+<h3 id="栈内复用模式（singleTask）"><a href="#栈内复用模式（singleTask）" class="headerlink" title="栈内复用模式（singleTask）"></a>栈内复用模式（singleTask）</h3><p>官方说明：</p>
+<blockquote>
+<p>The system creates the activity at the root of a new task and routes the intent to it. However, if an instance of the activity already exists, the system routes the intent to existing instance through a call to its onNewIntent() method, rather than creating a new one.</p>
+</blockquote>
+<p>翻译过来就是：</p>
+<blockquote>
+<p>在singleTask模式下，如果是第一次创建该Activity实例时，则会新建task并将该Activity添加到该task中。否则(该Activity的实例已存在)，则会将栈内该Activity实例之后加入的Activity关闭，并打开已有的Activity实例，并调用Activity的onNewIntent()方法，而不会新建Activity实例。</p>
+</blockquote>
+<p>流程图如下： <img src="/images/2018/04/singleTask流程图.png" alt="singleTask流程图"></p>
+<h3 id="单例模式（singleInstance）"><a href="#单例模式（singleInstance）" class="headerlink" title="单例模式（singleInstance）"></a>单例模式（singleInstance）</h3><ul>
+<li>栈内复用模式（singleTask）的强化，该模式下全局仅有一个实例</li>
+<li>打开该Activity时，直接创建一个新的任务栈，并创建该Activity实例放入新栈中</li>
+<li>一旦该模式的Activity实例已经存在于某个栈中，任何应用再激活该Activity时都会重用该栈中的实例</li>
+<li>使用场景：多个应用共享一个应用，不管谁激活该 Activity 都会进入同一个应用中。使用场景如闹铃提醒，将闹铃提醒与闹铃设置分离。</li>
+</ul>
+<h3 id="官方介绍"><a href="#官方介绍" class="headerlink" title="官方介绍"></a>官方介绍</h3><p><a href="/minepage/android/activity/activity_Android_Developers.html#lmode">android:launchMode (本地)</a><br><a href="https://developer.android.com/guide/topics/manifest/activity-element.html?hl=zh-cn#lmode" target="_blank" rel="noopener">android:launchMode （developer.android.com，需翻墙）</a></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
+<li>唯一性从小到大：standard &lt; singleTop &lt; singleTask &lt; singleInstance</li>
+<li>standard：无限制</li>
+<li>singleTop：栈顶唯一</li>
+<li>singleTask：栈内唯一</li>
+<li>singleInstance：全局唯一</li>
+</ul>
+<p>singleTop、singleTask、singleInstance重用时不会重走整个生命周期 </p>
+<ul>
+<li>singleTop:onPause &gt; onNewIntent &gt; onResume </li>
+<li>singleTask(位于栈顶):同singleTop一致 </li>
+<li>singleTask(没有位于栈顶):onNewIntent &gt; onRestart &gt; onStart &gt; onResume </li>
+<li>singleInstance(singleInstance实例可见，即处于前台):同singleTop一致 </li>
+<li>singleInstance(singleInstance实例不可见，即处于后台)：同 singleTask(没有位于栈顶) 一致</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持是对我最大的鼓励！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Haitao Ni 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.png" alt="Haitao Ni 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Activity启动模式/" rel="tag"># Activity启动模式</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/3223491470/" rel="next" title="网址收集">
+                <i class="fa fa-chevron-left"></i> 网址收集
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2779984340/" rel="prev" title="破解软件收集">
+                破解软件收集 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar" rel="external nofollow">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar/avatar.png" alt="Haitao Ni">
+            
+              <p class="site-author-name" itemprop="name">Haitao Ni</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">79</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">49</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">85</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:haitao_ni@nhtzj.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#launchMode简介"><span class="nav-number">1.</span> <span class="nav-text">launchMode简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#知识储备"><span class="nav-number">2.</span> <span class="nav-text">知识储备</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#任务栈（Task）"><span class="nav-number">2.1.</span> <span class="nav-text">任务栈（Task）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#终端使用adb-shell指令"><span class="nav-number">2.2.</span> <span class="nav-text">终端使用adb shell指令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四大启动模式"><span class="nav-number">3.</span> <span class="nav-text">四大启动模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#具体介绍"><span class="nav-number">4.</span> <span class="nav-text">具体介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#标准模式（standard）"><span class="nav-number">4.1.</span> <span class="nav-text">标准模式（standard）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#栈顶复用模式（singleTop）"><span class="nav-number">4.2.</span> <span class="nav-text">栈顶复用模式（singleTop）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#栈内复用模式（singleTask）"><span class="nav-number">4.3.</span> <span class="nav-text">栈内复用模式（singleTask）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#单例模式（singleInstance）"><span class="nav-number">4.4.</span> <span class="nav-text">单例模式（singleInstance）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#官方介绍"><span class="nav-number">4.5.</span> <span class="nav-text">官方介绍</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2023</span>
+
+
+  <div class="powered-by"><a class="theme-link" target="_blank" href="https://beian.miit.gov.cn/" rel="external nofollow" title="工业和信息化部ICP/IP地址/域名信息备案管理系统">浙ICP备17020869号</a></div>
+
+
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Haitao Ni</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'gaKW5YWAvf7NBOlU9eFbxN8O-gzGzoHsz',
+        appKey: 'susRHyMS8Fq1XyKXg0r9ad85',
+        placeholder: '填上邮箱可以收到我的回复哦 (*^ω^*)~~',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+
+//新增以下代码即可，可以移除.info下所有子节点。
+var infoEle = document.querySelector('#comments .info');
+if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0){
+  infoEle.childNodes.forEach(function(item) {
+    item.parentNode.removeChild(item);
+  });
+}
+
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("gaKW5YWAvf7NBOlU9eFbxN8O-gzGzoHsz", "susRHyMS8Fq1XyKXg0r9ad85");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,1737 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="uW8bwgMGUwIA01nPfh0oty1rmtmmuVkOVGaS9O0nQUg">
+
+
+
+
+
+
+
+
+  <meta name="baidu-site-verification" content="NeE6tPH3W1">
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico?v=5.1.4">
+
+
+
+
+
+
+
+  <meta name="keywords" content="备忘录,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="海的那边" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="Gradle下载的依赖包在什么位置？ Mac系统默认下载到：/Users/(用户名)/.gradle/caches/modules-2/files-2.1  Windows系统默认下载到：C:\Users(用户名).gradle\caches\modules-2\files-2.1   也可在 External Libraries下找到需要查看的依赖包，以oss为例，在Gradle:com.ali">
+<meta name="keywords" content="备忘录">
+<meta property="og:type" content="article">
+<meta property="og:title" content="备忘录">
+<meta property="og:url" content="http://www.nhtzj.com/668177610/index.html">
+<meta property="og:site_name" content="海的那边">
+<meta property="og:description" content="Gradle下载的依赖包在什么位置？ Mac系统默认下载到：/Users/(用户名)/.gradle/caches/modules-2/files-2.1  Windows系统默认下载到：C:\Users(用户名).gradle\caches\modules-2\files-2.1   也可在 External Libraries下找到需要查看的依赖包，以oss为例，在Gradle:com.ali">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/04/查看依赖包本地位置pre.png">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/04/查看依赖包本地位置.png">
+<meta property="og:image" content="http://www.nhtzj.com/images/2019/04/gradle_list.png">
+<meta property="og:image" content="http://www.nhtzj.com/images/2019/04/as_find_in_path.png">
+<meta property="og:image" content="http://www.nhtzj.com/images/2019/04/as_find_in_path.png">
+<meta property="og:image" content="http://www.nhtzj.com/images/2020/04/invoke-customs_are_only_support_starting_with_Android_O.jpg">
+<meta property="og:updated_time" content="2021-07-31T12:24:37.375Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="备忘录">
+<meta name="twitter:description" content="Gradle下载的依赖包在什么位置？ Mac系统默认下载到：/Users/(用户名)/.gradle/caches/modules-2/files-2.1  Windows系统默认下载到：C:\Users(用户名).gradle\caches\modules-2\files-2.1   也可在 External Libraries下找到需要查看的依赖包，以oss为例，在Gradle:com.ali">
+<meta name="twitter:image" content="http://www.nhtzj.com/images/2018/04/查看依赖包本地位置pre.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.nhtzj.com/668177610/">
+
+
+
+
+
+  <title>备忘录 | 海的那边</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">海的那边</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">人无远虑，必有近忧</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.nhtzj.com/668177610/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Haitao Ni">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="海的那边">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">备忘录</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-09T13:55:15+08:00">
+                2018-04-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/android/" itemprop="url" rel="index">
+                    <span itemprop="name">android</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/android/tool/" itemprop="url" rel="index">
+                    <span itemprop="name">tool</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/668177610/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/668177610/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/668177610/" class="leancloud_visitors" data-flag-title="备忘录">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  3,528
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  15
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Gradle"><a href="#Gradle" class="headerlink" title="Gradle"></a>Gradle</h2><h3 id="下载的依赖包在什么位置？"><a href="#下载的依赖包在什么位置？" class="headerlink" title="下载的依赖包在什么位置？"></a>下载的依赖包在什么位置？</h3><ul>
+<li>Mac系统默认下载到：/Users/(用户名)/.gradle/caches/modules-2/files-2.1 </li>
+<li>Windows系统默认下载到：C:\Users(用户名).gradle\caches\modules-2\files-2.1 </li>
+</ul>
+<p>也可在 External Libraries下找到需要查看的依赖包，<br>以oss为例，在Gradle:com.aliyun.dpa:oss-android-sdk:2.8.0 上右键-&gt;Libraries Properties 也可查看本地路径。 <img src="/images/2018/04/查看依赖包本地位置pre.png" alt="查看依赖包本地位置操作"> <img src="/images/2018/04/查看依赖包本地位置.png" alt="查看依赖包本地位置"></p>
+<h3 id="下载的插件包在什么位置"><a href="#下载的插件包在什么位置" class="headerlink" title="下载的插件包在什么位置"></a>下载的插件包在什么位置</h3><ul>
+<li>Mac系统默认下载到：/Users/(用户名)/.gradle/caches/modules-2/files-2.1/com.android.tools.build/gradle</li>
+</ul>
+<h3 id="Gradle离线下载配置"><a href="#Gradle离线下载配置" class="headerlink" title="Gradle离线下载配置"></a>Gradle离线下载配置</h3><p>离线下载官方地址：<a href="https://services.gradle.org/distributions/" target="_blank" rel="noopener">https://services.gradle.org/distributions</a></p>
+<p>点击对应项即可下载。</p>
+<ol>
+<li><p>查看项目gradle版本</p>
+<p>打开项目的根目录下的 <code>/gradle/wrapper/gradle-wrapper.properties</code>，我的配置如下：</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#Tue Mar <span class="number">12</span> <span class="number">16</span>:<span class="number">38</span>:<span class="number">29</span> CST <span class="number">2019</span></span><br><span class="line">distributionBase=GRADLE_USER_HOME</span><br><span class="line">distributionPath=wrapper<span class="regexp">/dists</span></span><br><span class="line"><span class="regexp">zipStoreBase=GRADLE_USER_HOME</span></span><br><span class="line"><span class="regexp">zipStorePath=wrapper/</span>dists</span><br><span class="line">distributionUrl=https\:<span class="comment">//services.gradle.org/distributions/gradle-4.10.1-all.zip</span></span><br></pre></td></tr></table></figure>
+<p>使用的gradle版本为<code>4.10.1</code>，离线下载可以直接点击<a href="https://services.gradle.org/distributions/" target="_blank" rel="noopener">https://services.gradle.org/distributions</a>，找到对应项 <code>gradle-4.10.1-all.zip</code>，或者在 <code>https://services.gradle.org/distributions/</code>后接上 <code>gradle-4.10.1-all.zip</code>即可下载。比如 <code>https://services.gradle.org/distributions/gradle-4.10.1-all.zip</code>。建议用迅雷下载。</p>
+</li>
+<li><p>找到gradle存放位置，将下载的gradle离线包放入对应文件夹内。</p>
+<p>Mac路径：<code>/User/用户名/.gradle/wrapper/dists/</code>，<code>dists</code>文件夹下是以gradle版本为名称的文件夹。以小编<code>4.10.1</code>为例，打开 <code>gradle-4.10.1-all</code>文件夹，找到类似 <code>455itskqi2qtf0v2sja68alqd</code>这样的文件夹，直接将之前下载的zip包放入即可。</p>
+<p>下图中<code>gradle-4.10.1-all.zip</code>文件上方的三个为AS打开项目后自动解压生成的。</p>
+<p><img src="/images/2019/04/gradle_list.png" alt="gradle_list"></p>
+<blockquote>
+<p> 注：以gradle版本为名的文件夹及其里面的文件夹，需要先用Android Studio软件打开项目后才能自动生成。内部类似 <code>455itskqi2qtf0v2sja68alqd</code>这样的文件夹如果有多个，则按照时间，将对应的zip放入其中。</p>
+</blockquote>
+</li>
+<li><p>重新打开AS项目</p>
+</li>
+</ol>
+<h3 id="gradle版本和插件版本对应关系"><a href="#gradle版本和插件版本对应关系" class="headerlink" title="gradle版本和插件版本对应关系"></a>gradle版本和插件版本对应关系</h3><p><a href="https://developer.android.google.cn/studio/releases/gradle-plugin#updating-plugin" target="_blank" rel="noopener">官网地址</a></p>
+<table>
+<thead>
+<tr>
+<th>Plugin version</th>
+<th>Required Gradle version</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1.0.0 - 1.1.3</td>
+<td>2.2.1 - 2.3</td>
+</tr>
+<tr>
+<td>1.2.0 - 1.3.1</td>
+<td>2.2.1 - 2.9</td>
+</tr>
+<tr>
+<td>1.5.0</td>
+<td>2.2.1 - 2.13</td>
+</tr>
+<tr>
+<td>2.0.0 - 2.1.2</td>
+<td>2.10 - 2.13</td>
+</tr>
+<tr>
+<td>2.1.3 - 2.2.3</td>
+<td>2.14.1+</td>
+</tr>
+<tr>
+<td>2.3.0+</td>
+<td>3.3+</td>
+</tr>
+<tr>
+<td>3.0.0+</td>
+<td>4.1+</td>
+</tr>
+<tr>
+<td>3.1.0+</td>
+<td>4.4+</td>
+</tr>
+<tr>
+<td>3.2.0 - 3.2.1</td>
+<td>4.6+</td>
+</tr>
+<tr>
+<td>3.3.0 - 3.3.2</td>
+<td>4.10.1+</td>
+</tr>
+<tr>
+<td>3.4.0 - 3.4.1</td>
+<td>5.1.1+</td>
+</tr>
+<tr>
+<td>3.5.0 - 3.5.4</td>
+<td>5.4.1+</td>
+</tr>
+<tr>
+<td>3.6.0 - 3.6.4</td>
+<td>5.6.4+</td>
+</tr>
+<tr>
+<td>4.0.0+</td>
+<td>6.1.1+</td>
+</tr>
+<tr>
+<td>4.1.0+</td>
+<td>6.5+</td>
+</tr>
+<tr>
+<td>4.2.0+</td>
+<td>6.7.1+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="gradle命令"><a href="#gradle命令" class="headerlink" title="gradle命令"></a>gradle命令</h3><ol>
+<li><p>查看模块依赖详情</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./gradlew app:dependencies</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看模块依赖详情（指定configuration）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./gradlew app:dependencies --configuration releaseUnitTestRuntimeClasspath</span><br></pre></td></tr></table></figure>
+</li>
+<li></li>
+</ol>
+<h2 id="SSH"><a href="#SSH" class="headerlink" title="SSH"></a>SSH</h2><h3 id="修改密码"><a href="#修改密码" class="headerlink" title="修改密码"></a>修改密码</h3><ol>
+<li><p>终端进入目录 /Users/(用户名)/.ssh</p>
+</li>
+<li><p>输入 <code>ssh-keygen -f id\_rsa -p</code>，</p>
+<p><strong>-p</strong> 选项请求修改私钥的密码<br><strong>-f{filename}</strong> 选项去指定密钥的名称,比如其中的 <code>id\_rsa</code> 为指定的私钥文件名</p>
+</li>
+<li><p>原先有密码，则需输入old passphrase，旧密码； 原先没有密码，则直接输入新密码 new passphrase (empty for no passphrase)</p>
+</li>
+</ol>
+<h2 id="Mac-app打开问题处理"><a href="#Mac-app打开问题处理" class="headerlink" title="Mac app打开问题处理"></a>Mac app打开问题处理</h2><h3 id="显示-“安全性与隐私”-“任何来源”"><a href="#显示-“安全性与隐私”-“任何来源”" class="headerlink" title="显示 “安全性与隐私”-“任何来源”"></a>显示 “安全性与隐私”-“任何来源”</h3><p>在 macOS Sierra 中，你会发现系统偏好设置的“安全性与隐私”中默认已经去除了允许“任何来源”的选项。 现在通过终端命令方式打开这个选项： 使用 spctl 命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo spctl --master-disable</span><br></pre></td></tr></table></figure>
+<p>OK！现在在 “安全性与隐私”中会多出“任何来源”这一选项。让我们愉快地使用app吧。</p>
+<h3 id="macOS-10-15-Catalina-xxx-app已损坏，无法打开，你应该将它移到废纸篓解决方法"><a href="#macOS-10-15-Catalina-xxx-app已损坏，无法打开，你应该将它移到废纸篓解决方法" class="headerlink" title="macOS 10.15 Catalina xxx.app已损坏，无法打开，你应该将它移到废纸篓解决方法"></a>macOS 10.15 Catalina xxx.app已损坏，无法打开，你应该将它移到废纸篓解决方法</h3><p>更新macOS 10.15 Catalina后，很多在10.14上可以使用的App都会提示提示【xxx已损坏，无法打开，你应该将它移到废纸篓解决办法】，哪怕你在【安全与隐私 》 通用】中已经开启了“任何来源”，但还是会这样提示，其实解决方法很简单。就是绕过macOS的公证。</p>
+<h4 id="绕过公证："><a href="#绕过公证：" class="headerlink" title="绕过公证："></a>绕过公证：</h4><p>在终端中执行如下命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo xattr -rd com.apple.quarantine /Applications/xxxxxx.app</span><br></pre></td></tr></table></figure>
+<p>将其中的 <code>xxxxxx.app</code>替换为您需要设置的app名称。</p>
+<p>比如软件StarUML：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo xattr -rd com.apple.quarantine /Applications/StarUML.app</span><br></pre></td></tr></table></figure>
+<p>或者复制以下命令粘贴到终端后</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo xattr -rd com.apple.quarantine</span><br></pre></td></tr></table></figure>
+<p>打开Finder（访达），点击左侧的 <code>应用程序</code>，将应用拖进终端中，然后按键盘的回车键（return），输入密码，再按回车键，完成。</p>
+<blockquote>
+<p>注意 <code>quarantine</code> 后面必须有个空格</p>
+</blockquote>
+<h4 id="某个程序绕开公证。-想恢复公正许怎么做"><a href="#某个程序绕开公证。-想恢复公正许怎么做" class="headerlink" title="某个程序绕开公证。 想恢复公正许怎么做"></a>某个程序绕开公证。 想恢复公正许怎么做</h4><p>重装应用</p>
+<h2 id="Mac下用Charles实现Android-http和https抓包"><a href="#Mac下用Charles实现Android-http和https抓包" class="headerlink" title="Mac下用Charles实现Android http和https抓包"></a>Mac下用Charles实现Android http和https抓包</h2><p><a href="https://blog.csdn.net/luochoudan/article/details/72801573" target="_blank" rel="noopener">Mac下用Charles实现Android http和https抓包</a></p>
+<h2 id="Mac更新系统后无法使用git"><a href="#Mac更新系统后无法使用git" class="headerlink" title="Mac更新系统后无法使用git"></a>Mac更新系统后无法使用git</h2><p>更新了系统后，进入到git工程目录，输入git命令，提示错误：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xcrun: error: invalid active developer path (/Library/Developer/CommandLineTools), missing xcrun at: /Library/Developer/CommandLineTools/usr/bin/xcrun</span><br></pre></td></tr></table></figure>
+<p>进入Android Studio后提示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">can&apos;t start git: /usr/bin/git </span><br><span class="line">probably the path to git executable is not valid . `fix it`.</span><br></pre></td></tr></table></figure>
+<h3 id="解决方案："><a href="#解决方案：" class="headerlink" title="解决方案："></a>解决方案：</h3><p>在终端输入：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xcode-select --install</span><br></pre></td></tr></table></figure>
+<p>据说原因是因为每次更新系统之后xcode就被卸载了，因此需要重新安装一次。</p>
+<h2 id="adb"><a href="#adb" class="headerlink" title="adb"></a>adb</h2><h3 id="多设备在线时，指定设备"><a href="#多设备在线时，指定设备" class="headerlink" title="多设备在线时，指定设备"></a>多设备在线时，指定设备</h3><ol>
+<li>通过adb devices命令获取所有online设备的serial number</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">➜  ~ adb devices</span><br><span class="line">List of devices attached</span><br><span class="line">11ab03c3	device</span><br><span class="line">emulator-5554	device</span><br></pre></td></tr></table></figure>
+<p>具体需要选择哪个设备，可以通过插拔其中的设备进行辨别。</p>
+<ol start="2">
+<li>通过<code>adb -s &lt;serial number&gt; 命令</code>向设备发送adb命令</li>
+</ol>
+<p>比如我需要安装app</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">➜  ~ adb -s 11ab03c3 install test.apk</span><br></pre></td></tr></table></figure>
+<h2 id="Git"><a href="#Git" class="headerlink" title="Git"></a>Git</h2><h3 id="删除分支（本地、远程）"><a href="#删除分支（本地、远程）" class="headerlink" title="删除分支（本地、远程）"></a>删除分支（本地、远程）</h3><ol>
+<li><p>查看分支，获取分支名称</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git branch -a</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>删除本地分支</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git branch -d &lt;BranchName&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>删除远程分支 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push origin --delete &lt;BranchName&gt;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="修改分支名称"><a href="#修改分支名称" class="headerlink" title="修改分支名称"></a>修改分支名称</h3><p><a href="https://www.jianshu.com/p/cc740394faf5" target="_blank" rel="noopener">git修改分支名称</a></p>
+<p>Sourcetree操作：（实例：将<code>br_test_rename</code>改为<code>br_test_rename_new</code>）</p>
+<ol>
+<li>修改本地分支名称（BRANCHES目录下的是本地分支，下面提到的 <code>REMOTES</code>是远程分支）<br>选中需要修改的分支<code>br_test_rename</code>；<br>右键，点击 <code>Rename</code>，在弹出的对话框内输入新的分支名称<code>br_test_rename_new</code>，点击 OK 按钮确认修改。</li>
+<li>推送新名称分支到远程仓库<br>点击 <code>push</code>按钮；<br>在弹出的对话框内购选中<code>br_test_rename_new</code>前的选择框；<br>点击OK按钮进行推送；<br>推送成功后，可以在 <code>REMOTES</code>目录下看到<code>br_test_rename_new</code>的新分支</li>
+<li>删除远程<code>br_test_rename</code>名称的旧分支<br> <code>REMOTES</code>目录下找到<code>br_test_rename</code>名称的分支；<br>右键，点击 <code>Delete…</code>；<br>在弹出的确认对话框内点击 OK 按钮进行删除；</li>
+<li>整个修改过程就完成了。<br>主要流程归纳为：<ul>
+<li>修改本地名称</li>
+<li>推送</li>
+<li>删除远程旧分支</li>
+</ul>
+</li>
+</ol>
+<h3 id="回退"><a href="#回退" class="headerlink" title="回退"></a>回退</h3><ol>
+<li><p>本地仓库回退到指定版本</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git rest --hard &lt;commit id | HEAD^&gt; //HEAD^表示上一个版本，HEAD^^ 表示上上个版本</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>暂存区回退到工作区</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git reset HEAD &lt;file&gt;...</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>丢弃工作区修改（回到最新一次add或commit的状态）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout -- &lt;file&gt;...</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="ssh与https相互切换"><a href="#ssh与https相互切换" class="headerlink" title="ssh与https相互切换"></a>ssh与https相互切换</h3><h4 id="从ssh切换到https"><a href="#从ssh切换到https" class="headerlink" title="从ssh切换到https"></a>从ssh切换到https</h4><p><strong>格式：</strong><code>git remote set-url 远程仓库名称（当只有一个远程仓库时可省略） https地址</code></p>
+<p><code>git remote set-url origin https://github.com/nhtzj/Java.git</code></p>
+<h4 id="从ssh切换到https-1"><a href="#从ssh切换到https-1" class="headerlink" title="从ssh切换到https"></a>从ssh切换到https</h4><p><strong>格式：</strong><code>git remote set-url 远程仓库名称（当只有一个远程仓库时可省略） ssh地址</code></p>
+<p><code>git remote set-url origin git@github.com:nhtzj/Java.git</code></p>
+<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><ol>
+<li><p>添加远程仓库地址</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git remote add origin git@gitee.com:goldsea/gitlearn.git</span><br></pre></td></tr></table></figure>
+<p>格式：git remote add + 自定义仓库命名 + 仓库ssh地址</p>
+</li>
+<li><p>第一次推送本地仓库内容到远程仓库</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push -u origin master</span><br></pre></td></tr></table></figure>
+<p> -u 参数的添加可以让本地仓库和远程仓库进行绑定</p>
+</li>
+<li><p>查看本地ssh key</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat ~/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>修改最近一次提交的提交信息（commit 未push）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git commit --amend</span><br></pre></td></tr></table></figure>
+<p>在文本编辑器内编辑提交信息，再保存</p>
+</li>
+<li><p>查看分支操作记录（带时间）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git reflog show --date=iso &lt;branch name&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li></li>
+</ol>
+<h2 id="Iterm2"><a href="#Iterm2" class="headerlink" title="Iterm2"></a>Iterm2</h2><h3 id="快捷键"><a href="#快捷键" class="headerlink" title="快捷键"></a>快捷键</h3><p><a href="https://blog.csdn.net/qq_21190081/article/details/76058173" target="_blank" rel="noopener">Mac终端Iterm2快捷键大全</a></p>
+<h3 id="分屏"><a href="#分屏" class="headerlink" title="分屏"></a>分屏</h3><ul>
+<li>垂直分屏：command + d</li>
+<li>水平分屏：command + shift + d</li>
+<li>切换屏幕：command + option + 方向键 或者 command + [ ]</li>
+</ul>
+<h3 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h3><ul>
+<li>查看历史命令：command + ;</li>
+<li>查看剪贴板历史：command + shift + h</li>
+<li>上一条命令：ctrl + p</li>
+<li>搜索命令历史：ctrl + r</li>
+<li>删除错误的密码：ctrl + u</li>
+</ul>
+<h3 id="行内"><a href="#行内" class="headerlink" title="行内"></a>行内</h3><ul>
+<li>清除当前行：ctrl + u</li>
+<li>到行首：ctrl + a</li>
+<li>到行尾：ctrl + e</li>
+<li>删除当前光标的字符：ctrl + d</li>
+<li>删除光标之前的字符：ctrl + h</li>
+<li>删除光标之前的单词：ctrl + w</li>
+<li>删除到文本末尾：ctrl + k</li>
+<li><p>交换光标处文本：ctrl + t</p>
+<h3 id="其他-1"><a href="#其他-1" class="headerlink" title="其他"></a>其他</h3></li>
+<li><p>清屏：command + k</p>
+</li>
+</ul>
+<h2 id="Vim-命令"><a href="#Vim-命令" class="headerlink" title="Vim 命令"></a>Vim 命令</h2><h3 id="多行注释"><a href="#多行注释" class="headerlink" title="多行注释"></a>多行注释</h3><ol>
+<li>进入命令行模式，按ctrl + v（windows ctrl + q）进入 visual block模式</li>
+<li>按上键（ 或者下键）选中多行，把需要注释的行标记起来</li>
+<li>按大写“I”键（Shift+i）进入插入模式，输入“#”（或者 “//”），然后按下“ESC”键（一下或两下）</li>
+</ol>
+<h3 id="取消多行注释"><a href="#取消多行注释" class="headerlink" title="取消多行注释"></a>取消多行注释</h3><ol>
+<li>进入命令行模式，按ctrl + v进入 visual block模式</li>
+<li>选中要删除的行首的注释符号，注意”//“ 要选中两个</li>
+<li>按”d”即可删除注释</li>
+</ol>
+<h2 id="Android-Studio"><a href="#Android-Studio" class="headerlink" title="Android Studio"></a>Android Studio</h2><h3 id="快捷键-1"><a href="#快捷键-1" class="headerlink" title="快捷键"></a>快捷键</h3><p>参考：<a href="https://zhuanlan.zhihu.com/p/98209766" target="_blank" rel="noopener">知乎</a></p>
+<ul>
+<li><p>类结构（方法和成员变量）：<code>command</code> +<code>fn</code> + <code>F12</code>  、菜单Navigate -&gt; File Structure </p>
+</li>
+<li><p>优化导包：<code>control</code>+<code>option</code>+o</p>
+</li>
+<li><p>显示注释：<code>control</code>+<code>J</code>  (在settings对话框的搜索框中，输入“quick doc”进行搜索)</p>
+</li>
+<li><p>导出为成员变量：<code>option</code>+<code>command</code>+F （在Refactor -&gt; Extract 内也有）</p>
+</li>
+<li><p>切换tab: (需要切换英文输入法，光标在编辑器内，在Window -&gt; Edit Tabs 内也能看到)<br>上一页 <code>shift</code>+<code>command</code>+[ </p>
+<p>下一页 <code>shift</code>+<code>command</code>+]</p>
+</li>
+<li><p>切换窗口:<code>command</code>+`</p>
+</li>
+<li><p>返回上一浏览位置 (具体可在keymap内搜索back或forward查看)<br>返回上一次浏览位置back： <code>option</code>+<code>command</code>+ ← 或 <code>command</code>+ [<br>返回下一次浏览位置forward： <code>option</code>+<code>command</code>+ →或 <code>command</code>+ ]</p>
+</li>
+<li><p>浮窗显示调用变量/方法定义：command + Y</p>
+</li>
+<li><p><strong>高亮</strong> - 查看某个变量在那个地方调用了：Cmd + Shift + Fn + F7</p>
+</li>
+<li><p><strong>查看类的层次结构</strong> ：Control + H</p>
+</li>
+<li><p><strong>自动生成变量</strong>：Cmd + Alt + V （Alt即option）</p>
+</li>
+<li><p><strong>自动提取参数</strong>：Cmd + Alt + P</p>
+</li>
+<li><p><strong>参数提示</strong>：Cmd + P</p>
+</li>
+<li><p><strong>快速跳转到父类</strong>：Cmd + U</p>
+</li>
+<li><p><strong>快速跳转到实现</strong>：Cmd + Option + B</p>
+</li>
+</ul>
+<h3 id="国际化，检查代码内的中文字符"><a href="#国际化，检查代码内的中文字符" class="headerlink" title="国际化，检查代码内的中文字符"></a>国际化，检查代码内的中文字符</h3><p>利用AS中的全局搜索+正则表达式，搜索。</p>
+<p>正则表达式:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">^((?!(*|//)).)+[\u4e00-\u9fa5]</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>打开全局搜索，位于 <code>Edit -&gt; Find - &gt; Fild in Path</code></p>
+<p><img src="/images/2019/04/as_find_in_path.png" width="400" height="400"></p>
+</li>
+<li><p>在输入框内输入正则表达式：<code>^((?!(*|//)).)+[\u4e00-\u9fa5]</code></p>
+</li>
+<li><p>钩上 <code>Regex</code>，也可钩上 <code>File mask</code>，用于查找指定文件后缀的文件</p>
+</li>
+<li><p><code>In Project</code>、<code>Module</code>、<code>Directory</code>、<code>Scope</code>用于指定查询路径</p>
+</li>
+<li><p>点击 <code>Open in Find Window</code>，在Find标签内一直保存。因为 <code>Fild in Path</code>窗口在你点击其他地方后就会消失。</p>
+</li>
+</ul>
+<p><img src="/images/2019/04/as_find_in_path.png" alt="as_find_in_path"></p>
+<h3 id="Fetch-failed-Could-not-read-from-remote-repository"><a href="#Fetch-failed-Could-not-read-from-remote-repository" class="headerlink" title="Fetch failed: Could not read from remote repository"></a>Fetch failed: Could not read from remote repository</h3><p>今天兴致勃勃地将Mac上地Android Studio 3.0升级到了3.1。但是用AS自带地图形化按钮提交和更新代码时（使用Git），却一直提示 “Fetch failed: Could not read from remote repository”。这可真是郁闷啊。Add、Commit都可以，就时Push不行。Add、Commit是对本地仓库地操作。用终端命令push又是可以的，所以该问题可以断定是3.1地AS将git的某个或某些配置改掉了。 解决途径： AS下进入： Settings -&gt; Version Control -&gt; Git -&gt; SSH Executable 如果SSH Executable选择的是Built-in，将它改为Native。 OK！大功告成！</p>
+<h3 id="AS直接安装apk提示：安装包有异常，无法安装"><a href="#AS直接安装apk提示：安装包有异常，无法安装" class="headerlink" title="AS直接安装apk提示：安装包有异常，无法安装"></a>AS直接安装apk提示：安装包有异常，无法安装</h3><p>Android Studio 3.0会在debug apk的manifest文件application标签里自动添加 <code>android:testOnly=&quot;true&quot;</code>属性，导致IDE中run跑出的apk在大部分手机上只能用<code>adb install -t</code>来安装，在oppo手机上甚至安装不了</p>
+<h4 id="解决方式"><a href="#解决方式" class="headerlink" title="解决方式"></a>解决方式</h4><p>在主工程 <code>/gradle.properties</code>内加入如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># gradle.properties</span><br><span class="line">android.injected.testOnly=<span class="keyword">false</span></span><br></pre></td></tr></table></figure>
+<p>AS禁用原因：大致就是安全性问题</p>
+<p><a href="https://commonsware.com/blog/2017/10/31/android-studio-3p0-flag-test-only.html" target="_blank" rel="noopener">Android Studio 3.0 and FLAG_TEST_ONLY</a></p>
+<h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><p><a href="https://gist.github.com/xujiaao/5fd127a72979cdc3c70dcc1324786f87" target="_blank" rel="noopener">Disable ‘testOnly’ mode for Android Studio 3.0</a></p>
+<h3 id="More-than-one-file-was-found-with-OS-independent-path-‘META-INF-proguard-androidx-annotations-pro’"><a href="#More-than-one-file-was-found-with-OS-independent-path-‘META-INF-proguard-androidx-annotations-pro’" class="headerlink" title="More than one file was found with OS independent path ‘META-INF/proguard/androidx-annotations.pro’"></a>More than one file was found with OS independent path ‘META-INF/proguard/androidx-annotations.pro’</h3><h4 id="处理方式"><a href="#处理方式" class="headerlink" title="处理方式"></a>处理方式</h4><p>在 <strong><code>app/build.gradle</code></strong>内加入如下：</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">android &#123;</span><br><span class="line">    packagingOptions &#123;</span><br><span class="line">        <span class="keyword">exclude</span> <span class="string">'META-INF/proguard/androidx-annotations.pro'</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>在<code>android节点内添加</code>packagingOptions`的内容</p>
+</blockquote>
+<h4 id="参考-1"><a href="#参考-1" class="headerlink" title="参考"></a>参考</h4><p><a href="https://stackoverflow.com/questions/52518378/more-than-one-file-was-found-with-os-independent-path-meta-inf-proguard-android" target="_blank" rel="noopener">More than one file was found with OS independent path ‘META-INF/proguard/androidx-annotations.pro’</a></p>
+<h3 id="Invoke-customs-are-only-supported-starting-with-Android-O-–min-api-26"><a href="#Invoke-customs-are-only-supported-starting-with-Android-O-–min-api-26" class="headerlink" title="Invoke-customs are only supported starting with Android O (–min-api 26)"></a>Invoke-customs are only supported starting with Android O (–min-api 26)</h3><p><img src="/images/2020/04/invoke-customs_are_only_support_starting_with_Android_O.jpg" alt="Invoke-customs are only supported starting with Android O (--min-api 26)"></p>
+<h4 id="处理方式-1"><a href="#处理方式-1" class="headerlink" title="处理方式"></a>处理方式</h4><p>在 <strong><code>app/build.gradle</code></strong>内加入如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">android &#123;</span><br><span class="line">    compileOptions &#123;</span><br><span class="line">        sourceCompatibility JavaVersion.VERSION_1_8</span><br><span class="line">        targetCompatibility JavaVersion.VERSION_1_8</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>在`android节点内添加compileOptions的内容</p>
+</blockquote>
+<h4 id="参考-2"><a href="#参考-2" class="headerlink" title="参考"></a>参考</h4><p><a href="https://stackoverflow.com/questions/49891730/invoke-customs-are-only-supported-starting-with-android-0-min-api-26" target="_blank" rel="noopener">Invoke-customs are only supported starting with android 0 –min-api 26</a></p>
+<h2 id="Mac-快捷键"><a href="#Mac-快捷键" class="headerlink" title="Mac 快捷键"></a>Mac 快捷键</h2><ul>
+<li>全屏/退出全屏：<code>control</code>+<code>command</code>+F</li>
+<li>Finder(访达)显示/隐藏 隐藏的文件或文件夹： shift + command + .</li>
+</ul>
+<h2 id="绘制圆图"><a href="#绘制圆图" class="headerlink" title="绘制圆图"></a>绘制圆图</h2><ul>
+<li>drawCircle() + BitmapShader</li>
+<li>Paint.setXfermode()</li>
+</ul>
+<h2 id="subLime"><a href="#subLime" class="headerlink" title="subLime"></a>subLime</h2><ul>
+<li><p>设置不换行</p>
+<p><code>Preferences--&gt;Settings-User</code> </p>
+<p>添加 <code>&quot;word_wrap&quot; : false,</code></p>
+</li>
+<li><p>log日志过滤</p>
+<ol>
+<li>「command + F」后在底部输入需要过滤的关键字</li>
+<li>选择「Find All」</li>
+<li>「command + L」或「菜单栏Selection -&gt; Expand Selection to Line」:将选中项扩展为关键字所在行</li>
+<li>「command + C」:复制</li>
+<li>新建文档后在新文档内「command + V」复制到新文本</li>
+</ol>
+</li>
+</ul>
+<h2 id="权限"><a href="#权限" class="headerlink" title="权限"></a>权限</h2><h3 id="修改文件或文件夹拥有者"><a href="#修改文件或文件夹拥有者" class="headerlink" title="修改文件或文件夹拥有者"></a>修改文件或文件夹拥有者</h3><p><strong>使用权限</strong> : root</p>
+<h4 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chown [-fhv] [-R [-H | -L | -P]] owner[:group] file ...</span><br><span class="line">chown [-fhv] [-R [-H | -L | -P]] :group file ...</span><br></pre></td></tr></table></figure>
+<h4 id="参数"><a href="#参数" class="headerlink" title="参数 :"></a>参数 :</h4><ul>
+<li>user : 新的文件拥有者的使用者 ID</li>
+<li>group : 新的文件拥有者的使用者组(group)</li>
+<li>-c : 显示更改的部分的信息</li>
+<li>-f : 忽略错误信息</li>
+<li>-h :修复符号链接</li>
+<li>-v : 显示详细的处理信息</li>
+<li>-R : 处理指定目录以及其子目录下的所有文件</li>
+<li>–help : 显示辅助说明</li>
+<li>–version : 显示版本</li>
+</ul>
+<h4 id="事例："><a href="#事例：" class="headerlink" title="事例："></a>事例：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo chown -R $(whoami) ～/.ssh</span><br></pre></td></tr></table></figure>
+<p>修改 ～/.ssh目录及目录下的所有文件拥有者为 <code>$(whoami)</code>，</p>
+<p><code>$(whoami)</code>: 表示当前登录的用户</p>
+<h2 id="Android-开发注意事项"><a href="#Android-开发注意事项" class="headerlink" title="Android 开发注意事项"></a>Android 开发注意事项</h2><h3 id="不能在-Activity-没有完全显示时显示-PopupWindow-和-Dialog"><a href="#不能在-Activity-没有完全显示时显示-PopupWindow-和-Dialog" class="headerlink" title="不能在 Activity 没有完全显示时显示 PopupWindow 和 Dialog"></a>不能在 Activity 没有完全显示时显示 PopupWindow 和 Dialog</h3><p>说明：</p>
+<p>Android Activity 创建时的生命周期，按照 <code>onCreate() -&gt; onStart() -&gt; onResume() -&gt; onAttachedToWindow() -&gt; onWindowFocusChanged()</code> 的 顺 序 ， 其 中 在<code>Activity#onAttachedToWindow()</code> 时，Activity 会与它的 Window 关联，这时 UI 才 会开始绘制，在 <code>Activity#onWindowFocusChanged()</code> 时，UI 才变成可交互状态，可以提示用户使用。如果在 Window 未关联时就创建对话框，UI 可能显示异常。 推荐的做法是在 <code>Activity#onAttachedToWindow()</code> 之后(其实最好是<code>Activity#onWindowFocusChanged()</code> 之后)才创建对话框。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持是对我最大的鼓励！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Haitao Ni 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.png" alt="Haitao Ni 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/备忘录/" rel="tag"># 备忘录</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/3800276053/" rel="next" title="文章收集">
+                <i class="fa fa-chevron-left"></i> 文章收集
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/127571935/" rel="prev" title="Gson list处理">
+                Gson list处理 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar" rel="external nofollow">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar/avatar.png" alt="Haitao Ni">
+            
+              <p class="site-author-name" itemprop="name">Haitao Ni</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">79</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">49</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">85</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:haitao_ni@nhtzj.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Gradle"><span class="nav-number">1.</span> <span class="nav-text">Gradle</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#下载的依赖包在什么位置？"><span class="nav-number">1.1.</span> <span class="nav-text">下载的依赖包在什么位置？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#下载的插件包在什么位置"><span class="nav-number">1.2.</span> <span class="nav-text">下载的插件包在什么位置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Gradle离线下载配置"><span class="nav-number">1.3.</span> <span class="nav-text">Gradle离线下载配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#gradle版本和插件版本对应关系"><span class="nav-number">1.4.</span> <span class="nav-text">gradle版本和插件版本对应关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#gradle命令"><span class="nav-number">1.5.</span> <span class="nav-text">gradle命令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SSH"><span class="nav-number">2.</span> <span class="nav-text">SSH</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#修改密码"><span class="nav-number">2.1.</span> <span class="nav-text">修改密码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Mac-app打开问题处理"><span class="nav-number">3.</span> <span class="nav-text">Mac app打开问题处理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#显示-“安全性与隐私”-“任何来源”"><span class="nav-number">3.1.</span> <span class="nav-text">显示 “安全性与隐私”-“任何来源”</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#macOS-10-15-Catalina-xxx-app已损坏，无法打开，你应该将它移到废纸篓解决方法"><span class="nav-number">3.2.</span> <span class="nav-text">macOS 10.15 Catalina xxx.app已损坏，无法打开，你应该将它移到废纸篓解决方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#绕过公证："><span class="nav-number">3.2.1.</span> <span class="nav-text">绕过公证：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#某个程序绕开公证。-想恢复公正许怎么做"><span class="nav-number">3.2.2.</span> <span class="nav-text">某个程序绕开公证。 想恢复公正许怎么做</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Mac下用Charles实现Android-http和https抓包"><span class="nav-number">4.</span> <span class="nav-text">Mac下用Charles实现Android http和https抓包</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Mac更新系统后无法使用git"><span class="nav-number">5.</span> <span class="nav-text">Mac更新系统后无法使用git</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#解决方案："><span class="nav-number">5.1.</span> <span class="nav-text">解决方案：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#adb"><span class="nav-number">6.</span> <span class="nav-text">adb</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#多设备在线时，指定设备"><span class="nav-number">6.1.</span> <span class="nav-text">多设备在线时，指定设备</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Git"><span class="nav-number">7.</span> <span class="nav-text">Git</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#删除分支（本地、远程）"><span class="nav-number">7.1.</span> <span class="nav-text">删除分支（本地、远程）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#修改分支名称"><span class="nav-number">7.2.</span> <span class="nav-text">修改分支名称</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#回退"><span class="nav-number">7.3.</span> <span class="nav-text">回退</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ssh与https相互切换"><span class="nav-number">7.4.</span> <span class="nav-text">ssh与https相互切换</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#从ssh切换到https"><span class="nav-number">7.4.1.</span> <span class="nav-text">从ssh切换到https</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#从ssh切换到https-1"><span class="nav-number">7.4.2.</span> <span class="nav-text">从ssh切换到https</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其他"><span class="nav-number">7.5.</span> <span class="nav-text">其他</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Iterm2"><span class="nav-number">8.</span> <span class="nav-text">Iterm2</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#快捷键"><span class="nav-number">8.1.</span> <span class="nav-text">快捷键</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分屏"><span class="nav-number">8.2.</span> <span class="nav-text">分屏</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#命令"><span class="nav-number">8.3.</span> <span class="nav-text">命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#行内"><span class="nav-number">8.4.</span> <span class="nav-text">行内</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其他-1"><span class="nav-number">8.5.</span> <span class="nav-text">其他</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Vim-命令"><span class="nav-number">9.</span> <span class="nav-text">Vim 命令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#多行注释"><span class="nav-number">9.1.</span> <span class="nav-text">多行注释</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#取消多行注释"><span class="nav-number">9.2.</span> <span class="nav-text">取消多行注释</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Android-Studio"><span class="nav-number">10.</span> <span class="nav-text">Android Studio</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#快捷键-1"><span class="nav-number">10.1.</span> <span class="nav-text">快捷键</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#国际化，检查代码内的中文字符"><span class="nav-number">10.2.</span> <span class="nav-text">国际化，检查代码内的中文字符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Fetch-failed-Could-not-read-from-remote-repository"><span class="nav-number">10.3.</span> <span class="nav-text">Fetch failed: Could not read from remote repository</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#AS直接安装apk提示：安装包有异常，无法安装"><span class="nav-number">10.4.</span> <span class="nav-text">AS直接安装apk提示：安装包有异常，无法安装</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#解决方式"><span class="nav-number">10.4.1.</span> <span class="nav-text">解决方式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#参考"><span class="nav-number">10.4.2.</span> <span class="nav-text">参考</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#More-than-one-file-was-found-with-OS-independent-path-‘META-INF-proguard-androidx-annotations-pro’"><span class="nav-number">10.5.</span> <span class="nav-text">More than one file was found with OS independent path ‘META-INF/proguard/androidx-annotations.pro’</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#处理方式"><span class="nav-number">10.5.1.</span> <span class="nav-text">处理方式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#参考-1"><span class="nav-number">10.5.2.</span> <span class="nav-text">参考</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Invoke-customs-are-only-supported-starting-with-Android-O-–min-api-26"><span class="nav-number">10.6.</span> <span class="nav-text">Invoke-customs are only supported starting with Android O (–min-api 26)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#处理方式-1"><span class="nav-number">10.6.1.</span> <span class="nav-text">处理方式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#参考-2"><span class="nav-number">10.6.2.</span> <span class="nav-text">参考</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Mac-快捷键"><span class="nav-number">11.</span> <span class="nav-text">Mac 快捷键</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#绘制圆图"><span class="nav-number">12.</span> <span class="nav-text">绘制圆图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#subLime"><span class="nav-number">13.</span> <span class="nav-text">subLime</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#权限"><span class="nav-number">14.</span> <span class="nav-text">权限</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#修改文件或文件夹拥有者"><span class="nav-number">14.1.</span> <span class="nav-text">修改文件或文件夹拥有者</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#语法"><span class="nav-number">14.1.1.</span> <span class="nav-text">语法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#参数"><span class="nav-number">14.1.2.</span> <span class="nav-text">参数 :</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#事例："><span class="nav-number">14.1.3.</span> <span class="nav-text">事例：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Android-开发注意事项"><span class="nav-number">15.</span> <span class="nav-text">Android 开发注意事项</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#不能在-Activity-没有完全显示时显示-PopupWindow-和-Dialog"><span class="nav-number">15.1.</span> <span class="nav-text">不能在 Activity 没有完全显示时显示 PopupWindow 和 Dialog</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2023</span>
+
+
+  <div class="powered-by"><a class="theme-link" target="_blank" href="https://beian.miit.gov.cn/" rel="external nofollow" title="工业和信息化部ICP/IP地址/域名信息备案管理系统">浙ICP备17020869号</a></div>
+
+
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Haitao Ni</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'gaKW5YWAvf7NBOlU9eFbxN8O-gzGzoHsz',
+        appKey: 'susRHyMS8Fq1XyKXg0r9ad85',
+        placeholder: '填上邮箱可以收到我的回复哦 (*^ω^*)~~',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+
+//新增以下代码即可，可以移除.info下所有子节点。
+var infoEle = document.querySelector('#comments .info');
+if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0){
+  infoEle.childNodes.forEach(function(item) {
+    item.parentNode.removeChild(item);
+  });
+}
+
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("gaKW5YWAvf7NBOlU9eFbxN8O-gzGzoHsz", "susRHyMS8Fq1XyKXg0r9ad85");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+
+
+  
+
+  
+
+</body>
+</html>

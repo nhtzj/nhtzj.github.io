@@ -1,0 +1,1784 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="uW8bwgMGUwIA01nPfh0oty1rmtmmuVkOVGaS9O0nQUg">
+
+
+
+
+
+
+
+
+  <meta name="baidu-site-verification" content="NeE6tPH3W1">
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico?v=5.1.4">
+
+
+
+
+
+
+
+  <meta name="keywords" content="view,Canvas">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="海的那边" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="前言本篇主要记录Canvas 的绘制类方法： drawXXX() 。 关于画笔、范围裁切和几何变换的详细介绍，放到之后的篇章中具体展开。 预备知识坐标系 Android坐标系将屏幕的左上角的顶点作为Android坐标系的原点，这个原点向右是X轴正方向，原点向下是Y轴正方向。 并且提供了View.getLocationInWindow()、View.getLocationOnScreen()方法来获">
+<meta name="keywords" content="view,Canvas">
+<meta property="og:type" content="article">
+<meta property="og:title" content="自定义View之Canvas.drawXXX()">
+<meta property="og:url" content="http://www.nhtzj.com/3854066347/index.html">
+<meta property="og:site_name" content="海的那边">
+<meta property="og:description" content="前言本篇主要记录Canvas 的绘制类方法： drawXXX() 。 关于画笔、范围裁切和几何变换的详细介绍，放到之后的篇章中具体展开。 预备知识坐标系 Android坐标系将屏幕的左上角的顶点作为Android坐标系的原点，这个原点向右是X轴正方向，原点向下是Y轴正方向。 并且提供了View.getLocationInWindow()、View.getLocationOnScreen()方法来获">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/08/Android坐标系.jpg">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/08/视图坐标系.jpg">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/08/drawColor.jpg">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/08/paint_red.jpg">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/08/paint_stroke.jpg">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/08/paint_stroke_width.jpg">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/08/paint_anti_alias_big.jpg">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/08/drawRoundRect.png">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/08/drawPoints_offset.jpg">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/08/drawArc.png">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/08/FontMetrics.png">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/08/drawBitmapMesh.jpg">
+<meta property="og:updated_time" content="2018-08-24T06:59:24.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="自定义View之Canvas.drawXXX()">
+<meta name="twitter:description" content="前言本篇主要记录Canvas 的绘制类方法： drawXXX() 。 关于画笔、范围裁切和几何变换的详细介绍，放到之后的篇章中具体展开。 预备知识坐标系 Android坐标系将屏幕的左上角的顶点作为Android坐标系的原点，这个原点向右是X轴正方向，原点向下是Y轴正方向。 并且提供了View.getLocationInWindow()、View.getLocationOnScreen()方法来获">
+<meta name="twitter:image" content="http://www.nhtzj.com/images/2018/08/Android坐标系.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.nhtzj.com/3854066347/">
+
+
+
+
+
+  <title>自定义View之Canvas.drawXXX() | 海的那边</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">海的那边</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">人无远虑，必有近忧</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.nhtzj.com/3854066347/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Haitao Ni">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="海的那边">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">自定义View之Canvas.drawXXX()</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-14T17:33:04+08:00">
+                2018-08-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/android/" itemprop="url" rel="index">
+                    <span itemprop="name">android</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/android/view/" itemprop="url" rel="index">
+                    <span itemprop="name">view</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/android/view/自定义/" itemprop="url" rel="index">
+                    <span itemprop="name">自定义</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/android/view/自定义/基础/" itemprop="url" rel="index">
+                    <span itemprop="name">基础</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/3854066347/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/3854066347/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/3854066347/" class="leancloud_visitors" data-flag-title="自定义View之Canvas.drawXXX()">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  4,554
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  21
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>本篇主要记录Canvas 的绘制类方法： drawXXX() 。</p>
+<p>关于画笔、范围裁切和几何变换的详细介绍，放到之后的篇章中具体展开。</p>
+<h2 id="预备知识"><a href="#预备知识" class="headerlink" title="预备知识"></a>预备知识</h2><p><strong>坐标系</strong></p>
+<h3 id="Android坐标系"><a href="#Android坐标系" class="headerlink" title="Android坐标系"></a>Android坐标系</h3><p>将屏幕的左上角的顶点作为Android坐标系的原点，这个原点向右是X轴正方向，原点向下是Y轴正方向。</p>
+<p>并且提供了<code>View.getLocationInWindow()、View.getLocationOnScreen()</code>方法来获取view在屏幕中的坐标。详见<a href="/2821410600/">Android获得控件在屏幕中的坐标</a></p>
+<p><img src="/images/2018/08/Android坐标系.jpg" alt="Android坐标系"></p>
+<h3 id="视图坐标系"><a href="#视图坐标系" class="headerlink" title="视图坐标系"></a>视图坐标系</h3><p>相对父布局而言。</p>
+<p><img src="/images/2018/08/视图坐标系.jpg" alt="视图坐标系"></p>
+<p>如上图所示有如下几类：</p>
+<ul>
+<li>自身宽高（getHeight()、getWidth()）</li>
+<li>相对父容器坐标（getTop()、getLeft()、getRight()、getBottom()）</li>
+<li>MotionEvent提供的方法（getX()、getY()、getRawX()、getRawY()，其中前两个是相对于父容器，后两个是相对于屏幕）</li>
+</ul>
+<p><a name="coordinates_canvas"></a></p>
+<h3 id="Canvas坐标系"><a href="#Canvas坐标系" class="headerlink" title="Canvas坐标系"></a>Canvas坐标系</h3><p>Canvas坐标系指的是Canvas本身的坐标系，Canvas坐标系有且只有一个，且是唯一不变的，其坐标原点在View的左上角，从坐标原点向右为x轴的正半轴，从坐标原点向下为y轴的正半轴。</p>
+<p><a name="coordinates_draw"></a></p>
+<h3 id="绘图坐标系"><a href="#绘图坐标系" class="headerlink" title="绘图坐标系"></a>绘图坐标系</h3><p>Canvas的drawXXX方法中传入的各种坐标指的都是绘图坐标系中的坐标，而非Canvas坐标系中的坐标。默认情况下，绘图坐标系与Canvas坐标系完全重合，即初始状况下，绘图坐标系的坐标原点也在View的左上角，从原点向右为x轴正半轴，从原点向下为y轴正半轴。但不同于Canvas坐标系，绘图坐标系并不是一成不变的，可以通过调用Canvas的translate方法平移坐标系，可以通过Canvas的rotate方法旋转坐标系，还可以通过Canvas的scale方法缩放坐标系，而且需要注意的是，translate、rotate、scale的操作都是基于当前绘图坐标系的，而不是基于Canvas坐标系，一旦通过以上方法对坐标系进行了操作之后，当前绘图坐标系就变化了，以后绘图都是基于更新的绘图坐标系了。也就是说，真正对我们绘图有用的是绘图坐标系而非Canvas坐标系。</p>
+<h2 id="drawXX系列"><a href="#drawXX系列" class="headerlink" title="drawXX系列"></a>drawXX系列</h2><p>常见的drawXX有：drawColor()、drawCircle()、drawRect()、drawPoint()、drawOval()、drawLine()、drawRoundRect()、drawArc()、drawPath()、drawText()、drawBitmap()</p>
+<p>接下来就逐个介绍一下Canvas的各个drawXX方法的效果。</p>
+<p>一般这些方法在<code>protected void onDraw(Canvas canvas)</code>方法中进行绘制。</p>
+<h3 id="drawColor-ColorInt-int-color"><a href="#drawColor-ColorInt-int-color" class="headerlink" title="drawColor(@ColorInt int color)"></a>drawColor(@ColorInt int color)</h3><p>在画布上填充（画）一层指定的颜色。<br>如:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onDraw</span><span class="params">(Canvas canvas)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onDraw(canvas);</span><br><span class="line"><span class="comment">//        canvas.drawColor(Color.parseColor("#FF0000"));</span></span><br><span class="line">        canvas.drawColor(Color.RED);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>另一方法：<strong><code>drawColor(@ColorInt int color, @NonNull PorterDuff.Mode mode)</code></strong></p>
+<p>指定了PorterDuff模式，该参数的具体说明在下面章节中详细说明。这里简单提一下：该参数是设置绘画的重叠效果。</p>
+<p><code>drawColor(@ColorInt int color)</code>内部是指定为<code>PorterDuff.Mode.SRC_OVER</code>，这种模式的效果就是会覆盖之前的内容。</p>
+<p>示例（盗用下别人的图）：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">drawColor(Color.parse(<span class="string">"#88880000"</span>); <span class="comment">// 半透明红色</span></span><br></pre></td></tr></table></figure>
+<p><img src="/images/2018/08/drawColor.jpg" alt="drawColor"></p>
+<p>绘制颜色的还有两个方法<code>drawARGB(int a, int r, int g, int b)</code>和<code>drawRGB(int r, int g, int b)</code>。</p>
+<p>这两个方法分别是通过传入ARGB、RGB 颜色值，进行颜色填充。其中各参数的取值范围为[0,255]。</p>
+<p>可以看到，这两个方法内部最终是调用了<code>drawColor()</code>方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">drawARGB</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> r, <span class="keyword">int</span> g, <span class="keyword">int</span> b)</span> </span>&#123;</span><br><span class="line">    drawColor(Color.argb(a, r, g, b));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">drawRGB</span><span class="params">(<span class="keyword">int</span> r, <span class="keyword">int</span> g, <span class="keyword">int</span> b)</span> </span>&#123;</span><br><span class="line">    drawColor(Color.rgb(r, g, b));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="drawCircle-float-cx-float-cy-float-radius-NonNull-Paint-paint"><a href="#drawCircle-float-cx-float-cy-float-radius-NonNull-Paint-paint" class="headerlink" title="drawCircle(float cx, float cy, float radius, @NonNull Paint paint)"></a>drawCircle(float cx, float cy, float radius, @NonNull Paint paint)</h3><p>以（cx,cy）坐标为圆心，radius为半径，用paint画笔画一个圆。</p>
+<p>其中cx、cy、radius用以确定圆的位置，而第四个参数paint则是控制所画圆的效果。</p>
+<p>比如：</p>
+<h4 id="一：Paint-setColor-ColorInt-int-color"><a href="#一：Paint-setColor-ColorInt-int-color" class="headerlink" title="一：Paint.setColor(@ColorInt int color)"></a><strong>一：Paint.setColor(@ColorInt int color)</strong></h4><p>设置画笔颜色</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">paint.setColor(Color.RED); <span class="comment">// 设置为红色</span></span><br><span class="line">canvas.drawCircle(<span class="number">300</span>, <span class="number">300</span>, <span class="number">200</span>, paint);</span><br></pre></td></tr></table></figure>
+<p><img src="/images/2018/08/paint_red.jpg" alt="paint_red"></p>
+<p><a name="setStyle"></a></p>
+<h4 id="二：Paint-setStyle-Style-style"><a href="#二：Paint-setStyle-Style-style" class="headerlink" title="二：Paint.setStyle(Style style)"></a><strong>二：Paint.setStyle(Style style)</strong></h4><p>设置画笔样式，系统提供了3种：</p>
+<ul>
+<li>Paint.Style.FILL    :0，填充模式，是paint的默认模式<br>   Paint.Style.STROKE    :1，画线模式<br>   Paint.Style.FILL_AND_STROKE    :2，填充完后画线</li>
+</ul>
+<p>所以drawCircle时，paint为STROKE样式，则画出来的是一个圆环。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">paint.setStyle(Paint.Style.STROKE); <span class="comment">// Style 修改为画线模式</span></span><br><span class="line">canvas.drawCircle(<span class="number">300</span>, <span class="number">300</span>, <span class="number">200</span>, paint);</span><br></pre></td></tr></table></figure>
+<p><img src="/images/2018/08/paint_stroke.jpg" alt="paint_stroke"></p>
+<p><strong>注</strong>：本篇未涉及到画布的几何变换（<strong>translate</strong>、<strong>rotate</strong>、<strong>scale</strong>、<strong>skew</strong>），所以这边的坐标系都以当前view左上角为原点，坐标原点向右为x轴的正半轴，从坐标原点向下为y轴的正半轴，即 <a href="#coordinates_canvas">Canvas坐标系</a>。</p>
+<p><a name="setStrokeWidth"></a></p>
+<h4 id="三：Paint-setStrokeWidth-float-width"><a href="#三：Paint-setStrokeWidth-float-width" class="headerlink" title="三：Paint.setStrokeWidth(float width)"></a><strong>三：Paint.setStrokeWidth(float width)</strong></h4><p>为STROKE模式或FILL_AND_STROKE模式设置线条的宽度。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">paint.setStyle(Paint.Style.STROKE);</span><br><span class="line">paint.setStrokeWidth(<span class="number">20</span>); <span class="comment">// 线条宽度为 20 像素</span></span><br><span class="line">canvas.drawCircle(<span class="number">300</span>, <span class="number">300</span>, <span class="number">200</span>, paint);</span><br></pre></td></tr></table></figure>
+<p><img src="/images/2018/08/paint_stroke_width.jpg" alt="paint_stroke_width"></p>
+<p><a name="setAntiAlias"></a></p>
+<h4 id="四：-Paint-setAntiAlias-boolean-aa"><a href="#四：-Paint-setAntiAlias-boolean-aa" class="headerlink" title="四： Paint.setAntiAlias(boolean aa)"></a>四： <strong>Paint.setAntiAlias(boolean aa)</strong></h4><p>抗锯齿。让图形和文字的边缘更加平滑。</p>
+<p>也可在 new Paint() 的时候加上一个 <code>Paint.ANTI_ALIAS_FLAG</code> 参数。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Paint paint = <span class="keyword">new</span> Paint(Paint.ANTI_ALIAS_FLAG);</span><br></pre></td></tr></table></figure>
+<p>锯齿出现的主要原因是屏幕的分辨率过低，使得绘制的边缘出现颗粒化。抗锯齿效果是修改图形边缘处的像素颜色，从而<strong>让图形在肉眼看来具有更加平滑的感觉</strong>。</p>
+<p><img src="/images/2018/08/paint_anti_alias_big.jpg" alt="/paint_anti_alias"></p>
+<h3 id="drawRect-float-left-float-top-float-right-float-bottom-NonNull-Paint-paint"><a href="#drawRect-float-left-float-top-float-right-float-bottom-NonNull-Paint-paint" class="headerlink" title="drawRect(float left, float top, float right, float bottom, @NonNull Paint paint)"></a>drawRect(float left, float top, float right, float bottom, @NonNull Paint paint)</h3><p>用paint绘制指定大小的矩形。矩形的大小形状由left、top、right、bottom四个参数决定。矩形的实心、空心等属性由paint决定。</p>
+<p><a name="drawRect_override"></a><br>重载方法：</p>
+<ul>
+<li>drawRect(@NonNull RectF rect, @NonNull Paint paint)</li>
+<li>drawRect(@NonNull Rect r, @NonNull Paint paint)</li>
+</ul>
+<p>这两个方法通过第一个参数确定所绘制的矩形的4边位置。RectF和Rect内部都维护了left、top、right、bottom四个参数。区别是RectF内的是float类型，Rect内的是int类型。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RectF</span> <span class="keyword">implements</span> <span class="title">Parcelable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">float</span> left;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">float</span> top;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">float</span> right;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">float</span> bottom;</span><br><span class="line">    ……</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Rect</span> <span class="keyword">implements</span> <span class="title">Parcelable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span> left;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span> top;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span> right;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span> bottom;</span><br><span class="line">    ……</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><a name="drawRoundRect"></a></p>
+<h3 id="drawRoundRect-float-left-float-top-float-right-float-bottom-float-rx-float-ry-NonNull-Paint-paint"><a href="#drawRoundRect-float-left-float-top-float-right-float-bottom-float-rx-float-ry-NonNull-Paint-paint" class="headerlink" title="drawRoundRect(float left, float top, float right, float bottom, float rx, float ry, @NonNull Paint paint)"></a>drawRoundRect(float left, float top, float right, float bottom, float rx, float ry, @NonNull Paint paint)</h3><p>绘制圆角矩形。</p>
+<p>与<code>drawRect()</code>类似，不过<code>drawRoundRect()</code>在paint前多传了两个参数用以确定四个圆角的弧度。</p>
+<p>rx、ry分别与left、top、right、bottom四边形成四个矩形绘制椭圆，此椭圆的一边形成圆角矩形的圆角。</p>
+<p>与<code>drawRect()</code>类似，该方法还有一个重载方法<code>drawRoundRect(@NonNull RectF rect, float rx, float ry, @NonNull Paint paint)</code>，通过RectF确定四边。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">    paint = <span class="keyword">new</span> Paint(Paint.ANTI_ALIAS_FLAG);</span><br><span class="line">    paint.setColor(Color.RED);</span><br><span class="line">    paint.setStyle(Paint.Style.STROKE);</span><br><span class="line">    </span><br><span class="line"><span class="meta">@TargetApi</span>(Build.VERSION_CODES.LOLLIPOP)</span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onDraw</span><span class="params">(Canvas canvas)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onDraw(canvas);</span><br><span class="line">    paint.setStrokeWidth(<span class="number">6</span>);</span><br><span class="line">    canvas.drawRoundRect(<span class="number">100</span>, <span class="number">100</span>, <span class="number">200</span>, <span class="number">300</span>, <span class="number">100</span>, <span class="number">200</span>, paint);</span><br><span class="line">    canvas.drawRoundRect(<span class="number">300</span>, <span class="number">100</span>, <span class="number">600</span>, <span class="number">600</span>, <span class="number">100</span>, <span class="number">200</span>, paint);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="/images/2018/08/drawRoundRect.png" alt="drawRoundRect"></p>
+<h3 id="drawPoint-float-x-float-y-NonNull-Paint-paint"><a href="#drawPoint-float-x-float-y-NonNull-Paint-paint" class="headerlink" title="drawPoint(float x, float y, @NonNull Paint paint)"></a>drawPoint(float x, float y, @NonNull Paint paint)</h3><p>绘制点。</p>
+<p>x，y确定点的位置。paint控制点的属性。</p>
+<p><code>drawPoint()</code>中常用的Paint属性有：</p>
+<ul>
+<li>Paint.setStrokeWidth(width)：设置点的大小</li>
+<li>Paint.setStrokeCap(cap)：设置点的形状<ul>
+<li>Paint.Cap.ROUND ：圆头，画线的时候会长于原始长度补半圆形</li>
+<li>Paint.Cap.SQUARE：方头，画线的时候会长于原始长度补方形</li>
+<li>Paint.Cap.BUTT：方头，画线的时候会等于原始长度，平头</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>注：Paint.setStrokeCap(cap) 可以设置点的形状，但这个方法并不是专门用来设置点的形状的，而是一个设置线条端点形状的方法。端点有圆头 (ROUND)、平头 (BUTT) 和方头 (SQUARE) 三种</p>
+</blockquote>
+<p>与<code>drawPoint()</code>类似还有两个画点的方法：</p>
+<ul>
+<li><strong>drawPoints(@Size(multiple = 2) @NonNull float[] pts, @NonNull Paint paint) </strong> </li>
+<li><strong>drawPoints(@Size(multiple = 2) float[] pts, int offset, int count, @NonNull Paint paint)</strong> </li>
+</ul>
+<p>这两个方法的作用是批量画点。</p>
+<p>通过pts数组（数组长度是2的倍数）传入点的位置，两个为一组。</p>
+<p>第二个方法中offset表示跳过pts数组中的前offset项开始记count个数，绘制count/2个点。</p>
+<p>比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">float</span>[] points = &#123;<span class="number">0</span>, <span class="number">0</span>, <span class="number">50</span>, <span class="number">50</span>, <span class="number">50</span>, <span class="number">100</span>, <span class="number">100</span>, <span class="number">50</span>, <span class="number">100</span>, <span class="number">100</span>, <span class="number">150</span>, <span class="number">50</span>, <span class="number">150</span>, <span class="number">100</span>&#125;;</span><br><span class="line"><span class="comment">// 绘制四个点：(50, 50) (50, 100) (100, 50) (100, 100)</span></span><br><span class="line">canvas.drawPoints(points, <span class="number">2</span> <span class="comment">/* 跳过两个数，即前两个 0 */</span>,</span><br><span class="line">          <span class="number">8</span> <span class="comment">/* 一共绘制 8 个数（4 个点）*/</span>, paint);</span><br></pre></td></tr></table></figure>
+<p><img src="/images/2018/08/drawPoints_offset.jpg" alt="drawPoints_offset"></p>
+<h3 id="drawOval-float-left-float-top-float-right-float-bottom-NonNull-Paint-paint"><a href="#drawOval-float-left-float-top-float-right-float-bottom-NonNull-Paint-paint" class="headerlink" title="drawOval(float left, float top, float right, float bottom, @NonNull Paint paint)"></a>drawOval(float left, float top, float right, float bottom, @NonNull Paint paint)</h3><p>绘制椭圆。</p>
+<p>当left、top、right、bottom四边围成的是一个正方形时，绘制出来的是圆形。</p>
+<p>重载方法：<code>drawOval(@NonNull RectF oval, @NonNull Paint paint)</code></p>
+<h3 id="drawLine-float-startX-float-startY-float-stopX-float-stopY-NonNull-Paint-paint"><a href="#drawLine-float-startX-float-startY-float-stopX-float-stopY-NonNull-Paint-paint" class="headerlink" title="drawLine(float startX, float startY, float stopX, float stopY, @NonNull Paint paint)"></a>drawLine(float startX, float startY, float stopX, float stopY, @NonNull Paint paint)</h3><p>绘制一条直线。(startX,startY)为绘制起点，(stopX,stopY)为绘制终点，如果线条很粗，则从startY对半延伸。</p>
+<p>绘制多条直线：</p>
+<ul>
+<li>drawLines(@Size(multiple = 4) @NonNull float[] pts, int offset, int count, @NonNull Paint paint)</li>
+<li>drawLines(@Size(multiple = 4) @NonNull float[] pts, @NonNull Paint paint)</li>
+</ul>
+<p>这两个方法与<strong><code>drawPoints()</code></strong>类似，不过<code>drawLines()</code>中的pts数组长度必须是4的倍数，用以确定每条线的起点与终点。</p>
+<h3 id="drawArc-float-left-float-top-float-right-float-bottom-float-startAngle-float-sweepAngle-boolean-useCenter-NonNull-Paint-paint"><a href="#drawArc-float-left-float-top-float-right-float-bottom-float-startAngle-float-sweepAngle-boolean-useCenter-NonNull-Paint-paint" class="headerlink" title="drawArc(float left, float top, float right, float bottom, float startAngle, float sweepAngle, boolean useCenter, @NonNull Paint paint)"></a>drawArc(float left, float top, float right, float bottom, float startAngle, float sweepAngle, boolean useCenter, @NonNull Paint paint)</h3><p>绘制弧线，用一个椭圆来描述弧形。</p>
+<p>left, top, right, bottom 描述的是这个弧形所在的椭圆；</p>
+<p>startAngle 是弧形的起始角度（x 轴的正向，即正右的方向，是 0 度的位置；顺时针为正角度，逆时针为负角度）；</p>
+<p>sweepAngle 是弧形划过的角度；</p>
+<p>useCenter 表示是否连接到圆心，如果不连接到圆心，就是弧形，如果连接到圆心，就是扇形。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">paint.setStyle(Paint.Style.FILL); <span class="comment">// 填充模式</span></span><br><span class="line">canvas.drawArc(<span class="number">200</span>, <span class="number">100</span>, <span class="number">800</span>, <span class="number">500</span>, -<span class="number">110</span>, <span class="number">100</span>, <span class="keyword">true</span>, paint); <span class="comment">// 绘制扇形</span></span><br><span class="line">canvas.drawArc(<span class="number">200</span>, <span class="number">100</span>, <span class="number">800</span>, <span class="number">500</span>, <span class="number">20</span>, <span class="number">100</span>, <span class="keyword">false</span>, paint); <span class="comment">// 绘制弧形</span></span><br><span class="line">paint.setStyle(Paint.Style.STROKE); <span class="comment">// 画线模式</span></span><br><span class="line">canvas.drawArc(<span class="number">200</span>, <span class="number">100</span>, <span class="number">800</span>, <span class="number">500</span>, <span class="number">130</span>, <span class="number">40</span>, <span class="keyword">true</span>, paint); <span class="comment">// 绘制封口的扇形边线</span></span><br><span class="line">canvas.drawArc(<span class="number">200</span>, <span class="number">100</span>, <span class="number">800</span>, <span class="number">500</span>, <span class="number">180</span>, <span class="number">60</span>, <span class="keyword">false</span>, paint); <span class="comment">// 绘制不封口的弧形</span></span><br></pre></td></tr></table></figure>
+<p><img src="/images/2018/08/drawArc.png" alt="drawArc"></p>
+<h3 id="drawText-NonNull-String-text-float-x-float-y-NonNull-Paint-paint"><a href="#drawText-NonNull-String-text-float-x-float-y-NonNull-Paint-paint" class="headerlink" title="drawText(@NonNull String text, float x, float y, @NonNull Paint paint)"></a>drawText(@NonNull String text, float x, float y, @NonNull Paint paint)</h3><p>绘制文字。</p>
+<p>text 是绘制的文字内容，(x,y)是绘制的起点位置（是文本对应的baseline处，并非绘制文本的左上角），paint用以控制绘制文本的属性（比如：Paint.setTextSize(textSize)，可以设置文字的大小；Paint.setTypeface(Typeface typeface)，设置字体）。</p>
+<p><img src="/images/2018/08/FontMetrics.png" alt="FontMetrics"></p>
+<p>重载方法：</p>
+<ul>
+<li>drawText(@NonNull char[] text, int index, int count, float x, float y, @NonNull Paint paint)</li>
+<li>drawText(@NonNull String text, int start, int end, float x, float y, @NonNull Paint paint)</li>
+<li>drawText(@NonNull CharSequence text, int start, int end, float x, float y, @NonNull Paint paint)</li>
+</ul>
+<p>这三个方法通过参数index、count或start、end去截取text中的内容进行绘制。</p>
+<p><a name="drawText_override"></a></p>
+<p>绘制文本的还有两个方法：</p>
+<ul>
+<li>drawTextOnPath(@NonNull char[] text, int index, int count, @NonNull Path path, float hOffset, float vOffset, @NonNull Paint paint)</li>
+<li>rawTextOnPath(@NonNull String text, @NonNull Path path, float hOffset, float vOffset, @NonNull Paint paint)</li>
+</ul>
+<p>这两个方法将文本绘制在path路径上。好比是之前的baseline是条直线，现在的baseline是path这条线。</p>
+<p>hOffset 和 vOffset是文字相对于 Path 的水平偏移量和竖直偏移量，利用它们可以调整文字的位置。</p>
+<blockquote>
+<p>关于drawText()配合paint的其他效果，将在下篇文章中具体展开。</p>
+</blockquote>
+<p><a name="drawPath"></a></p>
+<h3 id="drawPath-NonNull-Path-path-NonNull-Paint-paint"><a href="#drawPath-NonNull-Path-path-NonNull-Paint-paint" class="headerlink" title="drawPath(@NonNull Path path, @NonNull Paint paint)"></a>drawPath(@NonNull Path path, @NonNull Paint paint)</h3><p>绘制path路径（自定义图像），将path内容绘制出来。</p>
+<p>path中所涉及到的内容比较复杂，这节也会单独抽出来详细讲解path的用途。</p>
+<p>这里简单说一下path在<code>drawPath()</code>中可以做哪些事：线段、二次曲线、三次曲线。</p>
+<h3 id="drawBitmap-NonNull-Bitmap-bitmap-float-left-float-top-Nullable-Paint-paint"><a href="#drawBitmap-NonNull-Bitmap-bitmap-float-left-float-top-Nullable-Paint-paint" class="headerlink" title="drawBitmap(@NonNull Bitmap bitmap, float left, float top, @Nullable Paint paint)"></a>drawBitmap(@NonNull Bitmap bitmap, float left, float top, @Nullable Paint paint)</h3><p>绘制 Bitmap 对象，将Bitmap的内容绘制在指定位置（left,top）。（left,top）为绘制Bitmap对象的左上角。</p>
+<p>重载方法：</p>
+<ul>
+<li>drawBitmap(@NonNull Bitmap bitmap, @Nullable Rect src, @NonNull RectF dst, @Nullable Paint paint)</li>
+<li>drawBitmap(@NonNull Bitmap bitmap, @Nullable Rect src, @NonNull Rect dst, @Nullable Paint paint)</li>
+<li>drawBitmap(@NonNull Bitmap bitmap, @NonNull Matrix matrix, @Nullable Paint paint)</li>
+</ul>
+<p>前两个方法的唯一区别是dst参数的类型，这与<a href="#drawRect_override">drawRect的重载方法</a>中的类似，这里就一起讲解其作用。</p>
+<p>前两个方法中：</p>
+<ul>
+<li><p>src 用于裁剪bitmap，<code>drawBitmap()</code>方法只会绘制src所限定的区域</p>
+</li>
+<li><p>dst 用于确定bitmap绘制的位置，通过src所限定的区域内的bitmap内容会显示在dst区域内，并且会通过缩放铺满dst区域。通过修改dst值，可以实现图像的移动及缩放。</p>
+</li>
+</ul>
+<p>第三个方法传入的matrix来绘制bitmap。<code>drawBitmap()</code>的其他重载方法内部是使用了Canvas当前的matrix来进行几何变换。常用的方法有pre/postTranslate/Rotate/Scale/Skew()。</p>
+<p>关于几何变换，会在之后的篇章中详细介绍，尤其是对pre和post的几个方法组合调用先后关系的理解。</p>
+<p>关于drawBitmap的方法还有一个：<br><strong>drawBitmapMesh(@NonNull Bitmap bitmap, int meshWidth, int meshHeight,</strong><br>            <strong>@NonNull float[] verts, int vertOffset, @Nullable int[] colors, int colorOffset,</strong><br>            <strong>@Nullable Paint paint)</strong></p>
+<p>实现对 Bitmap 的各种扭曲。</p>
+<p>方法drawBitmapMesh中的Mesh翻译过来即：网格。</p>
+<p>将一个图片横向、纵向均匀切割成 n 份，就会形成一个「网格」，我把所有网格线的交点称为「顶点」。</p>
+<p>正常情况下，顶点是均匀分布的。当我们改变了顶点的位置时，系统会拿偏移后的顶点坐标，和原来的坐标进行对比，通过一套算法，将图片进行扭曲，像这样：</p>
+<p> <img src="/images/2018/08/drawBitmapMesh.jpg" alt="drawBitmapMesh"></p>
+<p>方法参数说明：</p>
+<ul>
+<li>bitmap - 需要转换的位图</li>
+<li>meshWidth - 横向的格数， 0的时候不会绘制</li>
+<li>meshHeight - 纵向的格数，0的时候不会绘制</li>
+<li>verts - 网格顶点坐标数组，记录扭曲后图片各顶点的坐标，数组大小为 (meshWidth+1) <em> (meshHeight+1) </em> 2 + vertOffset </li>
+<li>vertOffset - 从第几个顶点开始对位图进行扭曲，通常传 0</li>
+<li>colors - 设置网格顶点的颜色，该颜色会和位图对应像素的颜色叠加，数组大小为 (meshWidth+1) * (meshHeight+1) + colorOffset，可以传 null</li>
+<li>colorOffset - 从第几个顶点开始转换颜色，通常传 0</li>
+<li>paint - 「画笔」，可以传 null</li>
+</ul>
+<p>需要说明一下的是，可以用 colors 这个参数来实现阴影的效果，但在 API 18 以下开启了硬件加速，colors 这个参数是不起作用的</p>
+<p>具体的使用可以查看这篇文章<a href="https://juejin.im/post/58fb4c64ac502e0063a2721e" target="_blank" rel="noopener">浪起来！使用 drawBitmapMesh 实现仿真水波纹效果</a></p>
+<h2 id="官方介绍"><a href="#官方介绍" class="headerlink" title="官方介绍"></a>官方介绍</h2><style>
+table th:nth-of-type(1) {
+    width: 16%;
+}
+table th:nth-of-type(2) {
+    width: 84%;
+}
+</style>
+
+<table>
+<thead>
+<tr>
+<th>返回类型</th>
+<th>Canvas.drawXXX()方法简介</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>void</code></td>
+<td><strong><code>drawARGB(int a, int r, int g, int b)</code></strong>Fill the entire canvas’ bitmap (restricted to the current clip) with the specified ARGB color, using srcover porterduff mode.</td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td><code>drawArc(float left, float top, float right, float bottom, float startAngle, float sweepAngle, boolean useCenter, Paint paint)</code>Draw the specified arc, which will be scaled to fit inside the specified oval.</td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td><code>drawArc(RectF oval, float startAngle, float sweepAngle, boolean useCenter, Paint paint)</code>Draw the specified arc, which will be scaled to fit inside the specified oval.</td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td><code>drawBitmap(Bitmap bitmap, Matrix matrix, Paint paint)</code>Draw the bitmap using the specified matrix.</td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td><code>drawBitmap(int[] colors, int offset, int stride, float x, float y,int width, int height, boolean hasAlpha, Paint paint)</code><em>This method was deprecated in API level 21. Usage with a hardware accelerated canvas requires an internal copy of color buffer contents every time this method is called. Using a Bitmap avoids this copy, and allows the application to more explicitly control the lifetime and copies of pixel data.</em></td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td><code>drawBitmap(int[] colors, int offset, int stride, int x, int y, int width, int height, boolean hasAlpha, Paint paint)</code><em>This method was deprecated in API level 21. Usage with a hardware accelerated canvas requires an internal copy of color buffer contents every time this method is called. Using a Bitmap avoids this copy, and allows the application to more explicitly control the lifetime and copies of pixel data.</em></td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td><code>drawBitmap(Bitmap bitmap, Rect src, Rect dst, Paint paint)</code>Draw the specified bitmap, scaling/translating automatically to fill the destination rectangle.</td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td><code>drawBitmap(Bitmap bitmap, Rect src, RectF dst, Paint paint)</code>Draw the specified bitmap, scaling/translating automatically to fill the destination rectangle.</td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td><code>drawBitmap(Bitmap bitmap, float left, float top, Paint paint)</code>Draw the specified bitmap, with its top/left corner at (x,y), using the specified paint, transformed by the current matrix.</td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td><code>drawBitmapMesh(Bitmap bitmap, int meshWidth, int meshHeight, float[] verts, int vertOffset, int[] colors, int colorOffset, Paint paint)</code>Draw the bitmap through the mesh, where mesh vertices are evenly distributed across the bitmap.</td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td><code>drawCircle(float cx, float cy, float radius, Paint paint)</code>Draw the specified circle using the specified paint.</td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td><code>drawColor(int color)</code>Fill the entire canvas’ bitmap (restricted to the current clip) with the specified color, using srcover porterduff mode.</td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td><code>drawColor(int color, PorterDuff.Mode mode)</code>Fill the entire canvas’ bitmap (restricted to the current clip) with the specified color and porter-duff xfermode.</td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td><code>drawLine(float startX, float startY, float stopX, float stopY, Paintpaint)</code>Draw a line segment with the specified start and stop x,y coordinates, using the specified paint.</td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td><code>drawLines(float[] pts, int offset, int count, Paint paint)</code>Draw a series of lines.</td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td><code>drawLines(float[] pts, Paint paint)</code></td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td><code>drawOval(float left, float top, float right, float bottom, Paintpaint)</code>Draw the specified oval using the specified paint.</td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td><code>drawOval(RectF oval, Paint paint)</code>Draw the specified oval using the specified paint.</td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td><code>drawPaint(Paint paint)</code>Fill the entire canvas’ bitmap (restricted to the current clip) with the specified paint.</td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td><code>drawPatch(NinePatch patch, RectF dst, Paint paint)</code></td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td><code>drawPatch(NinePatch patch, Rect dst, Paint paint)</code></td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td><code>drawPath(Path path, Paint paint)</code>Draw the specified path using the specified paint.</td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td><code>drawPicture(Picture picture, RectF dst)</code>Draw the picture, stretched to fit into the dst rectangle.</td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td><code>drawPicture(Picture picture)</code>Save the canvas state, draw the picture, and restore the canvas state.</td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td><code>drawPicture(Picture picture, Rect dst)</code>Draw the picture, stretched to fit into the dst rectangle.</td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td><code>drawPoint(float x, float y, Paint paint)</code>Helper for drawPoints() for drawing a single point.</td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td><code>drawPoints(float[] pts, Paint paint)</code>Helper for drawPoints() that assumes you want to draw the entire array</td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td><code>drawPoints(float[] pts, int offset, int count, Paint paint)</code>Draw a series of points.</td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td><code>drawPosText(String text, float[] pos, Paint paint)</code><em>This method was deprecated in API level 16. This method does not support glyph composition and decomposition and should therefore not be used to render complex scripts. It also doesn’t handle supplementary characters (eg emoji).</em></td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td><code>drawPosText(char[] text, int index, int count, float[] pos, Paintpaint)</code><em>This method was deprecated in API level 16. This method does not support glyph composition and decomposition and should therefore not be used to render complex scripts. It also doesn’t handle supplementary characters (eg emoji).</em></td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td><code>drawRGB(int r, int g, int b)</code>Fill the entire canvas’ bitmap (restricted to the current clip) with the specified RGB color, using srcover porterduff mode.</td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td><code>drawRect(float left, float top, float right, float bottom, Paintpaint)</code>Draw the specified Rect using the specified paint.</td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td><code>drawRect(Rect r, Paint paint)</code>Draw the specified Rect using the specified Paint.</td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td><code>drawRect(RectF rect, Paint paint)</code>Draw the specified Rect using the specified paint.</td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td><code>drawRoundRect(RectF rect, float rx, float ry, Paint paint)</code>Draw the specified round-rect using the specified paint.</td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td><code>drawRoundRect(float left, float top, float right, float bottom,float rx, float ry, Paint paint)</code>Draw the specified round-rect using the specified paint.</td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td><code>drawText(CharSequence text, int start, int end, float x, float y,Paint paint)</code>Draw the specified range of text, specified by start/end, with its origin at (x,y), in the specified Paint.</td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td><code>drawText(String text, float x, float y, Paint paint)</code>Draw the text, with origin at (x,y), using the specified paint.</td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td><code>drawText(char[] text, int index, int count, float x, float y, Paintpaint)</code>Draw the text, with origin at (x,y), using the specified paint.</td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td><code>drawText(String text, int start, int end, float x, float y, Paintpaint)</code>Draw the text, with origin at (x,y), using the specified paint.</td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td><code>drawTextOnPath(String text, Path path, float hOffset, float vOffset,Paint paint)</code>Draw the text, with origin at (x,y), using the specified paint, along the specified path.</td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td><code>drawTextOnPath(char[] text, int index, int count, Path path, float hOffset, float vOffset, Paint paint)</code>Draw the text, with origin at (x,y), using the specified paint, along the specified path.</td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td><code>drawTextRun(char[] text, int index, int count, int contextIndex, int contextCount, float x, float y, boolean isRtl, Paint paint)</code>Draw a run of text, all in a single direction, with optional context for complex text shaping.</td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td><code>drawTextRun(CharSequence text, int start, int end, int contextStart,int contextEnd, float x, float y, boolean isRtl, Paint paint)</code>Draw a run of text, all in a single direction, with optional context for complex text shaping.</td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td><code>drawVertices(Canvas.VertexMode mode, int vertexCount, float[] verts,int vertOffset, float[] texs, int texOffset, int[] colors, int colorOffset, short[] indices, int indexOffset, int indexCount, Paintpaint)</code>Draw the array of vertices, interpreted as triangles (based on mode).</td>
+</tr>
+</tbody>
+</table>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://www.jianshu.com/p/2cb60b4d9938" target="_blank" rel="noopener">Android中的坐标系统</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/27787919" target="_blank" rel="noopener">Android 开发进阶 UI 部分 1-1：绘制基础</a></p>
+<p><a href="https://juejin.im/post/58fb4c64ac502e0063a2721e" target="_blank" rel="noopener">浪起来！使用 drawBitmapMesh 实现仿真水波纹效果</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持是对我最大的鼓励！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Haitao Ni 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.png" alt="Haitao Ni 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/view/" rel="tag"># view</a>
+          
+            <a href="/tags/Canvas/" rel="tag"># Canvas</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2231365790/" rel="next" title="自定义View之使用DrawableState实现选择框">
+                <i class="fa fa-chevron-left"></i> 自定义View之使用DrawableState实现选择框
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2623377752/" rel="prev" title="自定义View之Path">
+                自定义View之Path <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar" rel="external nofollow">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar/avatar.png" alt="Haitao Ni">
+            
+              <p class="site-author-name" itemprop="name">Haitao Ni</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">79</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">49</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">85</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:haitao_ni@nhtzj.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#预备知识"><span class="nav-number">2.</span> <span class="nav-text">预备知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Android坐标系"><span class="nav-number">2.1.</span> <span class="nav-text">Android坐标系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#视图坐标系"><span class="nav-number">2.2.</span> <span class="nav-text">视图坐标系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Canvas坐标系"><span class="nav-number">2.3.</span> <span class="nav-text">Canvas坐标系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#绘图坐标系"><span class="nav-number">2.4.</span> <span class="nav-text">绘图坐标系</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#drawXX系列"><span class="nav-number">3.</span> <span class="nav-text">drawXX系列</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#drawColor-ColorInt-int-color"><span class="nav-number">3.1.</span> <span class="nav-text">drawColor(@ColorInt int color)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#drawCircle-float-cx-float-cy-float-radius-NonNull-Paint-paint"><span class="nav-number">3.2.</span> <span class="nav-text">drawCircle(float cx, float cy, float radius, @NonNull Paint paint)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#一：Paint-setColor-ColorInt-int-color"><span class="nav-number">3.2.1.</span> <span class="nav-text">一：Paint.setColor(@ColorInt int color)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#二：Paint-setStyle-Style-style"><span class="nav-number">3.2.2.</span> <span class="nav-text">二：Paint.setStyle(Style style)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#三：Paint-setStrokeWidth-float-width"><span class="nav-number">3.2.3.</span> <span class="nav-text">三：Paint.setStrokeWidth(float width)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#四：-Paint-setAntiAlias-boolean-aa"><span class="nav-number">3.2.4.</span> <span class="nav-text">四： Paint.setAntiAlias(boolean aa)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#drawRect-float-left-float-top-float-right-float-bottom-NonNull-Paint-paint"><span class="nav-number">3.3.</span> <span class="nav-text">drawRect(float left, float top, float right, float bottom, @NonNull Paint paint)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#drawRoundRect-float-left-float-top-float-right-float-bottom-float-rx-float-ry-NonNull-Paint-paint"><span class="nav-number">3.4.</span> <span class="nav-text">drawRoundRect(float left, float top, float right, float bottom, float rx, float ry, @NonNull Paint paint)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#drawPoint-float-x-float-y-NonNull-Paint-paint"><span class="nav-number">3.5.</span> <span class="nav-text">drawPoint(float x, float y, @NonNull Paint paint)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#drawOval-float-left-float-top-float-right-float-bottom-NonNull-Paint-paint"><span class="nav-number">3.6.</span> <span class="nav-text">drawOval(float left, float top, float right, float bottom, @NonNull Paint paint)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#drawLine-float-startX-float-startY-float-stopX-float-stopY-NonNull-Paint-paint"><span class="nav-number">3.7.</span> <span class="nav-text">drawLine(float startX, float startY, float stopX, float stopY, @NonNull Paint paint)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#drawArc-float-left-float-top-float-right-float-bottom-float-startAngle-float-sweepAngle-boolean-useCenter-NonNull-Paint-paint"><span class="nav-number">3.8.</span> <span class="nav-text">drawArc(float left, float top, float right, float bottom, float startAngle, float sweepAngle, boolean useCenter, @NonNull Paint paint)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#drawText-NonNull-String-text-float-x-float-y-NonNull-Paint-paint"><span class="nav-number">3.9.</span> <span class="nav-text">drawText(@NonNull String text, float x, float y, @NonNull Paint paint)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#drawPath-NonNull-Path-path-NonNull-Paint-paint"><span class="nav-number">3.10.</span> <span class="nav-text">drawPath(@NonNull Path path, @NonNull Paint paint)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#drawBitmap-NonNull-Bitmap-bitmap-float-left-float-top-Nullable-Paint-paint"><span class="nav-number">3.11.</span> <span class="nav-text">drawBitmap(@NonNull Bitmap bitmap, float left, float top, @Nullable Paint paint)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#官方介绍"><span class="nav-number">4.</span> <span class="nav-text">官方介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2023</span>
+
+
+  <div class="powered-by"><a class="theme-link" target="_blank" href="https://beian.miit.gov.cn/" rel="external nofollow" title="工业和信息化部ICP/IP地址/域名信息备案管理系统">浙ICP备17020869号</a></div>
+
+
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Haitao Ni</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'gaKW5YWAvf7NBOlU9eFbxN8O-gzGzoHsz',
+        appKey: 'susRHyMS8Fq1XyKXg0r9ad85',
+        placeholder: '填上邮箱可以收到我的回复哦 (*^ω^*)~~',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+
+//新增以下代码即可，可以移除.info下所有子节点。
+var infoEle = document.querySelector('#comments .info');
+if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0){
+  infoEle.childNodes.forEach(function(item) {
+    item.parentNode.removeChild(item);
+  });
+}
+
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("gaKW5YWAvf7NBOlU9eFbxN8O-gzGzoHsz", "susRHyMS8Fq1XyKXg0r9ad85");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+
+
+  
+
+  
+
+</body>
+</html>

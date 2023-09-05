@@ -1,0 +1,1619 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="uW8bwgMGUwIA01nPfh0oty1rmtmmuVkOVGaS9O0nQUg">
+
+
+
+
+
+
+
+
+  <meta name="baidu-site-verification" content="NeE6tPH3W1">
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico?v=5.1.4">
+
+
+
+
+
+
+
+  <meta name="keywords" content="view,Path">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="海的那边" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="前言本篇承上文 自定义View之Canvas.drawXXX()中drawPath(@NonNull Path path, @NonNull Paint paint)方法而来，详细讲解其中的参数Path的作用。 简介先上一下官方的注释 123456789101112package android.graphics;/** * The Path class encapsulates compound">
+<meta name="keywords" content="view,Path">
+<meta property="og:type" content="article">
+<meta property="og:title" content="自定义View之Path">
+<meta property="og:url" content="http://www.nhtzj.com/2623377752/index.html">
+<meta property="og:site_name" content="海的那边">
+<meta property="og:description" content="前言本篇承上文 自定义View之Canvas.drawXXX()中drawPath(@NonNull Path path, @NonNull Paint paint)方法而来，详细讲解其中的参数Path的作用。 简介先上一下官方的注释 123456789101112package android.graphics;/** * The Path class encapsulates compound">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/08/path_circle_stoke.jpg">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/08/path_fill_1.jpg">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/08/path_fill_2.jpg">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/08/path_addArc.png">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/08/path.lineTo.jpg">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/08/path_arcTo_true.jpg">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/08/path_arcTo_false.jpg">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/08/path_arcTo_true.jpg">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/08/path_fill_type.jpg">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/08/path_fillType_EVEN_ODD.jpg">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/08/path_fillType_WINDING_direction.jpg">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/08/path_fillType_WINDING_non_zero.jpg">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/08/path_fillType_INVERSE_EVEN_ODD.png">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/08/path_fillType_INVERSE_WINDING_same.png">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/08/path_fillType_INVERSE_EVEN_ODD.png">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/08/path_fillType_EVEN_ODD_WINDING.jpg">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/08/path_op_none.png">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/08/Path.Op.DIFFERENCE.png">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/08/Path.Op.INTERSECT.png">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/08/Path.Op.UNION.png">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/08/Path.Op.XOR_STROKE.png">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/08/Path.Op.XOR_FILL.png">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/08/Path.Op.REVERSE_DIFFERENCE.png">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/08/path_not_close.png">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/08/path_close.png">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/08/path_fill_auto_close.png">
+<meta property="og:image" content="http://www.nhtzj.com/images/2018/08/setLastPoint.png">
+<meta property="og:updated_time" content="2018-11-19T13:27:48.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="自定义View之Path">
+<meta name="twitter:description" content="前言本篇承上文 自定义View之Canvas.drawXXX()中drawPath(@NonNull Path path, @NonNull Paint paint)方法而来，详细讲解其中的参数Path的作用。 简介先上一下官方的注释 123456789101112package android.graphics;/** * The Path class encapsulates compound">
+<meta name="twitter:image" content="http://www.nhtzj.com/images/2018/08/path_circle_stoke.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.nhtzj.com/2623377752/">
+
+
+
+
+
+  <title>自定义View之Path | 海的那边</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">海的那边</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">人无远虑，必有近忧</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.nhtzj.com/2623377752/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Haitao Ni">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="海的那边">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">自定义View之Path</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-16T17:20:29+08:00">
+                2018-08-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/android/" itemprop="url" rel="index">
+                    <span itemprop="name">android</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/android/view/" itemprop="url" rel="index">
+                    <span itemprop="name">view</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/android/view/自定义/" itemprop="url" rel="index">
+                    <span itemprop="name">自定义</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/android/view/自定义/基础/" itemprop="url" rel="index">
+                    <span itemprop="name">基础</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2623377752/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2623377752/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2623377752/" class="leancloud_visitors" data-flag-title="自定义View之Path">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  3,956
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  18
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>本篇承上文 <a href="/3854066347/#drawPath">自定义View之Canvas.drawXXX()</a>中<code>drawPath(@NonNull Path path, @NonNull Paint paint)</code>方法而来，详细讲解其中的参数<code>Path</code>的作用。</p>
+<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>先上一下官方的注释</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> android.graphics;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * The Path class encapsulates compound (multiple contour) geometric paths</span></span><br><span class="line"><span class="comment"> * consisting of straight line segments, quadratic curves, and cubic curves.</span></span><br><span class="line"><span class="comment"> * It can be drawn with canvas.drawPath(path, paint), either filled or stroked</span></span><br><span class="line"><span class="comment"> * (based on the paint's Style), or it can be used for clipping or to draw</span></span><br><span class="line"><span class="comment"> * text on a path.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Path</span> </span>&#123;</span><br><span class="line">    ……</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到Path类位于<code>android.graphics</code>包中。</p>
+<p>注释的英文翻译过来大致如下：</p>
+<blockquote>
+<p>Path类封装了由直线段、二次曲线和三次曲线组成的复合（多个轮廓）几何路径。</p>
+<p>它可以用<code>Canvas.drawPath(path,paint)</code>绘制，无论是填充还是描边（取决于paint画笔的样式）；</p>
+<p>或者它可以用于剪裁或绘画路径上的文字。</p>
+</blockquote>
+<p>用于裁截的方法有<code>Canvas.clipPath(@NonNull Path path)</code>，另外还有几个重载方法。</p>
+<p>用于绘画路径上的文字的方法我所知道的目前只有一个，<code>drawTextOnPath(@NonNull char[] text, int index, int count, @NonNull Path path, float hOffset, float vOffset, @NonNull Paint paint)</code>，这个方法在上文<a href="/3854066347/#drawText_override">自定义View之Canvas.drawXXX()</a>中的<code>drawText()</code>一节中有简要说明。</p>
+<p>Path 可以描述直线、二次曲线、三次曲线、圆、椭圆、弧形、矩形、圆角矩形。把这些图形结合起来，就可以描述出很多复杂的图形</p>
+<p>这里主要围绕<code>Canvas.drawPath(path,paint)</code>展开说明。</p>
+<h2 id="Path类的具体使用"><a href="#Path类的具体使用" class="headerlink" title="Path类的具体使用"></a>Path类的具体使用</h2><p>Path 主要有两类方法，一类是直接描述路径的，另一类是辅助的设置或计算。</p>
+<h2 id="Path-方法第一类：直接描述路径"><a href="#Path-方法第一类：直接描述路径" class="headerlink" title="Path 方法第一类：直接描述路径"></a>Path 方法第一类：直接描述路径</h2><h3 id="Path-addXxx-系列"><a href="#Path-addXxx-系列" class="headerlink" title="Path.addXxx()系列"></a>Path.addXxx()系列</h3><p>Path.addXX()系列是直接调用<code>Path</code>提供的方法添加子图形到<code>Path</code>中。</p>
+<h4 id="addCircle-float-x-float-y-float-radius-Direction-dir"><a href="#addCircle-float-x-float-y-float-radius-Direction-dir" class="headerlink" title="addCircle(float x, float y, float radius, Direction dir)"></a>addCircle(float x, float y, float radius, Direction dir)</h4><p>添加封闭的圆。</p>
+<p>x, y, radius 这三个参数是圆的基本信息，最后一个参数 dir 是画圆的路径的方向。</p>
+<blockquote>
+<p>路径方向有两种：顺时针 (CW clockwise) 和逆时针 (CCW counter-clockwise) 。对于描边(Paint.Style 为 STROKE )情况，这个参数填 CW 还是填 CCW 没有影响。它只是在<strong>需要填充图形</strong> (Paint.Style 为 FILL 或 FILL_AND_STROKE) ，并且<strong>图形出现自相交</strong>时，用于判断填充范围的。比如下面这个图形：</p>
+</blockquote>
+<p><img src="/images/2018/08/path_circle_stoke.jpg" alt="path_circle_stoke"></p>
+<p><strong>填充类型</strong></p>
+<p><img src="/images/2018/08/path_fill_1.jpg" alt="path_fill_all"></p>
+<p><strong>OR</strong></p>
+<p><img src="/images/2018/08/path_fill_2.jpg" alt="path_fill_or"></p>
+<p>关于采取那个方式来操作，取决于<code>Path.setFillType()</code>，关于这方法，会在<a href="#second">辅助的设置或计算</a>中具体展开。</p>
+<h4 id="addRect-float-left-float-top-float-right-float-bottom-Direction-dir"><a href="#addRect-float-left-float-top-float-right-float-bottom-Direction-dir" class="headerlink" title="addRect(float left, float top, float right, float bottom, Direction dir)"></a>addRect(float left, float top, float right, float bottom, Direction dir)</h4><p>添加封闭的矩形。</p>
+<p>left，top，right，bottom 四个参数确定矩形的四边。</p>
+<p>重载方法：</p>
+<ul>
+<li>addRect(RectF rect, Direction dir)</li>
+</ul>
+<p>用RectF封装了float类型的四个变量： left，top，right，bottom</p>
+<h4 id="addRoundRect-RectF-rect-float-rx-float-ry-Direction-dir"><a href="#addRoundRect-RectF-rect-float-rx-float-ry-Direction-dir" class="headerlink" title="addRoundRect(RectF rect, float rx, float ry, Direction dir)"></a>addRoundRect(RectF rect, float rx, float ry, Direction dir)</h4><p>添加封闭的圆角矩形。</p>
+<p>rx、ry分别与rect的四边形成四个矩形绘制椭圆，此椭圆的一角形成圆角矩形的圆角。</p>
+<p>rx、ry的具体效果，可查看上篇 <a href="/3854066347/#drawRoundRect">自定义View之Canvas.drawXXX()</a>的drawRoundRect章节。</p>
+<p>重载方法：</p>
+<ul>
+<li>addRoundRect(float left, float top, float right, float bottom, float rx, float ry, Direction dir)  添加于api21</li>
+<li>addRoundRect(RectF rect, float[] radii, Direction dir) </li>
+<li>addRoundRect(float left, float top, float right, float bottom, float[] radii, Direction dir)  添加于api21</li>
+</ul>
+<p>后两个重载方法中多了<code>float[] radii</code>这个参数。radii数组有8个值，组成4对(x,y)，分别表示左上、右上，右下，左下，分别控制对应的圆角。</p>
+<p><a name="addArc"></a></p>
+<h4 id="addArc-RectF-oval-float-startAngle-float-sweepAngle"><a href="#addArc-RectF-oval-float-startAngle-float-sweepAngle" class="headerlink" title="addArc(RectF oval, float startAngle, float sweepAngle)"></a>addArc(RectF oval, float startAngle, float sweepAngle)</h4><p>添加弧形，该弧形是椭圆的一部分。<br>oval确定椭圆的四边界。可以看作是在oval决定的矩形中绘制了一个椭圆。<br>startAngle 为绘制椭圆弧形的起始角度（x 轴的正向，即正右的方向，是 0 度的位置；顺时针为正角度，逆时针为负角度）；<br>sweepAngle 是弧形划过的角度；</p>
+<p>重载方法：</p>
+<ul>
+<li>addArc(float left, float top, float right, float bottom, float startAngle, float sweepAngle)   添加于api21</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">    paint = <span class="keyword">new</span> Paint(Paint.ANTI_ALIAS_FLAG);</span><br><span class="line">    paint.setColor(Color.RED);</span><br><span class="line">    paint.setStyle(Paint.Style.STROKE);</span><br><span class="line"></span><br><span class="line">    mPath = <span class="keyword">new</span> Path();</span><br><span class="line">    mDashPathEffect = <span class="keyword">new</span> DashPathEffect(<span class="keyword">new</span> <span class="keyword">float</span>[]&#123;<span class="number">4</span>, <span class="number">4</span>&#125;, <span class="number">0</span>); <span class="comment">//设置虚线</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onDraw</span><span class="params">(Canvas canvas)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onDraw(canvas);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//绘制下半红色椭圆</span></span><br><span class="line">    mPath.addArc(<span class="number">100</span>, <span class="number">100</span>, <span class="number">600</span>, <span class="number">400</span>, <span class="number">0</span>, <span class="number">180</span>);</span><br><span class="line">    canvas.drawPath(mPath, paint);</span><br><span class="line">    <span class="comment">//绘制上半蓝色椭圆</span></span><br><span class="line">    mPath.reset();</span><br><span class="line">    paint.setColor(Color.BLUE);</span><br><span class="line">    mPath.addArc(<span class="number">100</span>, <span class="number">100</span>, <span class="number">600</span>, <span class="number">400</span>, <span class="number">0</span>, -<span class="number">180</span>);</span><br><span class="line">    canvas.drawPath(mPath, paint);</span><br><span class="line">    <span class="comment">//绘制灰色虚线矩形</span></span><br><span class="line">    mPath.reset();</span><br><span class="line">    mPath.addRect(<span class="number">100</span>, <span class="number">100</span>, <span class="number">600</span>, <span class="number">400</span>, Path.Direction.CCW);</span><br><span class="line">    paint.setColor(Color.GRAY);</span><br><span class="line">    paint.setPathEffect(mDashPathEffect); <span class="comment">//设置虚线</span></span><br><span class="line">    canvas.drawPath(mPath, paint);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="/images/2018/08/path_addArc.png" alt="addArc"></p>
+<h4 id="addOval-RectF-oval-Direction-dir"><a href="#addOval-RectF-oval-Direction-dir" class="headerlink" title="addOval(RectF oval, Direction dir)"></a>addOval(RectF oval, Direction dir)</h4><p>添加椭圆。</p>
+<p>重载方法：</p>
+<ul>
+<li>addOval(float left, float top, float right, float bottom, Direction dir)  添加于api21</li>
+</ul>
+<h4 id="addPath-Path-src"><a href="#addPath-Path-src" class="headerlink" title="addPath(Path src)"></a>addPath(Path src)</h4><p>将一个path数据添加到当前的path中。</p>
+<p>重载方法：</p>
+<ul>
+<li>addPath(Path src, float dx, float dy)</li>
+<li>addPath(Path src, Matrix matrix)</li>
+</ul>
+<p><code>addPath(Path src, float dx, float dy)</code> 将坐标系平移到(dx,dy)后添加src内容。也可以说是给src内的每个坐标点都添加(dx,dy)大小。<br><code>addPath(Path src, Matrix matrix)</code>与<code>addPath(Path src, float dx, float dy)</code>类似，不过matrix能做的事比<code>dx,dy</code>多得多了，<code>addPath(Path src, float dx, float dy)</code>中的<code>dx,dy</code>相当于<code>matrix.postTranslate(dx,dy)</code>。通过matrix几何变换后再添加src。</p>
+<h3 id="Path-XxxTo系列"><a href="#Path-XxxTo系列" class="headerlink" title="Path.XxxTo系列"></a>Path.XxxTo系列</h3><p>添加线条。</p>
+<p>这一组和第一组 addXxx() 方法的区别在于，第一组是添加的完整封闭图形（除了 addPath() ），而这一组添加的只是一条线。</p>
+<h4 id="lineTo-float-x-float-y-、rLineTo-float-dx-float-dy"><a href="#lineTo-float-x-float-y-、rLineTo-float-dx-float-dy" class="headerlink" title="lineTo(float x, float y)、rLineTo(float dx, float dy)"></a>lineTo(float x, float y)、rLineTo(float dx, float dy)</h4><p>画直线。<br>比如当前画笔停留的坐标为(x0,y0),则<br>lineTo是从(x0,y0)画直线到(x,y)。<br>rLineTo是从(x0,y0)画直线到(x0+dx,y0+dy)。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">paint.setStyle(Style.STROKE);</span><br><span class="line">path.lineTo(<span class="number">100</span>, <span class="number">100</span>); <span class="comment">// 由当前位置 (0, 0) 向 (100, 100) 画一条直线</span></span><br><span class="line">path.rLineTo(<span class="number">100</span>, <span class="number">0</span>); <span class="comment">// 由当前位置 (100, 100) 向正右方 100 像素的位置画一条直线</span></span><br></pre></td></tr></table></figure>
+<p><img src="/images/2018/08/path.lineTo.jpg" alt="lineToAndrLineTo"></p>
+<h4 id="moveTo-float-x-float-y-、rMoveTo-float-dx-float-dy"><a href="#moveTo-float-x-float-y-、rMoveTo-float-dx-float-dy" class="headerlink" title="moveTo (float x, float y)、rMoveTo (float dx, float dy)"></a>moveTo (float x, float y)、rMoveTo (float dx, float dy)</h4><p>将当前画笔的位置移动到指定位置。此过程不绘制任何内容。<br>好比是写字时，你将笔抬起后移动到下一行这个过程，之后再继续书写。</p>
+<p>moveTo 是直接将画笔移动到(x,y)处。<br>rMoveTo 是将画笔在当前位置基础上x轴移动dx，y轴移动dy。</p>
+<h4 id="arcTo-RectF-oval-float-startAngle-float-sweepAngle-、arcTo-RectF-oval-float-startAngle-float-sweepAngle-boolean-forceMoveTo-、arcTo-float-left-float-top-float-right-float-bottom-float-startAngle-float-sweepAngle-boolean-forceMoveTo"><a href="#arcTo-RectF-oval-float-startAngle-float-sweepAngle-、arcTo-RectF-oval-float-startAngle-float-sweepAngle-boolean-forceMoveTo-、arcTo-float-left-float-top-float-right-float-bottom-float-startAngle-float-sweepAngle-boolean-forceMoveTo" class="headerlink" title="arcTo(RectF oval, float startAngle, float sweepAngle)、arcTo(RectF oval, float startAngle, float sweepAngle, boolean forceMoveTo)、arcTo(float left, float top, float right, float bottom, float startAngle, float sweepAngle, boolean forceMoveTo)"></a>arcTo(RectF oval, float startAngle, float sweepAngle)、arcTo(RectF oval, float startAngle, float sweepAngle, boolean forceMoveTo)、arcTo(float left, float top, float right, float bottom, float startAngle, float sweepAngle, boolean forceMoveTo)</h4><p>添加弧线。</p>
+<p>与<a href="#addArc">addArc</a>类似，arcTo多了参数forceMoveTo，用于控制是否连接上一点与弧线起点。true：不连接，直接开始画弧线；false：连接后再开始画弧线。</p>
+<p>由此来看，<a href="#addArc">addArc</a>相当于是forceMoveTo=true的arcTo</p>
+<p><code>arcTo(RectF oval, float startAngle, float sweepAngle)</code>内部默认将forceMoveTo设置为false。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">arcTo</span><span class="params">(RectF oval, <span class="keyword">float</span> startAngle, <span class="keyword">float</span> sweepAngle)</span> </span>&#123;</span><br><span class="line">    arcTo(oval.left, oval.top, oval.right, oval.bottom, startAngle, sweepAngle, <span class="keyword">false</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>arcTo(float left, float top, float right, float bottom, float startAngle, float sweepAngle, boolean forceMoveTo)</code> 添加于api21</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">paint.setStyle(Style.STROKE);</span><br><span class="line">path.lineTo(<span class="number">100</span>, <span class="number">100</span>);</span><br><span class="line">path.arcTo(<span class="number">100</span>, <span class="number">100</span>, <span class="number">300</span>, <span class="number">300</span>, -<span class="number">90</span>, <span class="number">90</span>, <span class="keyword">true</span>); <span class="comment">// 强制移动到弧形起点（无痕迹）</span></span><br></pre></td></tr></table></figure>
+<p><img src="/images/2018/08/path_arcTo_true.jpg" alt="arcTo_false"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">paint.setStyle(Style.STROKE);</span><br><span class="line">path.lineTo(<span class="number">100</span>, <span class="number">100</span>);</span><br><span class="line">path.arcTo(<span class="number">100</span>, <span class="number">100</span>, <span class="number">300</span>, <span class="number">300</span>, -<span class="number">90</span>, <span class="number">90</span>, <span class="keyword">false</span>); <span class="comment">// 直接连线连到弧形起点（有痕迹）</span></span><br></pre></td></tr></table></figure>
+<p><img src="/images/2018/08/path_arcTo_false.jpg" alt="arcTo_false"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">paint.setStyle(Style.STROKE);</span><br><span class="line">path.lineTo(<span class="number">100</span>, <span class="number">100</span>);</span><br><span class="line">path.addArc(<span class="number">100</span>, <span class="number">100</span>, <span class="number">300</span>, <span class="number">300</span>, -<span class="number">90</span>, <span class="number">90</span>);</span><br></pre></td></tr></table></figure>
+<p><img src="/images/2018/08/path_arcTo_true.jpg" alt="drawArc"></p>
+<h4 id="quadTo-float-x1-float-y1-float-x2-float-y2-、rQuadTo-float-dx1-float-dy1-float-dx2-float-dy2"><a href="#quadTo-float-x1-float-y1-float-x2-float-y2-、rQuadTo-float-dx1-float-dy1-float-dx2-float-dy2" class="headerlink" title="quadTo(float x1, float y1, float x2, float y2)、rQuadTo(float dx1, float dy1, float dx2, float dy2)"></a>quadTo(float x1, float y1, float x2, float y2)、rQuadTo(float dx1, float dy1, float dx2, float dy2)</h4><p>画二次贝塞尔曲线。</p>
+<p>起点为画笔的当前位置，(x1,y1)为控制点坐标，(x2,y2)为终点坐标。</p>
+<p>假设画笔的当前位置为(x0,y0)，则rQuadTo中的控制点坐标为(x0+dx1,y0+dy1)，终点坐标为(x0+dx2,y0+dy2)。</p>
+<h4 id="cubicTo-float-x1-float-y1-float-x2-float-y2-float-x3-float-y3-、rCubicTo-float-x1-float-y1-float-x2-float-y2-float-x3-float-y3"><a href="#cubicTo-float-x1-float-y1-float-x2-float-y2-float-x3-float-y3-、rCubicTo-float-x1-float-y1-float-x2-float-y2-float-x3-float-y3" class="headerlink" title="cubicTo(float x1, float y1, float x2, float y2,float x3, float y3)、rCubicTo(float x1, float y1, float x2, float y2,float x3, float y3)"></a>cubicTo(float x1, float y1, float x2, float y2,float x3, float y3)、rCubicTo(float x1, float y1, float x2, float y2,float x3, float y3)</h4><p>画三次贝塞尔曲线。<br>与二次贝塞尔曲线方法类似，不过三次贝塞尔曲线控制点有两个，其中(x1,y1)，(x2,y2)为控制点，(x3,y3)为终点。</p>
+<p><a name="second"></a></p>
+<h2 id="Path-方法第二类：辅助的设置或计算"><a href="#Path-方法第二类：辅助的设置或计算" class="headerlink" title="Path 方法第二类：辅助的设置或计算"></a>Path 方法第二类：辅助的设置或计算</h2><h3 id="setFillType-FillType-ft"><a href="#setFillType-FillType-ft" class="headerlink" title="setFillType(FillType ft)"></a>setFillType(FillType ft)</h3><p>先上官方注释</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Set the path's fill type. This defines how "inside" is computed.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> ft The new fill type for this path</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setFillType</span><span class="params">(FillType ft)</span> </span>&#123;</span><br><span class="line">    nSetFillType(mNativePath, ft.nativeInt);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>设置path的填充类型。处理内容重叠曲的显示方式。</p>
+<p>前面在说 dir 参数的时候提到， <code>Path.setFillType(fillType)</code> 是用来设置图形自相交时的填充算法的：</p>
+<p><img src="/images/2018/08/path_fill_type.jpg" alt="fillType"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Enum for the ways a path may be filled.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> FillType &#123;</span><br><span class="line">    <span class="comment">// these must match the values in SkPath.h</span></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Specifies that "inside" is computed by a non-zero sum of signed</span></span><br><span class="line"><span class="comment">     * edge crossings.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    WINDING         (<span class="number">0</span>),</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Specifies that "inside" is computed by an odd number of edge</span></span><br><span class="line"><span class="comment">     * crossings.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    EVEN_ODD        (<span class="number">1</span>),</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Same as &#123;<span class="doctag">@link</span> #WINDING&#125;, but draws outside of the path, rather than inside.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    INVERSE_WINDING (<span class="number">2</span>),</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Same as &#123;<span class="doctag">@link</span> #EVEN_ODD&#125;, but draws outside of the path, rather than inside.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    INVERSE_EVEN_ODD(<span class="number">3</span>);</span><br><span class="line"></span><br><span class="line">    FillType(<span class="keyword">int</span> ni) &#123;</span><br><span class="line">        nativeInt = ni;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">int</span> nativeInt;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>系统提供了4种填充类型：</p>
+<ul>
+<li>WINDING</li>
+<li>EVEN_ODD</li>
+<li>INVERSE_WINDING</li>
+<li>INVERSE_EVEN_ODD</li>
+</ul>
+<p>INVERSE_WINDING和INVERSE_EVEN_ODD从字面上就可以知道与WINDING和EVEN_ODD刚好反了一下。</p>
+<p>所以只要理了WINDING和EVEN_ODD，剩下的两种自然也就理解了。</p>
+<h4 id="EVEN-ODD"><a href="#EVEN-ODD" class="headerlink" title="EVEN_ODD"></a>EVEN_ODD</h4><p>EVEN：偶数的     ODD：奇数的</p>
+<p>即奇偶原则：对于平面中的任意一点，向任意方向射出一条射线，这条射线和图形相交的次数（相交才算，相切不算哦）如果是奇数，则这个点被认为在图形内部，是要被涂色的区域；如果是偶数，则这个点被认为在图形外部，是不被涂色的区域。还以左右相交的双圆为例：</p>
+<p><img src="/images/2018/08/path_fillType_EVEN_ODD.jpg" alt="EVEN_ODD"></p>
+<p>简单来讲：线方向无关，射线交点（奇数画，偶数不画）</p>
+<blockquote>
+<p>射线的方向无所谓，同一个点射向任何方向的射线，结果都是一样的</p>
+</blockquote>
+<h4 id="WINDING"><a href="#WINDING" class="headerlink" title="WINDING"></a>WINDING</h4><p>即 non-zero winding rule （非零环绕数原则）</p>
+<p>首先，它需要你图形中的所有线条都是有绘制方向的：</p>
+<p> <img src="/images/2018/08/path_fillType_WINDING_direction.jpg" alt="WINDING_direction"></p>
+<p>然后，同样是从平面中的点向任意方向射出一条射线，但计算规则不一样：以 0 为初始值，对于射线和图形的所有交点，遇到每个顺时针的交点（图形从射线的左边向右穿过）把结果加 1，遇到每个逆时针的交点（图形从射线的右边向左穿过）把结果减 1，最终把所有的交点都算上，得到的结果如果不是 0，则认为这个点在图形内部，是要被涂色的区域；如果是 0，则认为这个点在图形外部，是不被涂色的区域。</p>
+<p><img src="/images/2018/08/path_fillType_WINDING_non_zero.jpg" alt="WINDING_non_zero"></p>
+<p>简单来讲：线方向相关，射线交点（顺时针+1，逆时针-1），非0画，0不画</p>
+<blockquote>
+<p>图形的方向：</p>
+<p>对于添加子图形类方法（如 Path.addCircle() Path.addRect()）的方向，由方法的 dir 参数来控制，这个在前面已经讲过了；</p>
+<p>而对于画线类的方法（如 Path.lineTo()Path.arcTo()），线的方向就是图形的方向。</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">paint = <span class="keyword">new</span> Paint(Paint.ANTI_ALIAS_FLAG);</span><br><span class="line">paint.setColor(Color.RED);</span><br><span class="line">mPath = <span class="keyword">new</span> Path();</span><br><span class="line">mPath.setFillType(Path.FillType.INVERSE_EVEN_ODD);</span><br><span class="line"></span><br><span class="line">mPath.addCircle(<span class="number">200</span>,<span class="number">200</span>,<span class="number">100</span>, Path.Direction.CW);</span><br><span class="line">mPath.addCircle(<span class="number">350</span>,<span class="number">200</span>,<span class="number">100</span>, Path.Direction.CW);</span><br><span class="line">canvas.drawPath(mPath,paint);</span><br></pre></td></tr></table></figure>
+<p><img src="/images/2018/08/path_fillType_INVERSE_EVEN_ODD.png" alt="INVERSE_EVEN_ODD"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">paint = <span class="keyword">new</span> Paint(Paint.ANTI_ALIAS_FLAG);</span><br><span class="line">paint.setColor(Color.RED);</span><br><span class="line">mPath = <span class="keyword">new</span> Path();</span><br><span class="line">mPath.setFillType(Path.FillType.INVERSE_WINDING);</span><br><span class="line"></span><br><span class="line">mPath.addCircle(<span class="number">200</span>,<span class="number">200</span>,<span class="number">100</span>, Path.Direction.CW);</span><br><span class="line">mPath.addCircle(<span class="number">350</span>,<span class="number">200</span>,<span class="number">100</span>, Path.Direction.CW);</span><br><span class="line">canvas.drawPath(mPath,paint);</span><br></pre></td></tr></table></figure>
+<p><img src="/images/2018/08/path_fillType_INVERSE_WINDING_same.png" alt="INVERSE_WINDING 同方向"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">paint = <span class="keyword">new</span> Paint(Paint.ANTI_ALIAS_FLAG);</span><br><span class="line">paint.setColor(Color.RED);</span><br><span class="line">mPath = <span class="keyword">new</span> Path();</span><br><span class="line">mPath.setFillType(Path.FillType.INVERSE_WINDING);</span><br><span class="line"></span><br><span class="line">mPath.addCircle(<span class="number">200</span>,<span class="number">200</span>,<span class="number">100</span>, Path.Direction.CW);</span><br><span class="line">mPath.addCircle(<span class="number">350</span>,<span class="number">200</span>,<span class="number">100</span>, Path.Direction.CCW);</span><br><span class="line">canvas.drawPath(mPath,paint);</span><br></pre></td></tr></table></figure>
+<p><img src="/images/2018/08/path_fillType_INVERSE_EVEN_ODD.png" alt="INVERSE_WINDING 反方向"></p>
+<p> EVEN_ODD 和 WINDING 的效果应该是这样的：</p>
+<p><img src="/images/2018/08/path_fillType_EVEN_ODD_WINDING.jpg" alt="EVEN_ODD和WINDING效果演示"></p>
+<h3 id="Path-Op"><a href="#Path-Op" class="headerlink" title="Path.Op"></a>Path.Op</h3><p>类似于Paint中的xfermode属性，可以用来组合两个Path。</p>
+<p>系统提供了如下几种：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * The logical operations that can be performed when combining two paths.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span> #op(Path, android.graphics.Path.Op)</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span> #op(Path, Path, android.graphics.Path.Op)</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> Op &#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Subtract the second path from the first path.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    DIFFERENCE,</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Intersect the two paths.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    INTERSECT,</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Union (inclusive-or) the two paths.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    UNION,</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Exclusive-or the two paths.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    XOR,</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Subtract the first path from the second path.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    REVERSE_DIFFERENCE</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><a name="non_Path_Op"></a></p>
+<h4 id="不添加OP属性示例"><a href="#不添加OP属性示例" class="headerlink" title="不添加OP属性示例"></a>不添加OP属性示例</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">paint = <span class="keyword">new</span> Paint(Paint.ANTI_ALIAS_FLAG);</span><br><span class="line">paint.setColor(Color.RED);</span><br><span class="line">paint.setStyle(Paint.Style.STROKE);</span><br><span class="line">mPath = <span class="keyword">new</span> Path();</span><br><span class="line">mPathSec = <span class="keyword">new</span> Path();</span><br><span class="line"></span><br><span class="line">mPath.addCircle(<span class="number">200</span>, <span class="number">200</span>, <span class="number">100</span>, Path.Direction.CW);</span><br><span class="line">mPathSec.addRect(<span class="number">200</span>, <span class="number">200</span>, <span class="number">300</span>, <span class="number">300</span>, Path.Direction.CW);</span><br><span class="line">canvas.drawPath(mPath, paint);</span><br><span class="line"></span><br><span class="line">paint.setColor(Color.GRAY);</span><br><span class="line">canvas.drawPath(mPathSec, paint);</span><br></pre></td></tr></table></figure>
+<p>为了区分圆形和矩形，设置了不同颜色。</p>
+<p><img src="/images/2018/08/path_op_none.png" alt="分开绘制"></p>
+<h4 id="DIFFERENCE"><a href="#DIFFERENCE" class="headerlink" title="DIFFERENCE"></a>DIFFERENCE</h4><p>从当前path中去除另一个path，即显示当前path中不相交的部分。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">paint = <span class="keyword">new</span> Paint(Paint.ANTI_ALIAS_FLAG);</span><br><span class="line">paint.setColor(Color.RED);</span><br><span class="line">paint.setStyle(Paint.Style.STROKE);</span><br><span class="line">mPath = <span class="keyword">new</span> Path();</span><br><span class="line">mPathSec = <span class="keyword">new</span> Path();</span><br><span class="line"></span><br><span class="line">mPath.addCircle(<span class="number">200</span>, <span class="number">200</span>, <span class="number">100</span>, Path.Direction.CW);</span><br><span class="line">mPathSec.addRect(<span class="number">200</span>, <span class="number">200</span>, <span class="number">300</span>, <span class="number">300</span>, Path.Direction.CW);</span><br><span class="line">mPath.op(mPathSec, Path.Op.DIFFERENCE);</span><br><span class="line">canvas.drawPath(mPath, paint);</span><br></pre></td></tr></table></figure>
+<p><img src="/images/2018/08/Path.Op.DIFFERENCE.png" alt="Path.Op.DIFFERENCE"></p>
+<h4 id="INTERSECT"><a href="#INTERSECT" class="headerlink" title="INTERSECT"></a>INTERSECT</h4><p>取相交的部分显示出来</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">paint = <span class="keyword">new</span> Paint(Paint.ANTI_ALIAS_FLAG);</span><br><span class="line">paint.setColor(Color.RED);</span><br><span class="line">paint.setStyle(Paint.Style.STROKE);</span><br><span class="line">mPath = <span class="keyword">new</span> Path();</span><br><span class="line">mPathSec = <span class="keyword">new</span> Path();</span><br><span class="line"></span><br><span class="line">mPath.addCircle(<span class="number">200</span>, <span class="number">200</span>, <span class="number">100</span>, Path.Direction.CW);</span><br><span class="line">mPathSec.addRect(<span class="number">200</span>, <span class="number">200</span>, <span class="number">300</span>, <span class="number">300</span>, Path.Direction.CW);</span><br><span class="line">mPath.op(mPathSec, Path.Op.INTERSECT);</span><br><span class="line">canvas.drawPath(mPath, paint);</span><br></pre></td></tr></table></figure>
+<p><img src="/images/2018/08/Path.Op.INTERSECT.png" alt="Path.Op.INTERSECT"></p>
+<h4 id="UNION"><a href="#UNION" class="headerlink" title="UNION"></a>UNION</h4><p>inclusive-or，两个path组合在一起（STORKE的样式下，重叠部分的线不绘制）。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">paint = <span class="keyword">new</span> Paint(Paint.ANTI_ALIAS_FLAG);</span><br><span class="line">paint.setColor(Color.RED);</span><br><span class="line">paint.setStyle(Paint.Style.STROKE);</span><br><span class="line">mPath = <span class="keyword">new</span> Path();</span><br><span class="line">mPathSec = <span class="keyword">new</span> Path();</span><br><span class="line"></span><br><span class="line">mPath.addCircle(<span class="number">200</span>, <span class="number">200</span>, <span class="number">100</span>, Path.Direction.CW);</span><br><span class="line">mPathSec.addRect(<span class="number">250</span>, <span class="number">250</span>, <span class="number">300</span>, <span class="number">300</span>, Path.Direction.CW);</span><br><span class="line">mPath.op(mPathSec, Path.Op.UNION);</span><br><span class="line">canvas.drawPath(mPath, paint);</span><br></pre></td></tr></table></figure>
+<p><img src="/images/2018/08/Path.Op.UNION.png" alt="Path.Op.UNION"></p>
+<h4 id="XOR"><a href="#XOR" class="headerlink" title="XOR"></a>XOR</h4><p>取两个path不相交部分。</p>
+<p>当画笔在描边模式下时，与 <a href="#non_Path_Op">不添加OP属性示例</a>一致。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">paint = <span class="keyword">new</span> Paint(Paint.ANTI_ALIAS_FLAG);</span><br><span class="line">paint.setColor(Color.RED);</span><br><span class="line">paint.setStyle(Paint.Style.STROKE);</span><br><span class="line">mPath = <span class="keyword">new</span> Path();</span><br><span class="line">mPathSec = <span class="keyword">new</span> Path();</span><br><span class="line"></span><br><span class="line">mPath.addCircle(<span class="number">200</span>, <span class="number">200</span>, <span class="number">100</span>, Path.Direction.CW);</span><br><span class="line">mPathSec.addRect(<span class="number">250</span>, <span class="number">250</span>, <span class="number">300</span>, <span class="number">300</span>, Path.Direction.CW);</span><br><span class="line">mPath.op(mPathSec, Path.Op.XOR);</span><br><span class="line">canvas.drawPath(mPath, paint);</span><br></pre></td></tr></table></figure>
+<p><img src="/images/2018/08/Path.Op.XOR_STROKE.png" alt="Path.Op.XOR_STROKE"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">paint = <span class="keyword">new</span> Paint(Paint.ANTI_ALIAS_FLAG);</span><br><span class="line">paint.setColor(Color.RED);</span><br><span class="line">paint.setStyle(Paint.Style.FILL);<span class="comment">//或者FILL_OR_STROKE</span></span><br><span class="line">mPath = <span class="keyword">new</span> Path();</span><br><span class="line">mPathSec = <span class="keyword">new</span> Path();</span><br><span class="line"></span><br><span class="line">mPath.addCircle(<span class="number">200</span>, <span class="number">200</span>, <span class="number">100</span>, Path.Direction.CW);</span><br><span class="line">mPathSec.addRect(<span class="number">250</span>, <span class="number">250</span>, <span class="number">300</span>, <span class="number">300</span>, Path.Direction.CW);</span><br><span class="line">mPath.op(mPathSec, Path.Op.XOR);</span><br><span class="line">canvas.drawPath(mPath, paint);</span><br></pre></td></tr></table></figure>
+<p><img src="/images/2018/08/Path.Op.XOR_FILL.png" alt="Path.Op.XOR_FILL"></p>
+<h4 id="REVERSE-DIFFERENCE"><a href="#REVERSE-DIFFERENCE" class="headerlink" title="REVERSE_DIFFERENCE"></a>REVERSE_DIFFERENCE</h4><p>DIFFERENCE是从当前path中去除另一个path；</p>
+<p>而REVERSE_DIFFERENCE是从另一个path中去除当前path部分，即显示另一个path中不相交的部分。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">paint = <span class="keyword">new</span> Paint(Paint.ANTI_ALIAS_FLAG);</span><br><span class="line">paint.setColor(Color.RED);</span><br><span class="line">paint.setStyle(Paint.Style.STROKE);</span><br><span class="line">mPath = <span class="keyword">new</span> Path();</span><br><span class="line">mPathSec = <span class="keyword">new</span> Path();</span><br><span class="line"></span><br><span class="line">mPath.addCircle(<span class="number">200</span>, <span class="number">200</span>, <span class="number">100</span>, Path.Direction.CW);</span><br><span class="line">mPathSec.addRect(<span class="number">250</span>, <span class="number">250</span>, <span class="number">300</span>, <span class="number">300</span>, Path.Direction.CW);</span><br><span class="line">mPath.op(mPathSec, Path.Op.REVERSE_DIFFERENCE);</span><br><span class="line">canvas.drawPath(mPath, paint);</span><br></pre></td></tr></table></figure>
+<p><img src="/images/2018/08/Path.Op.REVERSE_DIFFERENCE.png" alt="Path.Op.REVERSE_DIFFERENCE"></p>
+<p><a name="close"></a></p>
+<h3 id="close"><a href="#close" class="headerlink" title="close()"></a>close()</h3><p>封闭当前子图形，即由当前位置向当前子图形的起点绘制一条直线。</p>
+<p>相当于lineTo(起点坐标) 。</p>
+<p>当Paint画笔为填充类型时（<strong>即 Paint.Style 为 FILL 或 FILL_AND_STROKE</strong>），会自动封闭子图形。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">paint.setStyle(Style.STROKE);</span><br><span class="line">path.moveTo(<span class="number">100</span>, <span class="number">100</span>);</span><br><span class="line">path.lineTo(<span class="number">200</span>, <span class="number">100</span>);</span><br><span class="line">path.lineTo(<span class="number">150</span>, <span class="number">150</span>);</span><br></pre></td></tr></table></figure>
+<p><img src="/images/2018/08/path_not_close.png" alt="not_close"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">paint.setStyle(Style.STROKE);</span><br><span class="line">path.moveTo(<span class="number">100</span>, <span class="number">100</span>);</span><br><span class="line">path.lineTo(<span class="number">200</span>, <span class="number">100</span>);</span><br><span class="line">path.lineTo(<span class="number">150</span>, <span class="number">150</span>);</span><br><span class="line">path.close(); <span class="comment">// 使用 close() 封闭子图形。等价于 path.lineTo(100, 100)</span></span><br></pre></td></tr></table></figure>
+<p><img src="/images/2018/08/path_close.png" alt="close"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">paint.setStyle(Style.FILL);<span class="comment">//或者Style.FILL_AND_STROKE</span></span><br><span class="line">path.moveTo(<span class="number">100</span>, <span class="number">100</span>);</span><br><span class="line">path.lineTo(<span class="number">200</span>, <span class="number">100</span>);</span><br><span class="line">path.lineTo(<span class="number">150</span>, <span class="number">150</span>);</span><br></pre></td></tr></table></figure>
+<p><img src="/images/2018/08/path_fill_auto_close.png" alt="fill_auto_close"></p>
+<h3 id="reset"><a href="#reset" class="headerlink" title="reset()"></a>reset()</h3><p>重置path，清空内容，但是不会改变fillType。</p>
+<h3 id="set-NonNull-Path-src"><a href="#set-NonNull-Path-src" class="headerlink" title="set (@NonNull Path src)"></a>set (@NonNull Path src)</h3><p>用src替换当前path内的内容。</p>
+<h3 id="setLastPoint-float-dx-float-dy"><a href="#setLastPoint-float-dx-float-dy" class="headerlink" title="setLastPoint(float dx, float dy)"></a>setLastPoint(float dx, float dy)</h3><p>设置path的最后一个点坐标。</p>
+<p>与<code>moveTo()</code>的比较</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">类型</th>
+<th style="text-align:center">是否影响起点</th>
+<th style="text-align:center">是否影响之前的操作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">moveTo()</td>
+<td style="text-align:center">是</td>
+<td style="text-align:center">否</td>
+</tr>
+<tr>
+<td style="text-align:center">setLastPoint()</td>
+<td style="text-align:center">否</td>
+<td style="text-align:center">是</td>
+</tr>
+</tbody>
+</table>
+<p>如瞎下面画矩形<code>addRect(200, 400, 400, 500, Path.Direction.CW)</code>，</p>
+<p>确定矩形的四个顶点坐标为(200,400)，(400,400)，(200,500)，(400,500)。</p>
+<p>但设置<code>setLastPoint(100, 450)</code>后，四个点的坐标变为(200,400)，(400,400)，(100,450)，(400,500)。</p>
+<p>这个方法在不同形状的子图形上有不同的显示效果，可以自己去试试。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">paint = <span class="keyword">new</span> Paint(Paint.ANTI_ALIAS_FLAG);</span><br><span class="line">paint.setColor(Color.RED);</span><br><span class="line">paint.setStyle(Paint.Style.STROKE);</span><br><span class="line">mPath = <span class="keyword">new</span> Path();</span><br><span class="line"></span><br><span class="line">mPath.addRect(<span class="number">200</span>, <span class="number">400</span>, <span class="number">400</span>, <span class="number">500</span>, Path.Direction.CW);</span><br><span class="line">mPath.setLastPoint(<span class="number">100</span>, <span class="number">450</span>);</span><br><span class="line">canvas.drawPath(mPath, paint);</span><br></pre></td></tr></table></figure>
+<p><img src="/images/2018/08/setLastPoint.png" alt="setLastPoint"></p>
+<h3 id="isConvex"><a href="#isConvex" class="headerlink" title="isConvex ()"></a>isConvex ()</h3><p>判断path是否为凸多边形。</p>
+<h3 id="offset-float-dx-float-dy-、offset-float-dx-float-dy-Nullable-Path-dst"><a href="#offset-float-dx-float-dy-、offset-float-dx-float-dy-Nullable-Path-dst" class="headerlink" title="offset(float dx, float dy)、offset(float dx, float dy, @Nullable Path dst)"></a>offset(float dx, float dy)、offset(float dx, float dy, @Nullable Path dst)</h3><p>offset(float dx, float dy)：将当前path平移(dx,dy)</p>
+<p>offset(float dx, float dy, @Nullable Path dst)：dst为null时，与<code>offset(float dx, float dy)</code>效果一致；dst不为null时，将当前path平移后的状态存入dst中，不会影响当前path。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">offset</span><span class="params">(<span class="keyword">float</span> dx, <span class="keyword">float</span> dy, @Nullable Path dst)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (dst != <span class="keyword">null</span>) &#123;</span><br><span class="line">        dst.set(<span class="keyword">this</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        dst = <span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    dst.offset(dx, dy);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持是对我最大的鼓励！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Haitao Ni 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.png" alt="Haitao Ni 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/view/" rel="tag"># view</a>
+          
+            <a href="/tags/Path/" rel="tag"># Path</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/3854066347/" rel="next" title="自定义View之Canvas.drawXXX()">
+                <i class="fa fa-chevron-left"></i> 自定义View之Canvas.drawXXX()
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/3461679658/" rel="prev" title="自定义View之Scroller">
+                自定义View之Scroller <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar" rel="external nofollow">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar/avatar.png" alt="Haitao Ni">
+            
+              <p class="site-author-name" itemprop="name">Haitao Ni</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">79</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">49</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">85</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:haitao_ni@nhtzj.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#简介"><span class="nav-number">2.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Path类的具体使用"><span class="nav-number">3.</span> <span class="nav-text">Path类的具体使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Path-方法第一类：直接描述路径"><span class="nav-number">4.</span> <span class="nav-text">Path 方法第一类：直接描述路径</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Path-addXxx-系列"><span class="nav-number">4.1.</span> <span class="nav-text">Path.addXxx()系列</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#addCircle-float-x-float-y-float-radius-Direction-dir"><span class="nav-number">4.1.1.</span> <span class="nav-text">addCircle(float x, float y, float radius, Direction dir)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#addRect-float-left-float-top-float-right-float-bottom-Direction-dir"><span class="nav-number">4.1.2.</span> <span class="nav-text">addRect(float left, float top, float right, float bottom, Direction dir)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#addRoundRect-RectF-rect-float-rx-float-ry-Direction-dir"><span class="nav-number">4.1.3.</span> <span class="nav-text">addRoundRect(RectF rect, float rx, float ry, Direction dir)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#addArc-RectF-oval-float-startAngle-float-sweepAngle"><span class="nav-number">4.1.4.</span> <span class="nav-text">addArc(RectF oval, float startAngle, float sweepAngle)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#addOval-RectF-oval-Direction-dir"><span class="nav-number">4.1.5.</span> <span class="nav-text">addOval(RectF oval, Direction dir)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#addPath-Path-src"><span class="nav-number">4.1.6.</span> <span class="nav-text">addPath(Path src)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Path-XxxTo系列"><span class="nav-number">4.2.</span> <span class="nav-text">Path.XxxTo系列</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#lineTo-float-x-float-y-、rLineTo-float-dx-float-dy"><span class="nav-number">4.2.1.</span> <span class="nav-text">lineTo(float x, float y)、rLineTo(float dx, float dy)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#moveTo-float-x-float-y-、rMoveTo-float-dx-float-dy"><span class="nav-number">4.2.2.</span> <span class="nav-text">moveTo (float x, float y)、rMoveTo (float dx, float dy)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#arcTo-RectF-oval-float-startAngle-float-sweepAngle-、arcTo-RectF-oval-float-startAngle-float-sweepAngle-boolean-forceMoveTo-、arcTo-float-left-float-top-float-right-float-bottom-float-startAngle-float-sweepAngle-boolean-forceMoveTo"><span class="nav-number">4.2.3.</span> <span class="nav-text">arcTo(RectF oval, float startAngle, float sweepAngle)、arcTo(RectF oval, float startAngle, float sweepAngle, boolean forceMoveTo)、arcTo(float left, float top, float right, float bottom, float startAngle, float sweepAngle, boolean forceMoveTo)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#quadTo-float-x1-float-y1-float-x2-float-y2-、rQuadTo-float-dx1-float-dy1-float-dx2-float-dy2"><span class="nav-number">4.2.4.</span> <span class="nav-text">quadTo(float x1, float y1, float x2, float y2)、rQuadTo(float dx1, float dy1, float dx2, float dy2)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#cubicTo-float-x1-float-y1-float-x2-float-y2-float-x3-float-y3-、rCubicTo-float-x1-float-y1-float-x2-float-y2-float-x3-float-y3"><span class="nav-number">4.2.5.</span> <span class="nav-text">cubicTo(float x1, float y1, float x2, float y2,float x3, float y3)、rCubicTo(float x1, float y1, float x2, float y2,float x3, float y3)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Path-方法第二类：辅助的设置或计算"><span class="nav-number">5.</span> <span class="nav-text">Path 方法第二类：辅助的设置或计算</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#setFillType-FillType-ft"><span class="nav-number">5.1.</span> <span class="nav-text">setFillType(FillType ft)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#EVEN-ODD"><span class="nav-number">5.1.1.</span> <span class="nav-text">EVEN_ODD</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#WINDING"><span class="nav-number">5.1.2.</span> <span class="nav-text">WINDING</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Path-Op"><span class="nav-number">5.2.</span> <span class="nav-text">Path.Op</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#不添加OP属性示例"><span class="nav-number">5.2.1.</span> <span class="nav-text">不添加OP属性示例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DIFFERENCE"><span class="nav-number">5.2.2.</span> <span class="nav-text">DIFFERENCE</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#INTERSECT"><span class="nav-number">5.2.3.</span> <span class="nav-text">INTERSECT</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#UNION"><span class="nav-number">5.2.4.</span> <span class="nav-text">UNION</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#XOR"><span class="nav-number">5.2.5.</span> <span class="nav-text">XOR</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#REVERSE-DIFFERENCE"><span class="nav-number">5.2.6.</span> <span class="nav-text">REVERSE_DIFFERENCE</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#close"><span class="nav-number">5.3.</span> <span class="nav-text">close()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#reset"><span class="nav-number">5.4.</span> <span class="nav-text">reset()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#set-NonNull-Path-src"><span class="nav-number">5.5.</span> <span class="nav-text">set (@NonNull Path src)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#setLastPoint-float-dx-float-dy"><span class="nav-number">5.6.</span> <span class="nav-text">setLastPoint(float dx, float dy)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#isConvex"><span class="nav-number">5.7.</span> <span class="nav-text">isConvex ()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#offset-float-dx-float-dy-、offset-float-dx-float-dy-Nullable-Path-dst"><span class="nav-number">5.8.</span> <span class="nav-text">offset(float dx, float dy)、offset(float dx, float dy, @Nullable Path dst)</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2023</span>
+
+
+  <div class="powered-by"><a class="theme-link" target="_blank" href="https://beian.miit.gov.cn/" rel="external nofollow" title="工业和信息化部ICP/IP地址/域名信息备案管理系统">浙ICP备17020869号</a></div>
+
+
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Haitao Ni</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'gaKW5YWAvf7NBOlU9eFbxN8O-gzGzoHsz',
+        appKey: 'susRHyMS8Fq1XyKXg0r9ad85',
+        placeholder: '填上邮箱可以收到我的回复哦 (*^ω^*)~~',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+
+//新增以下代码即可，可以移除.info下所有子节点。
+var infoEle = document.querySelector('#comments .info');
+if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0){
+  infoEle.childNodes.forEach(function(item) {
+    item.parentNode.removeChild(item);
+  });
+}
+
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("gaKW5YWAvf7NBOlU9eFbxN8O-gzGzoHsz", "susRHyMS8Fq1XyKXg0r9ad85");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+
+
+  
+
+  
+
+</body>
+</html>

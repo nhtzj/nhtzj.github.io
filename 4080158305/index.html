@@ -1,0 +1,1496 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="uW8bwgMGUwIA01nPfh0oty1rmtmmuVkOVGaS9O0nQUg">
+
+
+
+
+
+
+
+
+  <meta name="baidu-site-verification" content="NeE6tPH3W1">
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico?v=5.1.4">
+
+
+
+
+
+
+
+  <meta name="keywords" content="事件分发,ViewRootImpl">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="海的那边" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="前言上篇“Android事件分发机制源码解析”分析了从Activity获取到触摸事件之后开始的分发流程，本篇就承接该篇介绍在触摸事件到达Activity之前的一些流程。 当点击屏幕产生一个触摸行为时，这个触摸行为则是通过底层硬件捕获传递到ViewRootImpl内的。由于底层相关的涉及到native相关的知识，这里就简单摘取传到Java层的主要部分，详细的过程感兴趣的同学可以查看这篇文章“Inpu">
+<meta name="keywords" content="事件分发,ViewRootImpl">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从ViewRootImpl开始分析事件分发过程">
+<meta property="og:url" content="http://www.nhtzj.com/4080158305/index.html">
+<meta property="og:site_name" content="海的那边">
+<meta property="og:description" content="前言上篇“Android事件分发机制源码解析”分析了从Activity获取到触摸事件之后开始的分发流程，本篇就承接该篇介绍在触摸事件到达Activity之前的一些流程。 当点击屏幕产生一个触摸行为时，这个触摸行为则是通过底层硬件捕获传递到ViewRootImpl内的。由于底层相关的涉及到native相关的知识，这里就简单摘取传到Java层的主要部分，详细的过程感兴趣的同学可以查看这篇文章“Inpu">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://www.nhtzj.com/images/2021/07/触摸事件分发到Activity时序图.jpg">
+<meta property="og:image" content="http://www.nhtzj.com/images/2021/07/InputStage类图.jpg">
+<meta property="og:image" content="http://www.nhtzj.com/images/2021/07/InputStage流程图.jpg">
+<meta property="og:updated_time" content="2021-07-07T13:06:13.030Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="从ViewRootImpl开始分析事件分发过程">
+<meta name="twitter:description" content="前言上篇“Android事件分发机制源码解析”分析了从Activity获取到触摸事件之后开始的分发流程，本篇就承接该篇介绍在触摸事件到达Activity之前的一些流程。 当点击屏幕产生一个触摸行为时，这个触摸行为则是通过底层硬件捕获传递到ViewRootImpl内的。由于底层相关的涉及到native相关的知识，这里就简单摘取传到Java层的主要部分，详细的过程感兴趣的同学可以查看这篇文章“Inpu">
+<meta name="twitter:image" content="http://www.nhtzj.com/images/2021/07/触摸事件分发到Activity时序图.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.nhtzj.com/4080158305/">
+
+
+
+
+
+  <title>从ViewRootImpl开始分析事件分发过程 | 海的那边</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">海的那边</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">人无远虑，必有近忧</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.nhtzj.com/4080158305/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Haitao Ni">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="海的那边">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">从ViewRootImpl开始分析事件分发过程</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-07-02T22:20:40+08:00">
+                2021-07-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/android/" itemprop="url" rel="index">
+                    <span itemprop="name">android</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/android/事件分发/" itemprop="url" rel="index">
+                    <span itemprop="name">事件分发</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/4080158305/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/4080158305/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/4080158305/" class="leancloud_visitors" data-flag-title="从ViewRootImpl开始分析事件分发过程">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  4,702
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  23
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>上篇“<a href="/2679806526/">Android事件分发机制源码解析</a>”分析了从Activity获取到触摸事件之后开始的分发流程，本篇就承接该篇介绍在触摸事件到达Activity之前的一些流程。</p>
+<p>当点击屏幕产生一个触摸行为时，这个触摸行为则是通过<strong>底层硬件</strong>捕获传递到<code>ViewRootImpl</code>内的。由于底层相关的涉及到native相关的知识，这里就简单摘取传到Java层的主要部分，详细的过程感兴趣的同学可以查看这篇文章“<a href="http://gityuan.com/2016/12/31/input-ipc/" target="_blank" rel="noopener">Input系统—事件处理全过程</a>”，而本篇就直接从<code>ViewRootImpl</code>接受到事件处开始展开。</p>
+<h2 id="时序图"><a href="#时序图" class="headerlink" title="时序图"></a>时序图</h2><p>分发流程的主题部分如下时序图所示：</p>
+<p><img src="/images/2021/07/触摸事件分发到Activity时序图.jpg" alt="时序图-触摸事件分发到Activity"></p>
+<p>下面将详细介绍其中的每个步骤。</p>
+<h2 id="Native"><a href="#Native" class="headerlink" title="Native"></a>Native</h2><blockquote>
+<p><a href="https://cs.android.com/android/platform/superproject/+/master:frameworks/base/core/jni/android_view_InputEventReceiver.cpp;l=223" target="_blank" rel="noopener">frameworks/base/core/jni/android_view_InputEventReceiver.cpp （点击查看完整源码）</a></p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">status_t</span> NativeInputEventReceiver::consumeEvents(JNIEnv* env,</span><br><span class="line">        <span class="keyword">bool</span> consumeBatches, <span class="keyword">nsecs_t</span> frameTime, <span class="keyword">bool</span>* outConsumedBatch) &#123;</span><br><span class="line">        </span><br><span class="line">    ...</span><br><span class="line">        </span><br><span class="line">    ScopedLocalRef&lt;jobject&gt; receiverObj(env, <span class="literal">NULL</span>);</span><br><span class="line">    <span class="keyword">bool</span> skipCallbacks = <span class="literal">false</span>;</span><br><span class="line">    <span class="keyword">for</span> (;;) &#123;</span><br><span class="line">        <span class="keyword">uint32_t</span> seq;</span><br><span class="line">        InputEvent* inputEvent;</span><br><span class="line">        <span class="comment">// 读取InputEvent</span></span><br><span class="line">        <span class="keyword">status_t</span> status = mInputConsumer.consume(&amp;mInputEventFactory,</span><br><span class="line">                consumeBatches, frameTime, &amp;seq, &amp;inputEvent);</span><br><span class="line">			</span><br><span class="line">    ...</span><br><span class="line">				</span><br><span class="line">            <span class="keyword">switch</span> (inputEvent-&gt;getType()) &#123;</span><br><span class="line">                <span class="keyword">case</span> AINPUT_EVENT_TYPE_KEY:</span><br><span class="line">                    <span class="comment">//由Native的inputEvent来生成Java层的事件</span></span><br><span class="line">                    inputEventObj = android_view_KeyEvent_fromNative(env,</span><br><span class="line">                            <span class="keyword">static_cast</span>&lt;KeyEvent*&gt;(inputEvent));</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">    ...</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (inputEventObj) &#123;</span><br><span class="line">                <span class="comment">//执行Java层的InputEventReceiver.dispachInputEvent</span></span><br><span class="line">                env-&gt;CallVoidMethod(receiverObj.get(),</span><br><span class="line">                        gInputEventReceiverClassInfo.dispatchInputEvent, seq, inputEventObj);</span><br><span class="line">    ...</span><br><span class="line">            &#125; </span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">    ...</span><br><span class="line">			</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到最后是调用到了Java层的InputEventReceiver.dispachInputEvent()方法</p>
+<h3 id="InputEventReceiver"><a href="#InputEventReceiver" class="headerlink" title="InputEventReceiver"></a>InputEventReceiver</h3><blockquote>
+<p><a href="https://cs.android.com/android/platform/superproject/+/master:frameworks/base/core/java/android/view/InputEventReceiver.java?q=InputEventReceiver.java&amp;ss=android%2Fplatform%2Fsuperproject" target="_blank" rel="noopener">frameworks/base/core/java/android/view/InputEventReceiver.java（点击查看完整源码）</a></p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Provides a low-level mechanism for an application to receive input events.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@hide</span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">InputEventReceiver</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">dispatchInputEvent</span><span class="params">(<span class="keyword">int</span> seq, InputEvent event)</span> </span>&#123;</span><br><span class="line">        mSeqMap.put(event.getSequenceNumber(), seq);</span><br><span class="line">        onInputEvent(event);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>dispatchInputEvent()</code>方法内部主要是调用了<code>onInputEvent(event)</code>方法。</p>
+<p>而这里<code>InputEventReceiver</code>的实现类就是<code>ViewRootImpl</code>的内部类<code>WindowInputEventReceiver</code>。</p>
+<h2 id="ViewRootImpl"><a href="#ViewRootImpl" class="headerlink" title="ViewRootImpl"></a>ViewRootImpl</h2><p><strong>从这里开始开始的流程就都是在Java层了。</strong></p>
+<h3 id="WindowInputEventReceiver"><a href="#WindowInputEventReceiver" class="headerlink" title="WindowInputEventReceiver"></a>WindowInputEventReceiver</h3><blockquote>
+<p><a href="https://cs.android.com/android/platform/superproject/+/master:frameworks/base/core/java/android/view/ViewRootImpl.java;l=8183" target="_blank" rel="noopener">frameworks/base/core/java/android/view/ViewRootImpl.java （点击查看完整源码）</a></p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">WindowInputEventReceiver</span> <span class="keyword">extends</span> <span class="title">InputEventReceiver</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onInputEvent</span><span class="params">(InputEvent event)</span> </span>&#123;</span><br><span class="line">        ...</span><br><span class="line">        enqueueInputEvent(event, <span class="keyword">this</span>, <span class="number">0</span>, <span class="keyword">true</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在子类<code>WindowInputEventReceiver.onInputEvent()</code>方法内调用了<code>ViewRootImpl.enqueueInputEvent()</code><br><span id="enqueueInputEvent"></span></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">enqueueInputEvent</span><span class="params">(InputEvent event,</span></span></span><br><span class="line"><span class="function"><span class="params">        InputEventReceiver receiver, <span class="keyword">int</span> flags, <span class="keyword">boolean</span> processImmediately)</span> </span>&#123;</span><br><span class="line">    adjustInputEventForCompatibility(event);</span><br><span class="line">    <span class="comment">//构建一个QueuedInputEvent</span></span><br><span class="line">    QueuedInputEvent q = obtainQueuedInputEvent(event, receiver, flags);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//将构建的QueuedInputEvent添加到pending队列末尾</span></span><br><span class="line">    QueuedInputEvent last = mPendingInputEventTail;</span><br><span class="line">    <span class="keyword">if</span> (last == <span class="keyword">null</span>) &#123;</span><br><span class="line">        mPendingInputEventHead = q;</span><br><span class="line">        mPendingInputEventTail = q;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        last.mNext = q;</span><br><span class="line">        mPendingInputEventTail = q;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//队列计数</span></span><br><span class="line">    mPendingInputEventCount += <span class="number">1</span>;</span><br><span class="line">    Trace.traceCounter(Trace.TRACE_TAG_INPUT, mPendingInputEventQueueLengthCounterName,</span><br><span class="line">            mPendingInputEventCount);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//处理pending队列内的事件</span></span><br><span class="line">    <span class="keyword">if</span> (processImmediately) &#123;</span><br><span class="line">        doProcessInputEvents(); <span class="comment">// 立即同步执行</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        scheduleProcessInputEvents();<span class="comment">//通过handler分发执行</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>enqueueInputEvent()方法内将输入事件封装成QueuedInputEvent后加入队列末尾，之后再进行事件处理。</p>
+<h3 id="QueuedInputEvent回收池"><a href="#QueuedInputEvent回收池" class="headerlink" title="QueuedInputEvent回收池"></a>QueuedInputEvent回收池</h3><p>其中QueuedInputEvent也是ViewRootImpl的内部类，成员变量mNext是用来链接下一个成员，从而组成一个单向链表。</p>
+<p>其中mFlag是一个int型的标志位，在下方InputStage分发逻辑中有重要作用。可以看到<code>WindowInputEventReceiver.onInputEvent()</code>方法内调用<code>enqueueInputEvent()</code>方法时传入的<strong>flags</strong>行参值为<strong>0</strong>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">QueuedInputEvent</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">     <span class="keyword">public</span> QueuedInputEvent mNext;</span><br><span class="line"></span><br><span class="line">     <span class="keyword">public</span> InputEvent mEvent;</span><br><span class="line">     <span class="keyword">public</span> InputEventReceiver mReceiver;</span><br><span class="line">     <span class="keyword">public</span> <span class="keyword">int</span> mFlags;</span><br><span class="line">     ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>obtainQueuedInputEvent()</code>和<code>recycleQueuedInputEvent()</code>方法则是配合ViewRootImpl的成员变量<code>mQueuedInputEventPoolSize</code>、<code>mQueuedInputEventPool</code>设计成了一个输入事件包装类QueuedInputEvent的回收池，便于QueuedInputEvent的重复使用。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 1. 判断mQueuedInputEventPool回收池内是否有缓存的对象，若有则取出一个</span></span><br><span class="line"><span class="comment"> * 2. 若第一步内没有取到，则直接新建一个QueuedInputEvent对象</span></span><br><span class="line"><span class="comment"> * 3. 将入参保存到QueuedInputEvent对象内</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> QueuedInputEvent <span class="title">obtainQueuedInputEvent</span><span class="params">(InputEvent event,</span></span></span><br><span class="line"><span class="function"><span class="params">        InputEventReceiver receiver, <span class="keyword">int</span> flags)</span> </span>&#123;</span><br><span class="line">    QueuedInputEvent q = mQueuedInputEventPool;</span><br><span class="line">    <span class="keyword">if</span> (q != <span class="keyword">null</span>) &#123;</span><br><span class="line">        mQueuedInputEventPoolSize -= <span class="number">1</span>;<span class="comment">//QueuedInputEvent回收池由于取出一个后数量减1</span></span><br><span class="line">        mQueuedInputEventPool = q.mNext;</span><br><span class="line">        q.mNext = <span class="keyword">null</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        q = <span class="keyword">new</span> QueuedInputEvent();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    q.mEvent = event;</span><br><span class="line">    q.mReceiver = receiver;</span><br><span class="line">    q.mFlags = flags;</span><br><span class="line">    <span class="keyword">return</span> q;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 若当前回收池内的数量没有超过MAX_QUEUED_INPUT_EVENT_POOL_SIZE = 10，则将其放入回收池内</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">recycleQueuedInputEvent</span><span class="params">(QueuedInputEvent q)</span> </span>&#123;</span><br><span class="line">    q.mEvent = <span class="keyword">null</span>;</span><br><span class="line">    q.mReceiver = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (mQueuedInputEventPoolSize &lt; MAX_QUEUED_INPUT_EVENT_POOL_SIZE) &#123;</span><br><span class="line">        mQueuedInputEventPoolSize += <span class="number">1</span>;<span class="comment">//QueuedInputEvent回收池由于放入一个后数量加1</span></span><br><span class="line">        q.mNext = mQueuedInputEventPool;</span><br><span class="line">        mQueuedInputEventPool = q;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Pool of queued input events.</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MAX_QUEUED_INPUT_EVENT_POOL_SIZE = <span class="number">10</span>;</span><br></pre></td></tr></table></figure>
+<h3 id="doProcessInputEvents"><a href="#doProcessInputEvents" class="headerlink" title="doProcessInputEvents"></a>doProcessInputEvents</h3><p>再回到enqueueInputEvent()方法内，分析最后几行</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//处理pending队列内的事件</span></span><br><span class="line"><span class="keyword">if</span> (processImmediately) &#123;</span><br><span class="line">    doProcessInputEvents(); <span class="comment">// 立即同步执行</span></span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    scheduleProcessInputEvents();<span class="comment">//通过handler分发执行</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>processImmediately表示是否立即同步执行，在WindowInputEventReceiver回调内传入的是<code>true</code>，执行doProcessInputEvents()。而当false异步时，则调用到scheduleProcessInputEvents()</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">scheduleProcessInputEvents</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!mProcessInputEventsScheduled) &#123;</span><br><span class="line">        mProcessInputEventsScheduled = <span class="keyword">true</span>;</span><br><span class="line">        Message msg = mHandler.obtainMessage(MSG_PROCESS_INPUT_EVENTS);</span><br><span class="line">        msg.setAsynchronous(<span class="keyword">true</span>);</span><br><span class="line">        mHandler.sendMessage(msg);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">final</span> ViewRootHandler mHandler = <span class="keyword">new</span> ViewRootHandler();</span><br><span class="line"></span><br><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">ViewRootHandler</span> <span class="keyword">extends</span> <span class="title">Handler</span> </span>&#123;</span><br><span class="line">  </span><br><span class="line">    ...</span><br><span class="line">   </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleMessage</span><span class="params">(Message msg)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">switch</span> (msg.what) &#123;</span><br><span class="line">            ...</span><br><span class="line">            <span class="keyword">case</span> MSG_PROCESS_INPUT_EVENTS:</span><br><span class="line">                mProcessInputEventsScheduled = <span class="keyword">false</span>;</span><br><span class="line">                doProcessInputEvents();</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            ...</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到最后还是调用到了doProcessInputEvents()方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">doProcessInputEvents</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// Deliver all pending input events in the queue.</span></span><br><span class="line">    <span class="keyword">while</span> (mPendingInputEventHead != <span class="keyword">null</span>) &#123;</span><br><span class="line">        QueuedInputEvent q = mPendingInputEventHead;</span><br><span class="line">        mPendingInputEventHead = q.mNext;</span><br><span class="line">        <span class="keyword">if</span> (mPendingInputEventHead == <span class="keyword">null</span>) &#123;</span><br><span class="line">            mPendingInputEventTail = <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        q.mNext = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">        mPendingInputEventCount -= <span class="number">1</span>;</span><br><span class="line">        ...</span><br><span class="line"></span><br><span class="line">        deliverInputEvent(q);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 处理完所有输入事件后，清除标志位</span></span><br><span class="line">    <span class="keyword">if</span> (mProcessInputEventsScheduled) &#123;</span><br><span class="line">        mProcessInputEventsScheduled = <span class="keyword">false</span>;</span><br><span class="line">        mHandler.removeMessages(MSG_PROCESS_INPUT_EVENTS);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>doProcessInputEvents()方法内就是通过一个while循环遍历链表中的输入事件，调用deliverInputEvent()进行事件分发处理。</p>
+<p>这里的mPendingInputEventHead链表就是上面的<a href="#enqueueInputEvent">enqueueInputEvent()</a>方法将内输入事件包装类插入的链表。</p>
+<p>最后处理完所有输入事件后，清除标志位。<br><span id="deliverInputEvent"></span></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">deliverInputEvent</span><span class="params">(QueuedInputEvent q)</span> </span>&#123;</span><br><span class="line">    Trace.asyncTraceBegin(Trace.TRACE_TAG_VIEW, <span class="string">"deliverInputEvent"</span>,</span><br><span class="line">            q.mEvent.getSequenceNumber());</span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    InputStage stage;</span><br><span class="line">    <span class="keyword">if</span> (q.shouldSendToSynthesizer()) &#123;</span><br><span class="line">        stage = mSyntheticInputStage;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        stage = q.shouldSkipIme() ? mFirstPostImeInputStage : mFirstInputStage;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (stage != <span class="keyword">null</span>) &#123;</span><br><span class="line">        handleWindowFocusChanged();</span><br><span class="line">        stage.deliver(q);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        finishInputEvent(q); <span class="comment">//结束事件分发</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="deliverInputEvent"><a href="#deliverInputEvent" class="headerlink" title="deliverInputEvent"></a>deliverInputEvent</h3><p>deliverInputEvent()方法从方法名就可以知道它的作用是分发事件。</p>
+<p>方法内最主要的就是InputStage，最终要么是调用了stage.deliver(q)，要么就是stage为空直接结束事件分发。</p>
+<p>而stage赋值处的几个InputStage子类是在ViewRootImpl.setView()方法内实例化的，这个方法在窗口管理和view绘制方面起到非常重要的作用，这部分之后会抽空再单独详细讲解。所以在View绘制之后所触发的事件，这里的7个InputStage子类都是不为空的。</p>
+<p>而从这7个InputStage子类的构造器来看，就是典型的责任链模式，即自己能处理就自己处理，若不能处理则交给下一个处理，从下面InputStage的源码也能证实责任链模式。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setView</span><span class="params">(View view, WindowManager.LayoutParams attrs, View panelParentView,</span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">int</span> userId)</span> </span>&#123;</span><br><span class="line">        ...</span><br><span class="line">            mSyntheticInputStage = <span class="keyword">new</span> SyntheticInputStage();</span><br><span class="line">            InputStage viewPostImeStage = <span class="keyword">new</span> ViewPostImeInputStage(mSyntheticInputStage);</span><br><span class="line">            InputStage nativePostImeStage = <span class="keyword">new</span> NativePostImeInputStage(viewPostImeStage,</span><br><span class="line">                    <span class="string">"aq:native-post-ime:"</span> + counterSuffix);</span><br><span class="line">            InputStage earlyPostImeStage = <span class="keyword">new</span> EarlyPostImeInputStage(nativePostImeStage);</span><br><span class="line">            InputStage imeStage = <span class="keyword">new</span> ImeInputStage(earlyPostImeStage,</span><br><span class="line">                    <span class="string">"aq:ime:"</span> + counterSuffix);</span><br><span class="line">            InputStage viewPreImeStage = <span class="keyword">new</span> ViewPreImeInputStage(imeStage);</span><br><span class="line">            InputStage nativePreImeStage = <span class="keyword">new</span> NativePreImeInputStage(viewPreImeStage,</span><br><span class="line">                    <span class="string">"aq:native-pre-ime:"</span> + counterSuffix);</span><br><span class="line"></span><br><span class="line">            mFirstInputStage = nativePreImeStage;</span><br><span class="line">            mFirstPostImeInputStage = earlyPostImeStage;</span><br><span class="line">        ...</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>NativePreImeInputStage: 主要是为了将消息放到NativeActivity中去处理, NativeActivity和普通Acitivty的功能区别不大,只是很多代码都在native层去实现,这样执行效率更高,并且NativeActivity在游戏开发中很实用。</li>
+<li>ViewPreImeInputStage: 从名字中就可得知,最后会调用Acitivity的所有view的onkeyPreIme方法,这样就给View在输入法处理key事件之前先得到消息并处理的机会。</li>
+<li>ImeInputStage: ImeInputStage的onProcess方法会调用InputMethodManager的dispatchInputEvent方法处理消息。</li>
+<li>EarlyPostImeInputStage: 屏幕上有焦点的View会高亮显示,用来提示用户焦点所在。</li>
+<li>NativePostImeInputStage: 为了让IME处理完消息后能先于普通的Activity处理消息。</li>
+<li>ViewPostImeInputStage: Acitivity和view处理各种消息。</li>
+<li>SyntheticInputStage: 流水线的最后一级,经过层层过滤之后,到达这里的消息已经不多了,例如手机上的虚拟按键消息。</li>
+</ul>
+<p>那么Activity和View的事件处理主要对应的InputStage是ViewPostImeInputStage。</p>
+<p>类图:</p>
+<p><img src="/images/2021/07/InputStage类图.jpg" alt="InputStage类图"></p>
+<h3 id="InputStage详解"><a href="#InputStage详解" class="headerlink" title="InputStage详解"></a>InputStage详解</h3><h4 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Base class for implementing a stage in the chain of responsibility</span></span><br><span class="line"><span class="comment"> * for processing input events.</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * Events are delivered to the stage by the &#123;<span class="doctag">@link</span> #deliver&#125; method.  The stage</span></span><br><span class="line"><span class="comment"> * then has the choice of finishing the event or forwarding it to the next stage.</span></span><br><span class="line"><span class="comment"> * &lt;/p&gt;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">InputStage</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> InputStage mNext;<span class="comment">//持有的下一个stage对象</span></span><br><span class="line"></span><br><span class="line">   <span class="comment">//3种状态</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> FORWARD = <span class="number">0</span>;<span class="comment">//当前stage不处理，会将事件传递给下个stage处理</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> FINISH_HANDLED = <span class="number">1</span>;<span class="comment">//当前stage已处理，会调用finish，stage链上剩余的都不会处理该事件</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> FINISH_NOT_HANDLED = <span class="number">2</span>;<span class="comment">//当前stage未处理，会调用finish，stage链上剩余的都不会处理该事件</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String mTracePrefix;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Creates an input stage.</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> next The next stage to which events should be forwarded.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">InputStage</span><span class="params">(InputStage next)</span> </span>&#123;</span><br><span class="line">        mNext = next;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Delivers an event to be processed.</span></span><br><span class="line"><span class="comment">     * 分发事件</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">deliver</span><span class="params">(QueuedInputEvent q)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> ((q.mFlags &amp; QueuedInputEvent.FLAG_FINISHED) != <span class="number">0</span>) &#123;</span><br><span class="line">            forward(q);<span class="comment">//当前stage不处理，直接传给下一个（即：mNext）</span></span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (shouldDropInputEvent(q)) &#123;<span class="comment">//判断事件是否需要丢弃</span></span><br><span class="line">            finish(q, <span class="keyword">false</span>);<span class="comment">//结束调用，stage链上的各个stage都不会处理这个事件</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            traceEvent(q, Trace.TRACE_TAG_VIEW);</span><br><span class="line">            <span class="keyword">final</span> <span class="keyword">int</span> result;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                result = onProcess(q);<span class="comment">//在onProcess()内处理具体的操作</span></span><br><span class="line">            &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                Trace.traceEnd(Trace.TRACE_TAG_VIEW);</span><br><span class="line">            &#125;</span><br><span class="line">            apply(q, result);<span class="comment">//根据onProcess()返回的状态值result判断是传递给下个stage处理还是结束</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Marks the the input event as finished then forwards it to the next stage.</span></span><br><span class="line"><span class="comment">     * finish方法主要是给QueuedInputEvent的mFlags标志位设置FLAG_FINISHED状态，且当handled = true时，设 </span></span><br><span class="line"><span class="comment">     * 置FLAG_FINISHED_HANDLED标志，以表示事件已被处理。</span></span><br><span class="line"><span class="comment">     * 当事件在stage内传递完毕后会调用finishInputEvent()，该方法内就会取出FLAG_FINISHED_HANDLED标志状态回调给mReciver</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">finish</span><span class="params">(QueuedInputEvent q, <span class="keyword">boolean</span> handled)</span> </span>&#123;</span><br><span class="line">        q.mFlags |= QueuedInputEvent.FLAG_FINISHED;</span><br><span class="line">        <span class="keyword">if</span> (handled) &#123;</span><br><span class="line">            q.mFlags |= QueuedInputEvent.FLAG_FINISHED_HANDLED;</span><br><span class="line">        &#125;</span><br><span class="line">        forward(q);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Forwards the event to the next stage.</span></span><br><span class="line"><span class="comment">     * 将事件分发给下个stage</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">forward</span><span class="params">(QueuedInputEvent q)</span> </span>&#123;</span><br><span class="line">        onDeliverToNext(q);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Applies a result code from &#123;<span class="doctag">@link</span> #onProcess&#125; to the specified event.</span></span><br><span class="line"><span class="comment">     * 根据onProcess()返回的状态值result判断是传递给下个stage处理还是结束</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">apply</span><span class="params">(QueuedInputEvent q, <span class="keyword">int</span> result)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (result == FORWARD) &#123;</span><br><span class="line">            forward(q);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (result == FINISH_HANDLED) &#123;</span><br><span class="line">            finish(q, <span class="keyword">true</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (result == FINISH_NOT_HANDLED) &#123;</span><br><span class="line">            finish(q, <span class="keyword">false</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"Invalid result: "</span> + result);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Called when an event is ready to be processed.</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> A result code indicating how the event was handled.</span></span><br><span class="line"><span class="comment">     * 具体处理逻辑处，默认是无实现，直接返回FORWARD值，交给下个stage处理</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">int</span> <span class="title">onProcess</span><span class="params">(QueuedInputEvent q)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> FORWARD;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Called when an event is being delivered to the next stage.</span></span><br><span class="line"><span class="comment">     * 若stage未分发完毕，则继续分发处理；</span></span><br><span class="line"><span class="comment">     * 否则调用finishInputEvent方法结束stage的链式调用</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onDeliverToNext</span><span class="params">(QueuedInputEvent q)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (DEBUG_INPUT_STAGES) &#123;</span><br><span class="line">            Log.v(mTag, <span class="string">"Done with "</span> + getClass().getSimpleName() + <span class="string">". "</span> + q);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (mNext != <span class="keyword">null</span>) &#123;</span><br><span class="line">            mNext.deliver(q);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            finishInputEvent(q);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onWindowFocusChanged</span><span class="params">(<span class="keyword">boolean</span> hasWindowFocus)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (mNext != <span class="keyword">null</span>) &#123;</span><br><span class="line">            mNext.onWindowFocusChanged(hasWindowFocus);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onDetachedFromWindow</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (mNext != <span class="keyword">null</span>) &#123;</span><br><span class="line">            mNext.onDetachedFromWindow();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">boolean</span> <span class="title">shouldDropInputEvent</span><span class="params">(QueuedInputEvent q)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (mView == <span class="keyword">null</span> || !mAdded) &#123;</span><br><span class="line">            Slog.w(mTag, <span class="string">"Dropping event due to root view being removed: "</span> + q.mEvent);</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> ((!mAttachInfo.mHasWindowFocus</span><br><span class="line">                &amp;&amp; !q.mEvent.isFromSource(InputDevice.SOURCE_CLASS_POINTER)</span><br><span class="line">                &amp;&amp; !isAutofillUiShowing()) || mStopped</span><br><span class="line">                || (mIsAmbientMode &amp;&amp; !q.mEvent.isFromSource(InputDevice.SOURCE_CLASS_BUTTON))</span><br><span class="line">                || (mPausedForTransition &amp;&amp; !isBack(q.mEvent))) &#123;</span><br><span class="line">            <span class="comment">// This is a focus event and the window doesn't currently have input focus or</span></span><br><span class="line">            <span class="comment">// has stopped. This could be an event that came back from the previous stage</span></span><br><span class="line">            <span class="comment">// but the window has lost focus or stopped in the meantime.</span></span><br><span class="line">            <span class="keyword">if</span> (isTerminalInputEvent(q.mEvent)) &#123;</span><br><span class="line">                <span class="comment">// Don't drop terminal input events, however mark them as canceled.</span></span><br><span class="line">                q.mEvent.cancel();</span><br><span class="line">                Slog.w(mTag, <span class="string">"Cancelling event due to no window focus: "</span> + q.mEvent);</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// Drop non-terminal input events.</span></span><br><span class="line">            Slog.w(mTag, <span class="string">"Dropping event due to no window focus: "</span> + q.mEvent);</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">dump</span><span class="params">(String prefix, PrintWriter writer)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (mNext != <span class="keyword">null</span>) &#123;</span><br><span class="line">            mNext.dump(prefix, writer);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">isBack</span><span class="params">(InputEvent event)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (event <span class="keyword">instanceof</span> KeyEvent) &#123;</span><br><span class="line">            <span class="keyword">return</span> ((KeyEvent) event).getKeyCode() == KeyEvent.KEYCODE_BACK;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">traceEvent</span><span class="params">(QueuedInputEvent q, <span class="keyword">long</span> traceTag)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (!Trace.isTagEnabled(traceTag)) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (mTracePrefix == <span class="keyword">null</span>) &#123;</span><br><span class="line">            mTracePrefix = getClass().getSimpleName();</span><br><span class="line">        &#125;</span><br><span class="line">        Trace.traceBegin(traceTag, mTracePrefix + <span class="string">" id=0x"</span></span><br><span class="line">                + Integer.toHexString(q.mEvent.getId()));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="流程图"><a href="#流程图" class="headerlink" title="流程图"></a>流程图</h4><p><img src="/images/2021/07/InputStage流程图.jpg" alt="InputStage流程图"></p>
+<h4 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h4><p>InputStage主要方法有这几个：</p>
+<ul>
+<li><p><strong>void deliver(QueuedInputEvent q)</strong>：这是deliverInputEvent()方法内的satge直接调用的入口。</p>
+</li>
+<li><p><strong>void forward(QueuedInputEvent q)</strong>、<strong>onDeliverToNext(QueuedInputEvent q)</strong>：forword内直接调用了onDeliverToNext。后者方法内判断当前stage是否为stage链上的最后一项（即：mNext == null）。若是，则调用finishInputEvent(q)将处理结果返回给mReceiver，否则就继续传递给下一个stage判断处理（mNext.deliver(q)）</p>
+</li>
+<li><p><strong>boolean shouldDropInputEvent(QueuedInputEvent q)</strong>: 判断事件是否需要丢弃</p>
+</li>
+<li><p><strong>int onProcess(QueuedInputEvent q) </strong>：具体处理逻辑处，默认是无实现，直接返回FORWARD值，交给下个stage处理</p>
+</li>
+<li><p><strong>void apply(QueuedInputEvent q, int result) </strong>：根据onProcess()返回的状态值result判断是传递给下个stage处理还是<strong>结束</strong>，这里的结束并不是直接跳出stage链内的调用，而是在链内逐个stage遍历时每个stage都不处理，直到责任链尾时（mNext == null）调用finishInputEvent方法返回本次执行结果。</p>
+</li>
+<li><p><strong>void finish(QueuedInputEvent q, boolean handled) </strong>：给QueuedInputEvent的mFlags标志位设置FLAG_FINISHED状态，且当handled = true时，设置FLAG_FINISHED_HANDLED标志，以表示事件已被处理。当事件在stage内传递完毕后会调用finishInputEvent()，该方法内就会取出FLAG_FINISHED_HANDLED标志状态并回调给mReceiver</p>
+</li>
+</ul>
+<p>onProcess()返回的三种类型：</p>
+<ul>
+<li>FORWARD = 0 ：当前stage不处理，会将事件传递给下个stage处理</li>
+<li>FINISH_HANDLED = 1 ： 当前stage已处理，会调用finish，stage链上剩余的都不会处理该事件</li>
+<li>FINISH_NOT_HANDLED = 2 ： 当前stage未处理，会调用finish，stage链上剩余的都不会处理该事件</li>
+</ul>
+<p>其中FINISH_HANDLED 和FINISH_NOT_HANDLED在stage责任链模式上传递时的表现行为是完全一致的，即之后的stage都不会处理。只是在finishInputEvent内会将该值取出（表示该事件是否已被消费）回调给mReceiver</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">finishInputEvent</span><span class="params">(QueuedInputEvent q)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (q.mReceiver != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">boolean</span> handled = (q.mFlags &amp; QueuedInputEvent.FLAG_FINISHED_HANDLED) != <span class="number">0</span>;</span><br><span class="line">        ...</span><br><span class="line">        q.mReceiver.finishInputEvent(q.mEvent, handled);</span><br><span class="line"></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        q.mEvent.recycleIfNeededAfterDispatch();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    recycleQueuedInputEvent(q);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>finishInputEvent方法就是将执行结果handled返回给mReceiver，最后调用recycleQueuedInputEvent(q)将QueuedInputEvent对象回收。</p>
+<h3 id="ViewPostImeInputStage-onProcess"><a href="#ViewPostImeInputStage-onProcess" class="headerlink" title="ViewPostImeInputStage#onProcess()"></a>ViewPostImeInputStage#onProcess()</h3><p>InputStage内的具体执行流程分析完了，接下来就可以去看看<strong>ViewPostImeInputStage.onProcess()</strong>具体执行了什么。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">ViewPostImeInputStage</span> <span class="keyword">extends</span> <span class="title">InputStage</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ViewPostImeInputStage</span><span class="params">(InputStage next)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(next);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">int</span> <span class="title">onProcess</span><span class="params">(QueuedInputEvent q)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (q.mEvent <span class="keyword">instanceof</span> KeyEvent) &#123;</span><br><span class="line">            <span class="keyword">return</span> processKeyEvent(q);<span class="comment">//处理键盘事件</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">final</span> <span class="keyword">int</span> source = q.mEvent.getSource();</span><br><span class="line">            <span class="keyword">if</span> ((source &amp; InputDevice.SOURCE_CLASS_POINTER) != <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> processPointerEvent(q);<span class="comment">//处理触摸事件</span></span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> ((source &amp; InputDevice.SOURCE_CLASS_TRACKBALL) != <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> processTrackballEvent(q);<span class="comment">//处理轨迹球事件</span></span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">return</span> processGenericMotionEvent(q);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p><strong>ViewPostImeInputStage.onProcess()</strong>内有判断当前事件类型，我们这边分析触摸事件，所以直接看<code>processPointerEvent(q)</code>。对其他事件感兴趣的可以自行查看源码分析。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">processPointerEvent</span><span class="params">(QueuedInputEvent q)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> MotionEvent event = (MotionEvent)q.mEvent;</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">boolean</span> handled = mView.dispatchPointerEvent(event);</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">return</span> handled ? FINISH_HANDLED : FORWARD;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里就可以看到<code>ViewPostImeInputStage.onProgress()</code>返回的具体值<strong>handled ? FINISH_HANDLED : FORWARD</strong>，</p>
+<p>FINISH_HANDLED：当前触摸事件由ViewPostImeInputStage处理；FORWARD：ViewPostImeInputStage未处理，继续传给SyntheticInputStage处理。</p>
+<p>当然，processPointerEvent内的主角是<strong>mView.dispatchPointerEvent(event)</strong>。mView是ViewRootImpl的成员变量，该变量是在ViewRootImpl.setView()内赋值的。ViewRootImpl.setView()方法在上面介绍<a href="#deliverInputEvent">deliverInputEvent()</a>方法内的InputStage初始化实例时就提到过。</p>
+<h2 id="ViewRootImpl-setView行参view具体类型确定"><a href="#ViewRootImpl-setView行参view具体类型确定" class="headerlink" title="ViewRootImpl#setView行参view具体类型确定"></a>ViewRootImpl#setView行参view具体类型确定</h2><blockquote>
+<p><a href="https://cs.android.com/android/platform/superproject/+/master:frameworks/base/core/java/android/view/ViewRootImpl.java;l=5287;drc=master" target="_blank" rel="noopener">frameworks/base/core/java/android/view/ViewRootImpl.java （点击查看源码）</a></p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setView</span><span class="params">(View view, WindowManager.LayoutParams attrs, View panelParentView,</span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">int</span> userId)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">synchronized</span> (<span class="keyword">this</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (mView == <span class="keyword">null</span>) &#123;</span><br><span class="line">            mView = view;</span><br><span class="line">            ...</span><br><span class="line">         &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>这里view的入参类型是View，所以还得看看ViewRootImpl.setView()方法具体是哪里调用的，且view的具体类型是什么。</p>
+<p>这里就直接给出结论：DecorView</p>
+<p>调用过程：<strong>ActivityThread.handleResumeActivity()  -&gt;  WindowManagerImpl.addView()  -&gt;  WindowManagerGlobal.addView()  -&gt; ViewRootImpl.setView()</strong></p>
+<p>这里的涉及到的具体细节将在下篇介绍Window相关知识的时候再详细展开说明。</p>
+<blockquote>
+<p><a href="https://cs.android.com/android/platform/superproject/+/master:frameworks/base/core/java/android/app/ActivityThread.java;l=4462" target="_blank" rel="noopener">frameworks/base/core/java/android/app/ActivityThread.java（点击查看源码）</a></p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleResumeActivity</span><span class="params">(IBinder token, <span class="keyword">boolean</span> finalStateRequest, <span class="keyword">boolean</span> isForward,</span></span></span><br><span class="line"><span class="function"><span class="params">        String reason)</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">final</span> Activity a = r.activity;</span><br><span class="line">    ...</span><br><span class="line">      </span><br><span class="line">        r.window = r.activity.getWindow();</span><br><span class="line">        View decor = r.window.getDecorView();</span><br><span class="line">        decor.setVisibility(View.INVISIBLE);</span><br><span class="line">        ViewManager wm = a.getWindowManager();</span><br><span class="line">        WindowManager.LayoutParams l = r.window.getAttributes();</span><br><span class="line">        a.mDecor = decor;</span><br><span class="line">        ...</span><br><span class="line">        <span class="keyword">if</span> (a.mVisibleFromClient) &#123;</span><br><span class="line">            <span class="keyword">if</span> (!a.mWindowAdded) &#123;</span><br><span class="line">                a.mWindowAdded = <span class="keyword">true</span>;</span><br><span class="line">                wm.addView(decor, l);<span class="comment">//这里的wm的具体实现类是WindowManagerImpl</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><a href="https://cs.android.com/android/platform/superproject/+/master:frameworks/base/core/java/android/view/WindowManagerImpl.java;l=107" target="_blank" rel="noopener">frameworks/base/core/java/android/view/WindowManagerImpl.java（点击查看源码）</a><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> WindowManagerGlobal mGlobal = WindowManagerGlobal.getInstance();</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addView</span><span class="params">(@NonNull View view, @NonNull ViewGroup.LayoutParams params)</span> </span>&#123;</span><br><span class="line">    applyDefaultToken(params);</span><br><span class="line">    mGlobal.addView(view, params, mContext.getDisplayNoVerify(), mParentWindow,</span><br><span class="line">            mContext.getUserId());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<blockquote>
+<p><a href="https://cs.android.com/android/platform/superproject/+/master:frameworks/base/core/java/android/view/WindowManagerGlobal.java;l=331" target="_blank" rel="noopener">frameworks/base/core/java/android/view/WindowManagerGlobal.java（点击查看源码）</a></p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addView</span><span class="params">(View view, ViewGroup.LayoutParams params,</span></span></span><br><span class="line"><span class="function"><span class="params">        Display display, Window parentWindow, <span class="keyword">int</span> userId)</span> </span>&#123;</span><br><span class="line">        ...</span><br><span class="line">        root = <span class="keyword">new</span> ViewRootImpl(view.getContext(), display);</span><br><span class="line"></span><br><span class="line">        view.setLayoutParams(wparams);</span><br><span class="line"></span><br><span class="line">        mViews.add(view);</span><br><span class="line">        mRoots.add(root);</span><br><span class="line">        mParams.add(wparams);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// do this last because it fires off messages to start doing things</span></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            root.setView(view, wparams, panelParentView, userId);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (RuntimeException e) &#123;</span><br><span class="line">            <span class="comment">// BadTokenException or InvalidDisplayException, clean up.</span></span><br><span class="line">            <span class="keyword">if</span> (index &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">                removeViewLocked(index, <span class="keyword">true</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">throw</span> e;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="View-dispatchPointerEvent、DecorView-dispatchTouchEvent"><a href="#View-dispatchPointerEvent、DecorView-dispatchTouchEvent" class="headerlink" title="View#dispatchPointerEvent、DecorView#dispatchTouchEvent()"></a>View#dispatchPointerEvent、DecorView#dispatchTouchEvent()</h2><p>在确认了view的类型是DecorView后，在DecorView源码内搜索时确没有找到dispatchPointerEvent方法，那就从父类中查找（DecorView -&gt; FrameLayout -&gt; ViewGroup -&gt; View），直到在View内才找到该方法。</p>
+<blockquote>
+<p><a href="https://cs.android.com/android/platform/superproject/+/master:frameworks/base/core/java/android/view/View.java;drc=master;l=14565" target="_blank" rel="noopener">frameworks/base/core/java/android/view/View.java（点击查看源码）</a></p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">dispatchPointerEvent</span><span class="params">(MotionEvent event)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (event.isTouchEvent()) &#123;</span><br><span class="line">        <span class="keyword">return</span> dispatchTouchEvent(event);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> dispatchGenericMotionEvent(event);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到，这里会判断当前是否为触摸事件，如果是则调用<code>dispatchTouchEvent(event)</code>。</p>
+<blockquote>
+<p><a href="https://cs.android.com/android/platform/superproject/+/master:frameworks/base/core/java/com/android/internal/policy/DecorView.java;l=443" target="_blank" rel="noopener">frameworks/base/core/java/com/android/internal/policy/DecorView.java（点击查看源码）</a></p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">dispatchTouchEvent</span><span class="params">(MotionEvent ev)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> Window.Callback cb = mWindow.getCallback();</span><br><span class="line">    <span class="keyword">return</span> cb != <span class="keyword">null</span> &amp;&amp; !mWindow.isDestroyed() &amp;&amp; mFeatureId &lt; <span class="number">0</span></span><br><span class="line">            ? cb.dispatchTouchEvent(ev) : <span class="keyword">super</span>.dispatchTouchEvent(ev);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>回到DecorView.dispatchTouchEvent()，这里会调用<code>cb.dispatchTouchEvent(ev)</code>，cb为<code>Window.Callback</code>类型。</p>
+<blockquote>
+<p><a href="https://cs.android.com/android/platform/superproject/+/master:frameworks/base/core/java/android/view/Window.java;drc=master;l=336" target="_blank" rel="noopener">frameworks/base/core/java/android/view/Window.java（点击查看源码）</a></p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Callback</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Called to process key events.  At the very least your</span></span><br><span class="line"><span class="comment">     * implementation must call</span></span><br><span class="line"><span class="comment">     * &#123;<span class="doctag">@link</span> android.view.Window#superDispatchKeyEvent&#125; to do the</span></span><br><span class="line"><span class="comment">     * standard key processing.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> event The key event.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> boolean Return true if this event was consumed.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">dispatchKeyEvent</span><span class="params">(KeyEvent event)</span></span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Called to process touch screen events.  At the very least your</span></span><br><span class="line"><span class="comment">     * implementation must call</span></span><br><span class="line"><span class="comment">     * &#123;<span class="doctag">@link</span> android.view.Window#superDispatchTouchEvent&#125; to do the</span></span><br><span class="line"><span class="comment">     * standard touch screen processing.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> event The touch screen event.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> boolean Return true if this event was consumed.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">dispatchTouchEvent</span><span class="params">(MotionEvent event)</span></span>;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>而Activity类实现了这个回调，并且在Activity.attach()方法内给PhoneWindow设置CallBack回调。</p>
+<blockquote>
+<p><a href="https://cs.android.com/android/platform/superproject/+/master:frameworks/base/core/java/android/app/Activity.java;l=730" target="_blank" rel="noopener">frameworks/base/core/java/android/app/Activity.java（点击查看源码）</a></p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Activity</span> <span class="keyword">extends</span> <span class="title">ContextThemeWrapper</span></span></span><br><span class="line"><span class="class">        <span class="keyword">implements</span> <span class="title">LayoutInflater</span>.<span class="title">Factory2</span>,</span></span><br><span class="line"><span class="class">        <span class="title">Window</span>.<span class="title">Callback</span>, <span class="title">KeyEvent</span>.<span class="title">Callback</span>,</span></span><br><span class="line"><span class="class">        <span class="title">OnCreateContextMenuListener</span>, <span class="title">ComponentCallbacks2</span>,</span></span><br><span class="line"><span class="class">        <span class="title">Window</span>.<span class="title">OnWindowDismissedCallback</span>,</span></span><br><span class="line"><span class="class">        <span class="title">AutofillManager</span>.<span class="title">AutofillClient</span>, <span class="title">ContentCaptureManager</span>.<span class="title">ContentCaptureClient</span> </span>&#123;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">final</span> <span class="keyword">void</span> <span class="title">attach</span><span class="params">(Context context, ActivityThread aThread,</span></span></span><br><span class="line"><span class="function"><span class="params">        Instrumentation instr, IBinder token, <span class="keyword">int</span> ident,</span></span></span><br><span class="line"><span class="function"><span class="params">        Application application, Intent intent, ActivityInfo info,</span></span></span><br><span class="line"><span class="function"><span class="params">        CharSequence title, Activity parent, String id,</span></span></span><br><span class="line"><span class="function"><span class="params">        NonConfigurationInstances lastNonConfigurationInstances,</span></span></span><br><span class="line"><span class="function"><span class="params">        Configuration config, String referrer, IVoiceInteractor voiceInteractor,</span></span></span><br><span class="line"><span class="function"><span class="params">        Window window, ActivityConfigCallback activityConfigCallback, IBinder assistToken)</span> </span>&#123;</span><br><span class="line">    attachBaseContext(context);</span><br><span class="line"></span><br><span class="line">    mFragments.attachHost(<span class="keyword">null</span> <span class="comment">/*parent*/</span>);</span><br><span class="line"></span><br><span class="line">    mWindow = <span class="keyword">new</span> PhoneWindow(<span class="keyword">this</span>, window, activityConfigCallback);</span><br><span class="line">    mWindow.setWindowControllerCallback(mWindowControllerCallback);</span><br><span class="line">    mWindow.setCallback(<span class="keyword">this</span>);<span class="comment">//设置回调</span></span><br><span class="line">    mWindow.setOnWindowDismissedCallback(<span class="keyword">this</span>);</span><br><span class="line">    mWindow.getLayoutInflater().setPrivateFactory(<span class="keyword">this</span>);</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">dispatchTouchEvent</span><span class="params">(MotionEvent ev)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (ev.getAction() == MotionEvent.ACTION_DOWN) &#123;</span><br><span class="line">        onUserInteraction();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (getWindow().superDispatchTouchEvent(ev)) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> onTouchEvent(ev);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>分析到这里就回到平时从Activity开始分析的事件分发流程的起点了。从Activity.dispatchTouchEvent()开始分析事件分发的过程就可以看小编之前的文章“<a href="/2679806526/">Android事件分发机制源码解析</a>”了。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://www.jianshu.com/p/4b4ce5f30ab6" target="_blank" rel="noopener">Android Input（六）-ViewRootImpl接收事件</a></p>
+<p><a href="http://gityuan.com/2016/12/31/input-ipc/" target="_blank" rel="noopener">Input系统—事件处理全过程</a></p>
+<p><a href="https://cs.android.com/" target="_blank" rel="noopener">Android Code Search</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持是对我最大的鼓励！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Haitao Ni 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.png" alt="Haitao Ni 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2571175809/" rel="next" title="从源码及字节码角度分析For-Each删除问题">
+                <i class="fa fa-chevron-left"></i> 从源码及字节码角度分析For-Each删除问题
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar" rel="external nofollow">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar/avatar.png" alt="Haitao Ni">
+            
+              <p class="site-author-name" itemprop="name">Haitao Ni</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">79</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">49</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">85</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:haitao_ni@nhtzj.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#时序图"><span class="nav-number">2.</span> <span class="nav-text">时序图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Native"><span class="nav-number">3.</span> <span class="nav-text">Native</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#InputEventReceiver"><span class="nav-number">3.1.</span> <span class="nav-text">InputEventReceiver</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ViewRootImpl"><span class="nav-number">4.</span> <span class="nav-text">ViewRootImpl</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#WindowInputEventReceiver"><span class="nav-number">4.1.</span> <span class="nav-text">WindowInputEventReceiver</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#QueuedInputEvent回收池"><span class="nav-number">4.2.</span> <span class="nav-text">QueuedInputEvent回收池</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#doProcessInputEvents"><span class="nav-number">4.3.</span> <span class="nav-text">doProcessInputEvents</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#deliverInputEvent"><span class="nav-number">4.4.</span> <span class="nav-text">deliverInputEvent</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#InputStage详解"><span class="nav-number">4.5.</span> <span class="nav-text">InputStage详解</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#源码"><span class="nav-number">4.5.1.</span> <span class="nav-text">源码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#流程图"><span class="nav-number">4.5.2.</span> <span class="nav-text">流程图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#说明"><span class="nav-number">4.5.3.</span> <span class="nav-text">说明</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ViewPostImeInputStage-onProcess"><span class="nav-number">4.6.</span> <span class="nav-text">ViewPostImeInputStage#onProcess()</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ViewRootImpl-setView行参view具体类型确定"><span class="nav-number">5.</span> <span class="nav-text">ViewRootImpl#setView行参view具体类型确定</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#View-dispatchPointerEvent、DecorView-dispatchTouchEvent"><span class="nav-number">6.</span> <span class="nav-text">View#dispatchPointerEvent、DecorView#dispatchTouchEvent()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考"><span class="nav-number">7.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2023</span>
+
+
+  <div class="powered-by"><a class="theme-link" target="_blank" href="https://beian.miit.gov.cn/" rel="external nofollow" title="工业和信息化部ICP/IP地址/域名信息备案管理系统">浙ICP备17020869号</a></div>
+
+
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Haitao Ni</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'gaKW5YWAvf7NBOlU9eFbxN8O-gzGzoHsz',
+        appKey: 'susRHyMS8Fq1XyKXg0r9ad85',
+        placeholder: '填上邮箱可以收到我的回复哦 (*^ω^*)~~',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+
+//新增以下代码即可，可以移除.info下所有子节点。
+var infoEle = document.querySelector('#comments .info');
+if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0){
+  infoEle.childNodes.forEach(function(item) {
+    item.parentNode.removeChild(item);
+  });
+}
+
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("gaKW5YWAvf7NBOlU9eFbxN8O-gzGzoHsz", "susRHyMS8Fq1XyKXg0r9ad85");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+
+
+  
+
+  
+
+</body>
+</html>

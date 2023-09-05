@@ -1,0 +1,1581 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="uW8bwgMGUwIA01nPfh0oty1rmtmmuVkOVGaS9O0nQUg">
+
+
+
+
+
+
+
+
+  <meta name="baidu-site-verification" content="NeE6tPH3W1">
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico?v=5.1.4">
+
+
+
+
+
+
+
+  <meta name="keywords" content="Java,forEach,for,ConcurrentModificationException,遍历时删除">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="海的那边" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="前言印象中list在循环中删除成员时是会抛出异常的，结果最近无意中看到了关于该操作的相关文章，就将循环删除的几种方式均试了一下，实际结果却大相径庭。 今天就借此将结果和原因好好梳理分析一下。 这里重点介绍ArrayList这个类型的数据结构。 示例代码说明本篇使用到的示例代码如下，使用 ArrayList，并放入“1”、“2”、“3”这三个字符串。 在注释处替换为下方各方式内的示例代码 12345">
+<meta name="keywords" content="Java,forEach,for,ConcurrentModificationException,遍历时删除">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从源码及字节码角度分析For-Each删除问题">
+<meta property="og:url" content="http://www.nhtzj.com/2571175809/index.html">
+<meta property="og:site_name" content="海的那边">
+<meta property="og:description" content="前言印象中list在循环中删除成员时是会抛出异常的，结果最近无意中看到了关于该操作的相关文章，就将循环删除的几种方式均试了一下，实际结果却大相径庭。 今天就借此将结果和原因好好梳理分析一下。 这里重点介绍ArrayList这个类型的数据结构。 示例代码说明本篇使用到的示例代码如下，使用 ArrayList，并放入“1”、“2”、“3”这三个字符串。 在注释处替换为下方各方式内的示例代码 12345">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2021-06-16T15:32:13.027Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="从源码及字节码角度分析For-Each删除问题">
+<meta name="twitter:description" content="前言印象中list在循环中删除成员时是会抛出异常的，结果最近无意中看到了关于该操作的相关文章，就将循环删除的几种方式均试了一下，实际结果却大相径庭。 今天就借此将结果和原因好好梳理分析一下。 这里重点介绍ArrayList这个类型的数据结构。 示例代码说明本篇使用到的示例代码如下，使用 ArrayList，并放入“1”、“2”、“3”这三个字符串。 在注释处替换为下方各方式内的示例代码 12345">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.nhtzj.com/2571175809/">
+
+
+
+
+
+  <title>从源码及字节码角度分析For-Each删除问题 | 海的那边</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">海的那边</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">人无远虑，必有近忧</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.nhtzj.com/2571175809/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Haitao Ni">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="海的那边">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">从源码及字节码角度分析For-Each删除问题</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-06-09T22:17:20+08:00">
+                2021-06-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2571175809/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2571175809/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2571175809/" class="leancloud_visitors" data-flag-title="从源码及字节码角度分析For-Each删除问题">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  5,866
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  30
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>印象中list在循环中删除成员时是会抛出异常的，结果最近无意中看到了关于该操作的相关文章，就将循环删除的几种方式均试了一下，实际结果却大相径庭。</p>
+<p>今天就借此将结果和原因好好梳理分析一下。</p>
+<p>这里重点介绍ArrayList这个类型的数据结构。</p>
+<h2 id="示例代码说明"><a href="#示例代码说明" class="headerlink" title="示例代码说明"></a>示例代码说明</h2><p>本篇使用到的示例代码如下，使用 <code>ArrayList</code>，并放入“1”、“2”、“3”这三个字符串。</p>
+<p>在注释处替换为下方各方式内的示例代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestForEach</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        ArrayList&lt;String&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        list.add(<span class="string">"1"</span>);</span><br><span class="line">        list.add(<span class="string">"2"</span>);</span><br><span class="line">        list.add(<span class="string">"3"</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//此处替换为下方各种方式内的遍历代码</span></span><br><span class="line"></span><br><span class="line">      </span><br><span class="line">      </span><br><span class="line">        System.out.println(list);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Iterable-forEach-Consumer-lt-super-E-gt-action"><a href="#Iterable-forEach-Consumer-lt-super-E-gt-action" class="headerlink" title="Iterable.forEach(Consumer&lt;? super E&gt; action)"></a>Iterable.forEach(Consumer&lt;? super E&gt; action)</h2><p>集合类均实现了 <code>Iterable</code>接口</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> java.util</span><br><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span>     Set</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span>     List</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span>     Map</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span>     SortedSet</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span>     SortedMap</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span>     HashSet</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span>     TreeSet</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span>     ArrayList</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span>     LinkedList</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span>     Vector</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span>     Collections</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span>     Arrays</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span>     AbstractCollection</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 1.2</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Collection</span>&lt;<span class="title">E</span>&gt; <span class="keyword">extends</span> <span class="title">Iterable</span>&lt;<span class="title">E</span>&gt; </span>&#123;</span><br><span class="line">	···</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> java.lang;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Implementing this interface allows an object to be the target of</span></span><br><span class="line"><span class="comment"> * the "for-each loop" statement. See</span></span><br><span class="line"><span class="comment"> * &lt;strong&gt;</span></span><br><span class="line"><span class="comment"> * &lt;a href="&#123;<span class="doctag">@docRoot</span>&#125;/../technotes/guides/language/foreach.html"&gt;For-each Loop&lt;/a&gt;</span></span><br><span class="line"><span class="comment"> * &lt;/strong&gt;</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> &lt;T&gt; the type of elements returned by the iterator</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 1.5</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@jls</span> 14.14.2 The enhanced for statement</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Iterable</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">  </span><br><span class="line">  	···</span><br><span class="line">  </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Performs the given action for each element of the &#123;<span class="doctag">@code</span> Iterable&#125;</span></span><br><span class="line"><span class="comment">     * until all elements have been processed or the action throws an</span></span><br><span class="line"><span class="comment">     * exception.  Unless otherwise specified by the implementing class,</span></span><br><span class="line"><span class="comment">     * actions are performed in the order of iteration (if an iteration order</span></span><br><span class="line"><span class="comment">     * is specified).  Exceptions thrown by the action are relayed to the</span></span><br><span class="line"><span class="comment">     * caller.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@implSpec</span></span></span><br><span class="line"><span class="comment">     * &lt;p&gt;The default implementation behaves as if:</span></span><br><span class="line"><span class="comment">     * &lt;pre&gt;&#123;<span class="doctag">@code</span></span></span><br><span class="line"><span class="comment">     *     for (T t : this)</span></span><br><span class="line"><span class="comment">     *         action.accept(t);</span></span><br><span class="line"><span class="comment">     * &#125;&lt;/pre&gt;</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> action The action to be performed for each element</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> NullPointerException if the specified action is null</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@since</span> 1.8</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">default</span> <span class="keyword">void</span> <span class="title">forEach</span><span class="params">(Consumer&lt;? <span class="keyword">super</span> T&gt; action)</span> </span>&#123;</span><br><span class="line">        Objects.requireNonNull(action);</span><br><span class="line">        <span class="keyword">for</span> (T t : <span class="keyword">this</span>) &#123;</span><br><span class="line">            action.accept(t);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">	···</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">list.forEach(number -&gt; &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="string">"2"</span>.equals(number)) &#123;</span><br><span class="line">        list.remove(number);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p><span id="for-result"></span></p>
+<h3 id="运行结果"><a href="#运行结果" class="headerlink" title="运行结果"></a>运行结果</h3><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Exception <span class="keyword">in</span> thread "main" java.util.ConcurrentModificationException</span><br><span class="line">	<span class="built_in">at</span> java.util.ArrayList.forEach(ArrayList.java:<span class="number">1260</span>)</span><br><span class="line">	<span class="built_in">at</span> TestForEach.main(TestForEach.java:<span class="number">10</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h3><p>可以看到，报了 <code>java.util.ConcurrentModificationException</code>错误，并提示了出错位置在 <code>java.util.ArrayList.forEach(ArrayList.java:1260)</code></p>
+<p>这是因为ArrayList重写了forEach方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">forEach</span><span class="params">(Consumer&lt;? <span class="keyword">super</span> E&gt; action)</span> </span>&#123;</span><br><span class="line">    Objects.requireNonNull(action);</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">int</span> expectedModCount = modCount;</span><br><span class="line">    <span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line">    <span class="keyword">final</span> E[] elementData = (E[]) <span class="keyword">this</span>.elementData;</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">int</span> size = <span class="keyword">this</span>.size;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; modCount == expectedModCount &amp;&amp; i &lt; size; i++) &#123;</span><br><span class="line">        action.accept(elementData[i]);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (modCount != expectedModCount) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> ConcurrentModificationException();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其中最主要的一个就是<strong>modCount</strong>，这个是<code>ArrayList</code>父类<code>AbstractList</code>的成员变量，默认值为<code>0</code>，表示list成员结构性修改的次数（add、remove、clear、sort等操作会使<strong>modCount</strong>值+1）。</p>
+<p>而我们回调内调用remove()方法，该方法内部又调用了<code>fastRemove()</code>，从而使得modCount++，导致<strong>modCount != expectedModCount</strong>成立后抛出异常。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * The number of times this list has been &lt;i&gt;structurally modified&lt;/i&gt;.</span></span><br><span class="line"><span class="comment">     * Structural modifications are those that change the size of the</span></span><br><span class="line"><span class="comment">     * list, or otherwise perturb it in such a fashion that iterations in</span></span><br><span class="line"><span class="comment">     * progress may yield incorrect results.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">		</span></span><br><span class="line"><span class="comment">		···</span></span><br><span class="line"><span class="comment">    </span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">transient</span> <span class="keyword">int</span> modCount = <span class="number">0</span>;</span><br></pre></td></tr></table></figure>
+<p><span id="ArrayList_remove"></span></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Removes the first occurrence of the specified element from this list,</span></span><br><span class="line"><span class="comment"> * if it is present.  If the list does not contain the element, it is</span></span><br><span class="line"><span class="comment"> * unchanged.  More formally, removes the element with the lowest index</span></span><br><span class="line"><span class="comment"> * &lt;tt&gt;i&lt;/tt&gt; such that</span></span><br><span class="line"><span class="comment"> * &lt;tt&gt;(o==null&amp;nbsp;?&amp;nbsp;get(i)==null&amp;nbsp;:&amp;nbsp;o.equals(get(i)))&lt;/tt&gt;</span></span><br><span class="line"><span class="comment"> * (if such an element exists).  Returns &lt;tt&gt;true&lt;/tt&gt; if this list</span></span><br><span class="line"><span class="comment"> * contained the specified element (or equivalently, if this list</span></span><br><span class="line"><span class="comment"> * changed as a result of the call).</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> o element to be removed from this list, if present</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> &lt;tt&gt;true&lt;/tt&gt; if this list contained the specified element</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">remove</span><span class="params">(Object o)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (o == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> index = <span class="number">0</span>; index &lt; size; index++)</span><br><span class="line">            <span class="keyword">if</span> (elementData[index] == <span class="keyword">null</span>) &#123;</span><br><span class="line">                fastRemove(index);</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> index = <span class="number">0</span>; index &lt; size; index++)</span><br><span class="line">            <span class="keyword">if</span> (o.equals(elementData[index])) &#123;</span><br><span class="line">                fastRemove(index);</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Private remove method that skips bounds checking and does not</span></span><br><span class="line"><span class="comment"> * return the value removed.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">fastRemove</span><span class="params">(<span class="keyword">int</span> index)</span> </span>&#123;</span><br><span class="line">    modCount++;</span><br><span class="line">    <span class="keyword">int</span> numMoved = size - index - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">if</span> (numMoved &gt; <span class="number">0</span>)</span><br><span class="line">        System.arraycopy(elementData, index+<span class="number">1</span>, elementData, index,</span><br><span class="line">                         numMoved);</span><br><span class="line">    elementData[--size] = <span class="keyword">null</span>; <span class="comment">// clear to let GC do its work</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>所以Arraylist在forEach回调内不能执行删除等会导致<strong>modCount</strong>值变化的操作。</p>
+<p>而LinkedList等则没有重写forEach方法对<strong>modCount</strong>变量进行判断，所以这类在forEach回调内进行删除等操作是正常的。</p>
+<h2 id="for-int-i-0-i-lt-list-size-i"><a href="#for-int-i-0-i-lt-list-size-i" class="headerlink" title="for(int i =0; i &lt; list.size(); i ++)"></a>for(int i =0; i &lt; list.size(); i ++)</h2><h3 id="示例-1"><a href="#示例-1" class="headerlink" title="示例"></a>示例</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; list.size(); i++) &#123;</span><br><span class="line">    String number = list.get(i);</span><br><span class="line">    <span class="keyword">if</span> (<span class="string">"1"</span>.equals(number)) &#123;</span><br><span class="line">        list.remove(number);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[2, 3]</span><br></pre></td></tr></table></figure>
+<p>能正常运行完毕，并输出当前list内的数据，可以看到字符串“1”已经被删除了。</p>
+<h3 id="字节码分析"><a href="#字节码分析" class="headerlink" title="字节码分析"></a>字节码分析</h3><p>这里字节码相对比较简单，就直接带过，详细的字节码分析放在For-Each小节内。</p>
+<p>这里字节码所表示的意思就是和Java源码所直接表示的意思一样，仅仅是循环执行for循环方法体内的代码逻辑，字符串常量“1”与列表内取出的元素做比较，一致则将其从列表中移除。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">javap -c TestForEach &gt; TestForEach.c</span><br></pre></td></tr></table></figure>
+<p>得到文件：</p>
+<blockquote>
+<p>TestForEach.c</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">Compiled from <span class="string">"TestForEach.java"</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestForEach</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="title">TestForEach</span><span class="params">()</span></span>;</span><br><span class="line">    Code:</span><br><span class="line">       <span class="number">0</span>: aload_0</span><br><span class="line">       1: invokespecial #1                  // Method java/lang/Object."&lt;init&gt;":()V</span><br><span class="line">       <span class="number">4</span>: <span class="keyword">return</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(java.lang.String[])</span></span>;</span><br><span class="line">    Code:</span><br><span class="line">       0: new           #2                  // class java/util/ArrayList</span><br><span class="line">       <span class="number">3</span>: dup</span><br><span class="line">       4: invokespecial #3                  // Method java/util/ArrayList."&lt;init&gt;":()V</span><br><span class="line">       <span class="number">7</span>: astore_1</span><br><span class="line">       <span class="number">8</span>: aload_1</span><br><span class="line">       9: ldc           #4                  // String 1</span><br><span class="line">      11: invokevirtual #5                  // Method java/util/ArrayList.add:(Ljava/lang/Object;)Z</span><br><span class="line">      <span class="number">14</span>: pop</span><br><span class="line">      <span class="number">15</span>: aload_1</span><br><span class="line">      16: ldc           #6                  // String 2</span><br><span class="line">      18: invokevirtual #5                  // Method java/util/ArrayList.add:(Ljava/lang/Object;)Z</span><br><span class="line">      <span class="number">21</span>: pop</span><br><span class="line">      <span class="number">22</span>: aload_1</span><br><span class="line">      23: ldc           #7                  // String 3</span><br><span class="line">      25: invokevirtual #5                  // Method java/util/ArrayList.add:(Ljava/lang/Object;)Z</span><br><span class="line">      <span class="number">28</span>: pop</span><br><span class="line">      <span class="number">29</span>: iconst_0</span><br><span class="line">      <span class="number">30</span>: istore_2</span><br><span class="line">      <span class="number">31</span>: iload_2</span><br><span class="line">      <span class="number">32</span>: aload_1</span><br><span class="line">      33: invokevirtual #8                  // Method java/util/ArrayList.size:()I</span><br><span class="line">      <span class="number">36</span>: if_icmpge     <span class="number">69</span></span><br><span class="line">      <span class="number">39</span>: aload_1</span><br><span class="line">      <span class="number">40</span>: iload_2</span><br><span class="line">      41: invokevirtual #9                  // Method java/util/ArrayList.get:(I)Ljava/lang/Object;</span><br><span class="line">      44: checkcast     #10                 // class java/lang/String</span><br><span class="line">      <span class="number">47</span>: astore_3</span><br><span class="line">      48: ldc           #4                  // String 1</span><br><span class="line">      <span class="number">50</span>: aload_3</span><br><span class="line">      51: invokevirtual #11                 // Method java/lang/String.equals:(Ljava/lang/Object;)Z</span><br><span class="line">      <span class="number">54</span>: ifeq          <span class="number">63</span></span><br><span class="line">      <span class="number">57</span>: aload_1</span><br><span class="line">      <span class="number">58</span>: aload_3</span><br><span class="line">      59: invokevirtual #12                 // Method java/util/ArrayList.remove:(Ljava/lang/Object;)Z</span><br><span class="line">      <span class="number">62</span>: pop</span><br><span class="line">      <span class="number">63</span>: iinc          <span class="number">2</span>, <span class="number">1</span></span><br><span class="line">      <span class="number">66</span>: goto          <span class="number">31</span></span><br><span class="line">      69: getstatic     #13                 // Field java/lang/System.out:Ljava/io/PrintStream;</span><br><span class="line">      <span class="number">72</span>: aload_1</span><br><span class="line">      73: invokevirtual #14                 // Method java/io/PrintStream.println:(Ljava/lang/Object;)V</span><br><span class="line">      <span class="number">76</span>: <span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="for-T-Iterable"><a href="#for-T-Iterable" class="headerlink" title="for( T : Iterable)"></a>for( T : Iterable<t>)</t></h2><p>这个就是增强for循环的写法，除了可以遍历数组，还可以用于遍历所有实现了Iterable<t> 接口的对象。</t></p>
+<h3 id="示例-2"><a href="#示例-2" class="headerlink" title="示例"></a>示例</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (String number : list) &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="string">"1"</span>.equals(number)) &#123;</span><br><span class="line">        list.remove(number);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="结果-1"><a href="#结果-1" class="headerlink" title="结果"></a>结果</h3><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Exception <span class="keyword">in</span> thread "main" java.util.ConcurrentModificationException</span><br><span class="line">	<span class="built_in">at</span> java.util.ArrayList$Itr.checkForComodification(ArrayList.java:<span class="number">909</span>)</span><br><span class="line">	<span class="built_in">at</span> java.util.ArrayList$Itr.next(ArrayList.java:<span class="number">859</span>)</span><br><span class="line">	<span class="built_in">at</span> TestForEach.main(TestForEach.java:<span class="number">10</span>)</span><br></pre></td></tr></table></figure>
+<p><span id="for-each-analyse"></span></p>
+<h3 id="分析-1"><a href="#分析-1" class="headerlink" title="分析"></a>分析</h3><p>可以看到，程序又报了 <code>java.util.ConcurrentModificationException</code>错误。</p>
+<p>但是这次提示的错误信息与 <a href="#for-result">Iterable.forEach(Consumer&lt;? super E&gt; action)</a>内的不一样。</p>
+<p>从这错误信息来分析，出错的地方是在ArrayList的内部类Itr内的一个方法。但是明明写的代码里面没有用到这个类啊，而且remove()方法内也是没有调用该类，那推测是这增强for循环在遍历时调用的。等同于入下代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (Iterator&lt;String&gt; iterator = list.iterator();iterator.hasNext();)&#123;</span><br><span class="line">        String number = iterator.next();</span><br><span class="line">        <span class="keyword">if</span> (<span class="string">"1"</span>.equals(number)) &#123;</span><br><span class="line">            list.remove(number);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>通过<code>iterator.hasNext()</code>判断是否还有下个元素，通过<code>iterator.next()</code>取出元素。</p>
+<p>而<code>ArrayList#iterator()</code>返回的就是<code>Itr</code>对象。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Returns an iterator over the elements in this list in proper sequence.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;The returned iterator is &lt;a href="#fail-fast"&gt;&lt;i&gt;fail-fast&lt;/i&gt;&lt;/a&gt;.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> an iterator over the elements in this list in proper sequence</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Iterator&lt;E&gt; <span class="title">iterator</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> Itr();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><span id="Itr"></span></p>
+<blockquote>
+<p>java.util.ArrayList.Itr</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">    * An optimized version of AbstractList.Itr</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">   <span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">Itr</span> <span class="keyword">implements</span> <span class="title">Iterator</span>&lt;<span class="title">E</span>&gt; </span>&#123;</span><br><span class="line">       <span class="keyword">int</span> cursor;       <span class="comment">// index of next element to return</span></span><br><span class="line">       <span class="keyword">int</span> lastRet = -<span class="number">1</span>; <span class="comment">// index of last element returned; -1 if no such</span></span><br><span class="line">       <span class="keyword">int</span> expectedModCount = modCount;</span><br><span class="line"></span><br><span class="line">       Itr() &#123;&#125;</span><br><span class="line"></span><br><span class="line">       <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">hasNext</span><span class="params">()</span> </span>&#123;</span><br><span class="line">           <span class="keyword">return</span> cursor != size; <span class="comment">// size是ArrayList的成员变量，用于记录当前列表内存放的元素数量</span></span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line">       <span class="function"><span class="keyword">public</span> E <span class="title">next</span><span class="params">()</span> </span>&#123;</span><br><span class="line">           checkForComodification();</span><br><span class="line">           <span class="keyword">int</span> i = cursor;</span><br><span class="line">           <span class="keyword">if</span> (i &gt;= size)</span><br><span class="line">               <span class="keyword">throw</span> <span class="keyword">new</span> NoSuchElementException();</span><br><span class="line">           Object[] elementData = ArrayList.<span class="keyword">this</span>.elementData;</span><br><span class="line">           <span class="keyword">if</span> (i &gt;= elementData.length)</span><br><span class="line">               <span class="keyword">throw</span> <span class="keyword">new</span> ConcurrentModificationException();</span><br><span class="line">           cursor = i + <span class="number">1</span>;</span><br><span class="line">           <span class="keyword">return</span> (E) elementData[lastRet = i];</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">remove</span><span class="params">()</span> </span>&#123;</span><br><span class="line">           <span class="keyword">if</span> (lastRet &lt; <span class="number">0</span>)</span><br><span class="line">               <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException();</span><br><span class="line">           checkForComodification();</span><br><span class="line"></span><br><span class="line">           <span class="keyword">try</span> &#123;</span><br><span class="line">               ArrayList.<span class="keyword">this</span>.remove(lastRet);</span><br><span class="line">               cursor = lastRet;</span><br><span class="line">               lastRet = -<span class="number">1</span>;</span><br><span class="line">               expectedModCount = modCount;</span><br><span class="line">           &#125; <span class="keyword">catch</span> (IndexOutOfBoundsException ex) &#123;</span><br><span class="line">               <span class="keyword">throw</span> <span class="keyword">new</span> ConcurrentModificationException();</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="meta">@Override</span></span><br><span class="line">       <span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line">       <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">forEachRemaining</span><span class="params">(Consumer&lt;? <span class="keyword">super</span> E&gt; consumer)</span> </span>&#123;</span><br><span class="line">           Objects.requireNonNull(consumer);</span><br><span class="line">           <span class="keyword">final</span> <span class="keyword">int</span> size = ArrayList.<span class="keyword">this</span>.size;</span><br><span class="line">           <span class="keyword">int</span> i = cursor;</span><br><span class="line">           <span class="keyword">if</span> (i &gt;= size) &#123;</span><br><span class="line">               <span class="keyword">return</span>;</span><br><span class="line">           &#125;</span><br><span class="line">           <span class="keyword">final</span> Object[] elementData = ArrayList.<span class="keyword">this</span>.elementData;</span><br><span class="line">           <span class="keyword">if</span> (i &gt;= elementData.length) &#123;</span><br><span class="line">               <span class="keyword">throw</span> <span class="keyword">new</span> ConcurrentModificationException();</span><br><span class="line">           &#125;</span><br><span class="line">           <span class="keyword">while</span> (i != size &amp;&amp; modCount == expectedModCount) &#123;</span><br><span class="line">               consumer.accept((E) elementData[i++]);</span><br><span class="line">           &#125;</span><br><span class="line">           <span class="comment">// update once at end of iteration to reduce heap write traffic</span></span><br><span class="line">           cursor = i;</span><br><span class="line">           lastRet = i - <span class="number">1</span>;</span><br><span class="line">           checkForComodification();</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="function"><span class="keyword">final</span> <span class="keyword">void</span> <span class="title">checkForComodification</span><span class="params">()</span> </span>&#123;</span><br><span class="line">           <span class="keyword">if</span> (modCount != expectedModCount)</span><br><span class="line">               <span class="keyword">throw</span> <span class="keyword">new</span> ConcurrentModificationException();</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>Itr类的逻辑比较简单，变量也有注释进行说明。</p>
+<p>其中</p>
+<ul>
+<li><p>cursor：下个元素下标</p>
+</li>
+<li><p>lastRet：上个返回元素的下标，-1表示没有这个元素</p>
+</li>
+<li>expectedModCount：记录ArrayList内modCount值，用于<code>next()</code>、<code>remove()</code>、<code>forEachRemaining()</code>内做检验</li>
+</ul>
+<p>其中<code>next()</code>、<code>remove()</code>方法在执行时，会先调用<code>checkForComodification()</code>进行判断modCount在此遍历期间是否有过改动，改动过（及ArrayList数据源有过结构性改动，比如增加、删除、元素排序等）就会抛出<strong>ConcurrentModificationException</strong>异常。</p>
+<p>因为在for循环体内调用了了<code>remove()</code>方法，所以在next() -&gt; checkForComodification()时会抛出<strong>ConcurrentModificationException</strong>异常。</p>
+<h3 id="字节码分析-1"><a href="#字节码分析-1" class="headerlink" title="字节码分析"></a>字节码分析</h3><h4 id="反编译字节码文件"><a href="#反编译字节码文件" class="headerlink" title="反编译字节码文件"></a>反编译字节码文件</h4><p>Java内置了一个javap工具，通过该工具就能将 .class文件进行反汇编，得到具体的字节码指令。</p>
+<p>通过<code>javap -help</code>就能看到<code>javap</code>工具的所有使用方式。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">➜  ～ javap -help</span><br><span class="line">用法: javap &lt;options&gt; &lt;classes&gt;</span><br><span class="line">其中, 可能的选项包括:</span><br><span class="line">  -help  --help  -?        输出此用法消息</span><br><span class="line">  -version                 版本信息</span><br><span class="line">  -v  -verbose             输出附加信息</span><br><span class="line">  -l                       输出行号和本地变量表</span><br><span class="line">  -public                  仅显示公共类和成员</span><br><span class="line">  -protected               显示受保护的/公共类和成员</span><br><span class="line">  -package                 显示程序包/受保护的/公共类</span><br><span class="line">                           和成员 (默认)</span><br><span class="line">  -p  -private             显示所有类和成员</span><br><span class="line">  -c                       对代码进行反汇编</span><br><span class="line">  -s                       输出内部类型签名</span><br><span class="line">  -sysinfo                 显示正在处理的类的</span><br><span class="line">                           系统信息 (路径, 大小, 日期, MD5 散列)</span><br><span class="line">  -constants               显示最终常量</span><br><span class="line">  -classpath &lt;path&gt;        指定查找用户类文件的位置</span><br><span class="line">  -cp &lt;path&gt;               指定查找用户类文件的位置</span><br><span class="line">  -bootclasspath &lt;path&gt;    覆盖引导类文件的位置</span><br></pre></td></tr></table></figure>
+<p>其中 `-v参数能导出了整个class文件的详情；</p>
+<p> <code>-c</code>参数，得到代码相关的JVM指令操作码。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">javap -v TestForEach &gt; TestForEach.v</span><br></pre></td></tr></table></figure>
+<p>得到TestForEach.v文件，其中<strong>.v</strong>后缀是为了和<strong>-v</strong>参数对应，方便辨别。文件内保存的是文本内容，文件后缀可以随意取。</p>
+<blockquote>
+<p>TestForEach.v</p>
+</blockquote>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br></pre></td><td class="code"><pre><span class="line">Classfile /Users/nht/WorkSpace/java/bytecode/TestForEach.class</span><br><span class="line">  Last modified <span class="number">2021</span>-<span class="number">6</span>-<span class="number">10</span>; size <span class="number">1119</span> bytes</span><br><span class="line">  MD5 checksum <span class="number">3</span>fb9f68c6d74f1a5bf9591aa607bf002</span><br><span class="line">  Compiled from "TestForEach.java"</span><br><span class="line">public class TestForEach</span><br><span class="line">  minor version: <span class="number">0</span></span><br><span class="line">  major version: <span class="number">52</span></span><br><span class="line"><span class="function">  flags: <span class="title">ACC_PUBLIC</span>, <span class="title">ACC_SUPER</span></span></span><br><span class="line"><span class="function"><span class="title">Constant</span> <span class="title">pool</span>:</span></span><br><span class="line"><span class="function">   #1 = <span class="title">Methodref</span>          #17.#40        // <span class="title">java</span>/<span class="title">lang</span>/<span class="title">Object</span>."&lt;<span class="title">init</span>&gt;":()<span class="title">V</span></span></span><br><span class="line"><span class="function">   #2 = <span class="title">Class</span>              #41            // <span class="title">java</span>/<span class="title">util</span>/<span class="title">ArrayList</span></span></span><br><span class="line"><span class="function">   #3 = <span class="title">Methodref</span>          #2.#40         // <span class="title">java</span>/<span class="title">util</span>/<span class="title">ArrayList</span>."&lt;<span class="title">init</span>&gt;":()<span class="title">V</span></span></span><br><span class="line"><span class="function">   #4 = <span class="title">String</span>             #42            // 1</span></span><br><span class="line"><span class="function">   #5 = <span class="title">Methodref</span>          #2.#43         // <span class="title">java</span>/<span class="title">util</span>/<span class="title">ArrayList.add</span>:(<span class="title">Ljava</span>/<span class="title">lang</span>/<span class="title">Object</span>;)<span class="title">Z</span></span></span><br><span class="line"><span class="function">   #6 = <span class="title">String</span>             #44            // 2</span></span><br><span class="line"><span class="function">   #7 = <span class="title">String</span>             #45            // 3</span></span><br><span class="line"><span class="function">   #8 = <span class="title">Methodref</span>          #2.#46         // <span class="title">java</span>/<span class="title">util</span>/<span class="title">ArrayList.iterator</span>:()<span class="title">Ljava</span>/<span class="title">util</span>/<span class="title">Iterator</span>;</span></span><br><span class="line"><span class="function">   #9 = <span class="title">InterfaceMethodref</span> #47.#48        // <span class="title">java</span>/<span class="title">util</span>/<span class="title">Iterator.hasNext</span>:()<span class="title">Z</span></span></span><br><span class="line"><span class="function">  #10 = <span class="title">InterfaceMethodref</span> #47.#49        // <span class="title">java</span>/<span class="title">util</span>/<span class="title">Iterator.next</span>:()<span class="title">Ljava</span>/<span class="title">lang</span>/<span class="title">Object</span>;</span></span><br><span class="line"><span class="function">  #11 = <span class="title">Class</span>              #50            // <span class="title">java</span>/<span class="title">lang</span>/<span class="title">String</span></span></span><br><span class="line"><span class="function">  #12 = <span class="title">Methodref</span>          #11.#51        // <span class="title">java</span>/<span class="title">lang</span>/<span class="title">String.equals</span>:(<span class="title">Ljava</span>/<span class="title">lang</span>/<span class="title">Object</span>;)<span class="title">Z</span></span></span><br><span class="line"><span class="function">  #13 = <span class="title">Methodref</span>          #2.#52         // <span class="title">java</span>/<span class="title">util</span>/<span class="title">ArrayList.remove</span>:(<span class="title">Ljava</span>/<span class="title">lang</span>/<span class="title">Object</span>;)<span class="title">Z</span></span></span><br><span class="line"><span class="function">  #14 = <span class="title">Fieldref</span>           #53.#54        // <span class="title">java</span>/<span class="title">lang</span>/<span class="title">System.out:Ljava</span>/<span class="title">io</span>/<span class="title">PrintStream</span>;</span></span><br><span class="line"><span class="function">  #15 = <span class="title">Methodref</span>          #55.#56        // <span class="title">java</span>/<span class="title">io</span>/<span class="title">PrintStream.println</span>:(<span class="title">Ljava</span>/<span class="title">lang</span>/<span class="title">Object</span>;)<span class="title">V</span></span></span><br><span class="line"><span class="function">  #16 = <span class="title">Class</span>              #57            // <span class="title">TestForEach</span></span></span><br><span class="line"><span class="function">  #17 = <span class="title">Class</span>              #58            // <span class="title">java</span>/<span class="title">lang</span>/<span class="title">Object</span></span></span><br><span class="line"><span class="function">  #18 = <span class="title">Utf8</span>               &lt;<span class="title">init</span>&gt;</span></span><br><span class="line"><span class="function">  #19 = <span class="title">Utf8</span>               ()<span class="title">V</span></span></span><br><span class="line"><span class="function">  #20 = <span class="title">Utf8</span>               <span class="title">Code</span></span></span><br><span class="line"><span class="function">  #21 = <span class="title">Utf8</span>               <span class="title">LineNumberTable</span></span></span><br><span class="line"><span class="function">  #22 = <span class="title">Utf8</span>               <span class="title">LocalVariableTable</span></span></span><br><span class="line"><span class="function">  #23 = <span class="title">Utf8</span>               <span class="title">this</span></span></span><br><span class="line"><span class="function">  #24 = <span class="title">Utf8</span>               <span class="title">LTestForEach</span>;</span></span><br><span class="line"><span class="function">  #25 = <span class="title">Utf8</span>               <span class="title">main</span></span></span><br><span class="line"><span class="function">  #26 = <span class="title">Utf8</span>               ([<span class="title">Ljava</span>/<span class="title">lang</span>/<span class="title">String</span>;)<span class="title">V</span></span></span><br><span class="line"><span class="function">  #27 = <span class="title">Utf8</span>               <span class="title">number</span></span></span><br><span class="line"><span class="function">  #28 = <span class="title">Utf8</span>               <span class="title">Ljava</span>/<span class="title">lang</span>/<span class="title">String</span>;</span></span><br><span class="line"><span class="function">  #29 = <span class="title">Utf8</span>               <span class="title">args</span></span></span><br><span class="line"><span class="function">  #30 = <span class="title">Utf8</span>               [<span class="title">Ljava</span>/<span class="title">lang</span>/<span class="title">String</span>;</span></span><br><span class="line"><span class="function">  #31 = <span class="title">Utf8</span>               <span class="title">list</span></span></span><br><span class="line"><span class="function">  #32 = <span class="title">Utf8</span>               <span class="title">Ljava</span>/<span class="title">util</span>/<span class="title">ArrayList</span>;</span></span><br><span class="line"><span class="function">  #33 = <span class="title">Utf8</span>               <span class="title">LocalVariableTypeTable</span></span></span><br><span class="line"><span class="function">  #34 = <span class="title">Utf8</span>               <span class="title">Ljava</span>/<span class="title">util</span>/<span class="title">ArrayList</span>&lt;<span class="title">Ljava</span>/<span class="title">lang</span>/<span class="title">String</span>;&gt;;</span></span><br><span class="line"><span class="function">  #35 = <span class="title">Utf8</span>               <span class="title">StackMapTable</span></span></span><br><span class="line"><span class="function">  #36 = <span class="title">Class</span>              #41            // <span class="title">java</span>/<span class="title">util</span>/<span class="title">ArrayList</span></span></span><br><span class="line"><span class="function">  #37 = <span class="title">Class</span>              #59            // <span class="title">java</span>/<span class="title">util</span>/<span class="title">Iterator</span></span></span><br><span class="line"><span class="function">  #38 = <span class="title">Utf8</span>               <span class="title">SourceFile</span></span></span><br><span class="line"><span class="function">  #39 = <span class="title">Utf8</span>               <span class="title">TestForEach.java</span></span></span><br><span class="line"><span class="function">  #40 = <span class="title">NameAndType</span>        #18:#19        // "&lt;<span class="title">init</span>&gt;":()<span class="title">V</span></span></span><br><span class="line"><span class="function">  #41 = <span class="title">Utf8</span>               <span class="title">java</span>/<span class="title">util</span>/<span class="title">ArrayList</span></span></span><br><span class="line"><span class="function">  #42 = <span class="title">Utf8</span>               1</span></span><br><span class="line"><span class="function">  #43 = <span class="title">NameAndType</span>        #60:#61        // <span class="title">add</span>:(<span class="title">Ljava</span>/<span class="title">lang</span>/<span class="title">Object</span>;)<span class="title">Z</span></span></span><br><span class="line"><span class="function">  #44 = <span class="title">Utf8</span>               2</span></span><br><span class="line"><span class="function">  #45 = <span class="title">Utf8</span>               3</span></span><br><span class="line"><span class="function">  #46 = <span class="title">NameAndType</span>        #62:#63        // <span class="title">iterator</span>:()<span class="title">Ljava</span>/<span class="title">util</span>/<span class="title">Iterator</span>;</span></span><br><span class="line"><span class="function">  #47 = <span class="title">Class</span>              #59            // <span class="title">java</span>/<span class="title">util</span>/<span class="title">Iterator</span></span></span><br><span class="line"><span class="function">  #48 = <span class="title">NameAndType</span>        #64:#65        // <span class="title">hasNext</span>:()<span class="title">Z</span></span></span><br><span class="line"><span class="function">  #49 = <span class="title">NameAndType</span>        #66:#67        // <span class="title">next</span>:()<span class="title">Ljava</span>/<span class="title">lang</span>/<span class="title">Object</span>;</span></span><br><span class="line"><span class="function">  #50 = <span class="title">Utf8</span>               <span class="title">java</span>/<span class="title">lang</span>/<span class="title">String</span></span></span><br><span class="line"><span class="function">  #51 = <span class="title">NameAndType</span>        #68:#61        // <span class="title">equals</span>:(<span class="title">Ljava</span>/<span class="title">lang</span>/<span class="title">Object</span>;)<span class="title">Z</span></span></span><br><span class="line"><span class="function">  #52 = <span class="title">NameAndType</span>        #69:#61        // <span class="title">remove</span>:(<span class="title">Ljava</span>/<span class="title">lang</span>/<span class="title">Object</span>;)<span class="title">Z</span></span></span><br><span class="line"><span class="function">  #53 = <span class="title">Class</span>              #70            // <span class="title">java</span>/<span class="title">lang</span>/<span class="title">System</span></span></span><br><span class="line"><span class="function">  #54 = <span class="title">NameAndType</span>        #71:#72        // <span class="title">out:Ljava</span>/<span class="title">io</span>/<span class="title">PrintStream</span>;</span></span><br><span class="line"><span class="function">  #55 = <span class="title">Class</span>              #73            // <span class="title">java</span>/<span class="title">io</span>/<span class="title">PrintStream</span></span></span><br><span class="line"><span class="function">  #56 = <span class="title">NameAndType</span>        #74:#75        // <span class="title">println</span>:(<span class="title">Ljava</span>/<span class="title">lang</span>/<span class="title">Object</span>;)<span class="title">V</span></span></span><br><span class="line"><span class="function">  #57 = <span class="title">Utf8</span>               <span class="title">TestForEach</span></span></span><br><span class="line"><span class="function">  #58 = <span class="title">Utf8</span>               <span class="title">java</span>/<span class="title">lang</span>/<span class="title">Object</span></span></span><br><span class="line"><span class="function">  #59 = <span class="title">Utf8</span>               <span class="title">java</span>/<span class="title">util</span>/<span class="title">Iterator</span></span></span><br><span class="line"><span class="function">  #60 = <span class="title">Utf8</span>               <span class="title">add</span></span></span><br><span class="line"><span class="function">  #61 = <span class="title">Utf8</span>               (<span class="title">Ljava</span>/<span class="title">lang</span>/<span class="title">Object</span>;)<span class="title">Z</span></span></span><br><span class="line"><span class="function">  #62 = <span class="title">Utf8</span>               <span class="title">iterator</span></span></span><br><span class="line"><span class="function">  #63 = <span class="title">Utf8</span>               ()<span class="title">Ljava</span>/<span class="title">util</span>/<span class="title">Iterator</span>;</span></span><br><span class="line"><span class="function">  #64 = <span class="title">Utf8</span>               <span class="title">hasNext</span></span></span><br><span class="line"><span class="function">  #65 = <span class="title">Utf8</span>               ()<span class="title">Z</span></span></span><br><span class="line"><span class="function">  #66 = <span class="title">Utf8</span>               <span class="title">next</span></span></span><br><span class="line"><span class="function">  #67 = <span class="title">Utf8</span>               ()<span class="title">Ljava</span>/<span class="title">lang</span>/<span class="title">Object</span>;</span></span><br><span class="line"><span class="function">  #68 = <span class="title">Utf8</span>               <span class="title">equals</span></span></span><br><span class="line"><span class="function">  #69 = <span class="title">Utf8</span>               <span class="title">remove</span></span></span><br><span class="line"><span class="function">  #70 = <span class="title">Utf8</span>               <span class="title">java</span>/<span class="title">lang</span>/<span class="title">System</span></span></span><br><span class="line"><span class="function">  #71 = <span class="title">Utf8</span>               <span class="title">out</span></span></span><br><span class="line"><span class="function">  #72 = <span class="title">Utf8</span>               <span class="title">Ljava</span>/<span class="title">io</span>/<span class="title">PrintStream</span>;</span></span><br><span class="line"><span class="function">  #73 = <span class="title">Utf8</span>               <span class="title">java</span>/<span class="title">io</span>/<span class="title">PrintStream</span></span></span><br><span class="line"><span class="function">  #74 = <span class="title">Utf8</span>               <span class="title">println</span></span></span><br><span class="line"><span class="function">  #75 = <span class="title">Utf8</span>               (<span class="title">Ljava</span>/<span class="title">lang</span>/<span class="title">Object</span>;)<span class="title">V</span></span></span><br><span class="line"><span class="function">&#123;</span></span><br><span class="line"><span class="function">  <span class="title">public</span> <span class="title">TestForEach</span>();</span></span><br><span class="line"><span class="function">    <span class="title">descriptor</span>: ()<span class="title">V</span></span></span><br><span class="line"><span class="function">    <span class="title">flags</span>: <span class="title">ACC_PUBLIC</span></span></span><br><span class="line"><span class="function">    <span class="title">Code</span>:</span></span><br><span class="line"><span class="function">      <span class="title">stack</span>=1, <span class="title">locals</span>=1, <span class="title">args_size</span>=1</span></span><br><span class="line"><span class="function">         0: <span class="title">aload_0</span></span></span><br><span class="line"><span class="function">         1: <span class="title">invokespecial</span> #1                  // <span class="title">Method</span> <span class="title">java</span>/<span class="title">lang</span>/<span class="title">Object</span>."&lt;<span class="title">init</span>&gt;":()<span class="title">V</span></span></span><br><span class="line"><span class="function">         4: <span class="title">return</span></span></span><br><span class="line"><span class="function">      <span class="title">LineNumberTable</span>:</span></span><br><span class="line"><span class="function">        <span class="title">line</span> 4: 0</span></span><br><span class="line"><span class="function">      <span class="title">LocalVariableTable</span>:</span></span><br><span class="line"><span class="function">        <span class="title">Start</span>  <span class="title">Length</span>  <span class="title">Slot</span>  <span class="title">Name</span>   <span class="title">Signature</span></span></span><br><span class="line"><span class="function">            0       5     0  <span class="title">this</span>   <span class="title">LTestForEach</span>;</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">  <span class="title">public</span> <span class="title">static</span> <span class="title">void</span> <span class="title">main</span>(<span class="title">java.lang.String</span>[]);</span></span><br><span class="line"><span class="function">    <span class="title">descriptor</span>: ([<span class="title">Ljava</span>/<span class="title">lang</span>/<span class="title">String</span>;)<span class="title">V</span></span></span><br><span class="line"><span class="function">    <span class="title">flags</span>: <span class="title">ACC_PUBLIC</span>, <span class="title">ACC_STATIC</span></span></span><br><span class="line"><span class="function">    <span class="title">Code</span>:</span></span><br><span class="line"><span class="function">      <span class="title">stack</span>=2, <span class="title">locals</span>=4, <span class="title">args_size</span>=1</span></span><br><span class="line"><span class="function">         0: <span class="title">new</span>           #2                  // <span class="title">class</span> <span class="title">java</span>/<span class="title">util</span>/<span class="title">ArrayList</span></span></span><br><span class="line"><span class="function">         3: <span class="title">dup</span></span></span><br><span class="line"><span class="function">         4: <span class="title">invokespecial</span> #3                  // <span class="title">Method</span> <span class="title">java</span>/<span class="title">util</span>/<span class="title">ArrayList</span>."&lt;<span class="title">init</span>&gt;":()<span class="title">V</span></span></span><br><span class="line"><span class="function">         7: <span class="title">astore_1</span></span></span><br><span class="line"><span class="function">         8: <span class="title">aload_1</span></span></span><br><span class="line"><span class="function">         9: <span class="title">ldc</span>           #4                  // <span class="title">String</span> 1</span></span><br><span class="line"><span class="function">        11: <span class="title">invokevirtual</span> #5                  // <span class="title">Method</span> <span class="title">java</span>/<span class="title">util</span>/<span class="title">ArrayList.add</span>:(<span class="title">Ljava</span>/<span class="title">lang</span>/<span class="title">Object</span>;)<span class="title">Z</span></span></span><br><span class="line"><span class="function">        14: <span class="title">pop</span></span></span><br><span class="line"><span class="function">        15: <span class="title">aload_1</span></span></span><br><span class="line"><span class="function">        16: <span class="title">ldc</span>           #6                  // <span class="title">String</span> 2</span></span><br><span class="line"><span class="function">        18: <span class="title">invokevirtual</span> #5                  // <span class="title">Method</span> <span class="title">java</span>/<span class="title">util</span>/<span class="title">ArrayList.add</span>:(<span class="title">Ljava</span>/<span class="title">lang</span>/<span class="title">Object</span>;)<span class="title">Z</span></span></span><br><span class="line"><span class="function">        21: <span class="title">pop</span></span></span><br><span class="line"><span class="function">        22: <span class="title">aload_1</span></span></span><br><span class="line"><span class="function">        23: <span class="title">ldc</span>           #7                  // <span class="title">String</span> 3</span></span><br><span class="line"><span class="function">        25: <span class="title">invokevirtual</span> #5                  // <span class="title">Method</span> <span class="title">java</span>/<span class="title">util</span>/<span class="title">ArrayList.add</span>:(<span class="title">Ljava</span>/<span class="title">lang</span>/<span class="title">Object</span>;)<span class="title">Z</span></span></span><br><span class="line"><span class="function">        28: <span class="title">pop</span></span></span><br><span class="line"><span class="function">        29: <span class="title">aload_1</span></span></span><br><span class="line"><span class="function">        30: <span class="title">invokevirtual</span> #8                  // <span class="title">Method</span> <span class="title">java</span>/<span class="title">util</span>/<span class="title">ArrayList.iterator</span>:()<span class="title">Ljava</span>/<span class="title">util</span>/<span class="title">Iterator</span>;</span></span><br><span class="line"><span class="function">        33: <span class="title">astore_2</span></span></span><br><span class="line"><span class="function">        34: <span class="title">aload_2</span></span></span><br><span class="line"><span class="function">        35: <span class="title">invokeinterface</span> #9,  1            // <span class="title">InterfaceMethod</span> <span class="title">java</span>/<span class="title">util</span>/<span class="title">Iterator.hasNext</span>:()<span class="title">Z</span></span></span><br><span class="line"><span class="function">        40: <span class="title">ifeq</span>          71</span></span><br><span class="line"><span class="function">        43: <span class="title">aload_2</span></span></span><br><span class="line"><span class="function">        44: <span class="title">invokeinterface</span> #10,  1           // <span class="title">InterfaceMethod</span> <span class="title">java</span>/<span class="title">util</span>/<span class="title">Iterator.next</span>:()<span class="title">Ljava</span>/<span class="title">lang</span>/<span class="title">Object</span>;</span></span><br><span class="line"><span class="function">        49: <span class="title">checkcast</span>     #11                 // <span class="title">class</span> <span class="title">java</span>/<span class="title">lang</span>/<span class="title">String</span></span></span><br><span class="line"><span class="function">        52: <span class="title">astore_3</span></span></span><br><span class="line"><span class="function">        53: <span class="title">ldc</span>           #4                  // <span class="title">String</span> 1</span></span><br><span class="line"><span class="function">        55: <span class="title">aload_3</span></span></span><br><span class="line"><span class="function">        56: <span class="title">invokevirtual</span> #12                 // <span class="title">Method</span> <span class="title">java</span>/<span class="title">lang</span>/<span class="title">String.equals</span>:(<span class="title">Ljava</span>/<span class="title">lang</span>/<span class="title">Object</span>;)<span class="title">Z</span></span></span><br><span class="line"><span class="function">        59: <span class="title">ifeq</span>          68</span></span><br><span class="line"><span class="function">        62: <span class="title">aload_1</span></span></span><br><span class="line"><span class="function">        63: <span class="title">aload_3</span></span></span><br><span class="line"><span class="function">        64: <span class="title">invokevirtual</span> #13                 // <span class="title">Method</span> <span class="title">java</span>/<span class="title">util</span>/<span class="title">ArrayList.remove</span>:(<span class="title">Ljava</span>/<span class="title">lang</span>/<span class="title">Object</span>;)<span class="title">Z</span></span></span><br><span class="line"><span class="function">        67: <span class="title">pop</span></span></span><br><span class="line"><span class="function">        68: <span class="title">goto</span>          34</span></span><br><span class="line"><span class="function">        71: <span class="title">getstatic</span>     #14                 // <span class="title">Field</span> <span class="title">java</span>/<span class="title">lang</span>/<span class="title">System.out:Ljava</span>/<span class="title">io</span>/<span class="title">PrintStream</span>;</span></span><br><span class="line"><span class="function">        74: <span class="title">aload_1</span></span></span><br><span class="line"><span class="function">        75: <span class="title">invokevirtual</span> #15                 // <span class="title">Method</span> <span class="title">java</span>/<span class="title">io</span>/<span class="title">PrintStream.println</span>:(<span class="title">Ljava</span>/<span class="title">lang</span>/<span class="title">Object</span>;)<span class="title">V</span></span></span><br><span class="line"><span class="function">        78: <span class="title">return</span></span></span><br><span class="line"><span class="function">      <span class="title">LineNumberTable</span>:</span></span><br><span class="line"><span class="function">        <span class="title">line</span> 6: 0</span></span><br><span class="line"><span class="function">        <span class="title">line</span> 7: 8</span></span><br><span class="line"><span class="function">        <span class="title">line</span> 8: 15</span></span><br><span class="line"><span class="function">        <span class="title">line</span> 9: 22</span></span><br><span class="line"><span class="function">        <span class="title">line</span> 18: 29</span></span><br><span class="line"><span class="function">        <span class="title">line</span> 19: 53</span></span><br><span class="line"><span class="function">        <span class="title">line</span> 20: 62</span></span><br><span class="line"><span class="function">        <span class="title">line</span> 22: 68</span></span><br><span class="line"><span class="function">        <span class="title">line</span> 56: 71</span></span><br><span class="line"><span class="function">        <span class="title">line</span> 58: 78</span></span><br><span class="line"><span class="function">      <span class="title">LocalVariableTable</span>:</span></span><br><span class="line"><span class="function">        <span class="title">Start</span>  <span class="title">Length</span>  <span class="title">Slot</span>  <span class="title">Name</span>   <span class="title">Signature</span></span></span><br><span class="line"><span class="function">           53      15     3 <span class="title">number</span>   <span class="title">Ljava</span>/<span class="title">lang</span>/<span class="title">String</span>;</span></span><br><span class="line"><span class="function">            0      79     0  <span class="title">args</span>   [<span class="title">Ljava</span>/<span class="title">lang</span>/<span class="title">String</span>;</span></span><br><span class="line"><span class="function">            8      71     1  <span class="title">list</span>   <span class="title">Ljava</span>/<span class="title">util</span>/<span class="title">ArrayList</span>;</span></span><br><span class="line"><span class="function">      <span class="title">LocalVariableTypeTable</span>:</span></span><br><span class="line"><span class="function">        <span class="title">Start</span>  <span class="title">Length</span>  <span class="title">Slot</span>  <span class="title">Name</span>   <span class="title">Signature</span></span></span><br><span class="line"><span class="function">            8      71     1  <span class="title">list</span>   <span class="title">Ljava</span>/<span class="title">util</span>/<span class="title">ArrayList</span>&lt;<span class="title">Ljava</span>/<span class="title">lang</span>/<span class="title">String</span>;&gt;;</span></span><br><span class="line"><span class="function">      <span class="title">StackMapTable</span>: <span class="title">number_of_entries</span> = 3</span></span><br><span class="line"><span class="function">        <span class="title">frame_type</span> = 253 /* <span class="title">append</span> */</span></span><br><span class="line"><span class="function">          <span class="title">offset_delta</span> = 34</span></span><br><span class="line"><span class="function">          <span class="title">locals</span> = [ <span class="title">class</span> <span class="title">java</span>/<span class="title">util</span>/<span class="title">ArrayList</span>, <span class="title">class</span> <span class="title">java</span>/<span class="title">util</span>/<span class="title">Iterator</span> ]</span></span><br><span class="line"><span class="function">        <span class="title">frame_type</span> = 33 /* <span class="title">same</span> */</span></span><br><span class="line"><span class="function">        <span class="title">frame_type</span> = 250 /* <span class="title">chop</span> */</span></span><br><span class="line"><span class="function">          <span class="title">offset_delta</span> = 2</span></span><br><span class="line"><span class="function">&#125;</span></span><br><span class="line"><span class="function"><span class="title">SourceFile</span>: "<span class="title">TestForEach.java</span>"</span></span><br></pre></td></tr></table></figure>
+<p>其中重点是Constant pool及其下方打括号{}内的方法表集合。</p>
+<h4 id="Constant-pool"><a href="#Constant-pool" class="headerlink" title="Constant pool"></a>Constant pool</h4><p><code>Constant pool</code>意为常量池。主要存放的是两大类常量：字面量(Literal)和符号引用(Symbolic References)。字面量类似于java中的常量概念，如文本字符串，final常量等，而符号引用则属于编译原理方面的概念，包括以下三种:</p>
+<ul>
+<li>类和接口的全限定名(Fully Qualified Name)</li>
+<li>字段的名称和描述符号(Descriptor)</li>
+<li>方法的名称和描述符</li>
+</ul>
+<p>查看第一个常量池数据：</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#<span class="number">1</span> = Methodref          #<span class="number">17</span>.#<span class="number">40</span>        // </span><br><span class="line">#<span class="number">17</span> = Class              #<span class="number">58</span>            // java/lang/Object</span><br><span class="line">#<span class="number">18</span> = Utf8               &lt;init&gt;</span><br><span class="line">#<span class="number">19</span> = Utf8               ()V</span><br><span class="line">#<span class="number">40</span> = NameAndType        #<span class="number">18</span>:#<span class="number">19</span>        // "&lt;init&gt;":()V</span><br></pre></td></tr></table></figure>
+<p>这是一个方法定义，指向了第17和第40个常量，以此类推，最终组成了右边注释的内容</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java/lang/Object.&quot;&lt;init&gt;&quot;:()V</span><br></pre></td></tr></table></figure>
+<p>表示的是实例构造器。</p>
+<p>()内部是入参，这里为空，表示没有入参。</p>
+<p>V表示void，代表没有返回类型。</p>
+<p>关于字节码的类型对应如下：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"><strong>标识字符</strong></th>
+<th style="text-align:center"><strong>含义</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">B</td>
+<td style="text-align:center">基本类型byte</td>
+</tr>
+<tr>
+<td style="text-align:center">C</td>
+<td style="text-align:center">基本类型char</td>
+</tr>
+<tr>
+<td style="text-align:center">D</td>
+<td style="text-align:center">基本类型double</td>
+</tr>
+<tr>
+<td style="text-align:center">F</td>
+<td style="text-align:center">基本类型float</td>
+</tr>
+<tr>
+<td style="text-align:center">I</td>
+<td style="text-align:center">基本类型int</td>
+</tr>
+<tr>
+<td style="text-align:center">J</td>
+<td style="text-align:center">基本类型long</td>
+</tr>
+<tr>
+<td style="text-align:center">S</td>
+<td style="text-align:center">基本类型short</td>
+</tr>
+<tr>
+<td style="text-align:center">Z</td>
+<td style="text-align:center">基本类型boolean</td>
+</tr>
+<tr>
+<td style="text-align:center">V</td>
+<td style="text-align:center">特殊类型void</td>
+</tr>
+<tr>
+<td style="text-align:center">L</td>
+<td style="text-align:center">对象类型，以分号结尾，如Ljava/lang/Object;</td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">对于数组类型，每一位使用一个前置的”[“字符来描述，如定义一个java.lang.String[][]类型的维数组，将被记录为”[[Ljava/lang/String;”</td>
+</tr>
+</tbody>
+</table>
+<h4 id="方法表集合分析"><a href="#方法表集合分析" class="headerlink" title="方法表集合分析"></a>方法表集合分析</h4><p>在常量池之后打括号{}内的是对类内部的方法描述。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">0: new           #2                  // class java/util/ArrayList</span><br><span class="line">3: dup</span><br><span class="line">4: invokespecial #3                  // Method java/util/ArrayList.&quot;&lt;init&gt;&quot;:()V</span><br><span class="line">7: astore_1</span><br></pre></td></tr></table></figure>
+<p>其中0、3、4表示 new ArrayList();</p>
+<p>new: 创建ArrayList对象，并将其引用引用值压入栈顶（栈内：ref）</p>
+<p>dup：复制栈顶数值并将复制值压入栈顶（栈内：ref ref）</p>
+<p>invokespecial：调用了构造方法初始化实例并使用了一个引用（栈内：ref）</p>
+<p>astore_1：弹出栈顶数据，并保存到局部变量表1处。</p>
+<p>7：存储到局部变量表1处。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"> 8: aload_1</span><br><span class="line"> 9: ldc           #4                  // String 1</span><br><span class="line">11: invokevirtual #5                  // Method java/util/ArrayList.add:(Ljava/lang/Object;)Z</span><br><span class="line">14: pop</span><br></pre></td></tr></table></figure>
+<p>本组指令表示将字符串“1”添加到列表内。</p>
+<p>8:将局部变量表1处的列表压入栈内</p>
+<p>9:将字符串“1”压入栈内</p>
+<p>11:调用add方法，此时会消耗掉栈内的两个值（将栈顶字符串通过add方法添加到列表内），并压入add方法的Boolean类型的返回结果</p>
+<p>14:出栈，将栈顶由11操作压入的值出栈（丢弃）</p>
+<p>15～28操作与此一致：</p>
+<p>15～21：将字符串“2”加入列表内；</p>
+<p>22～28：将字符串“3”加入列表内；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">29: aload_1</span><br><span class="line">30: invokevirtual #8                  // Method java/util/ArrayList.iterator:()Ljava/util/Iterator;</span><br><span class="line">33: astore_2</span><br></pre></td></tr></table></figure>
+<p>本组表示 Iterator<string> iterator = list.iterator();</string></p>
+<p>aload_1：将局部变量表1处的列表压入栈内</p>
+<p>invokevirtual：调用ArrayList.iterator方法获取Iterator对象并压入栈内（ArrayList内获取到的是Itr对象）</p>
+<p>astore_2：将栈顶的Itr对象保存到局部变量表2处</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">34: aload_2</span><br><span class="line">35: invokeinterface #9,  1            // InterfaceMethod java/util/Iterator.hasNext:()Z</span><br></pre></td></tr></table></figure>
+<p>本组表示 ：iterator.hasNext()</p>
+<p>aload_2:将局部变量表2处的Itr对象压入栈顶</p>
+<p>invokeinterface：调用hasNext接口，并将boolean结果压入栈顶</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">40: ifeq          71</span><br><span class="line">43: aload_2</span><br><span class="line">44: invokeinterface #10,  1           // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;</span><br><span class="line">49: checkcast     #11                 // class java/lang/String</span><br><span class="line">52: astore_3</span><br></pre></td></tr></table></figure>
+<p>ifeq：if语句，栈顶内为true这执行下条指令（这里是43）；反之，执行71处指令</p>
+<p>43～52:表示调用iterator.next()，并将取到的结果强转成String类型后保存到局部变量表3处</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">53: ldc           #4                  // String 1</span><br><span class="line">55: aload_3</span><br><span class="line">56: invokevirtual #12                 // Method java/lang/String.equals:(Ljava/lang/Object;)Z</span><br><span class="line">59: ifeq          68</span><br><span class="line">62: aload_1</span><br><span class="line">63: aload_3</span><br><span class="line">64: invokevirtual #13                 // Method java/util/ArrayList.remove:(Ljava/lang/Object;)Z</span><br><span class="line">67: pop</span><br><span class="line">68: goto          34</span><br></pre></td></tr></table></figure>
+<p>字符串“1”和局部变量表3处的值入栈，调用equals方法后判断栈顶值，true则执行下条指令（这里是62）；反之，执行68处指令，goto 34，跳到34指令处执行，即再次开始判断hasNext。</p>
+<p>62～67:将局部变量表3的值从列表内移除。</p>
+<p>再执行68处goto指令。</p>
+<p>而前面提到的71处指令如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">71: getstatic     #14                 // Field java/lang/System.out:Ljava/io/PrintStream;</span><br><span class="line">74: aload_1</span><br><span class="line">75: invokevirtual #15                 // Method java/io/PrintStream.println:(Ljava/lang/Object;)V</span><br><span class="line">78: return</span><br></pre></td></tr></table></figure>
+<p>表示调用System.out.println将列表数据打印。</p>
+<p>return:结束程序。</p>
+<p>综上分析，上面的<a href="#for-each-analyse">分析</a>过程是正确的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (String number : list) &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="string">"1"</span>.equals(number)) &#123;</span><br><span class="line">        list.remove(number);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>等同于</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (Iterator&lt;String&gt; iterator = list.iterator();iterator.hasNext();)&#123;</span><br><span class="line">        String number = iterator.next();</span><br><span class="line">        <span class="keyword">if</span> (<span class="string">"1"</span>.equals(number)) &#123;</span><br><span class="line">            list.remove(number);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="特例"><a href="#特例" class="headerlink" title="特例"></a>特例</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">for (String number : list) &#123;</span><br><span class="line">    if (&quot;2&quot;.equals(number)) &#123;</span><br><span class="line">        list.remove(number);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在使用<strong>for( T : Iterable)</strong>方式时，有一种特殊用例，会使得遍历时能正常删除，就是删除的是list倒数第二项时。</p>
+<p>经过上面的分析，我们只需回看下<a href="#Itr">ArrayList.Itr</a>的其中两个成员方法：<code>ArrayList.Itr.hasNext()</code>和<code>ArrayList.Itr.remove()</code> 以及<a href="#ArrayList_remove"><code>ArrayList.remove()</code></a>就可以知道原因了。</p>
+<blockquote>
+<p>ArrayList.Itr</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">hasNext</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> cursor != size; <span class="comment">// size是ArrayList的成员变量，用于记录当前列表内存放的元素数量</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> E <span class="title">next</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    checkForComodification();</span><br><span class="line">    <span class="keyword">int</span> i = cursor;</span><br><span class="line">    <span class="keyword">if</span> (i &gt;= size)</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> NoSuchElementException();</span><br><span class="line">    Object[] elementData = ArrayList.<span class="keyword">this</span>.elementData;</span><br><span class="line">    <span class="keyword">if</span> (i &gt;= elementData.length)</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> ConcurrentModificationException();</span><br><span class="line">    cursor = i + <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">return</span> (E) elementData[lastRet = i];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>ArrayList</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">remove</span><span class="params">(Object o)</span> </span>&#123;</span><br><span class="line">     <span class="keyword">if</span> (o == <span class="keyword">null</span>) &#123;</span><br><span class="line">         <span class="keyword">for</span> (<span class="keyword">int</span> index = <span class="number">0</span>; index &lt; size; index++)</span><br><span class="line">             <span class="keyword">if</span> (elementData[index] == <span class="keyword">null</span>) &#123;</span><br><span class="line">                 fastRemove(index);</span><br><span class="line">                 <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">             &#125;</span><br><span class="line">     &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">         <span class="keyword">for</span> (<span class="keyword">int</span> index = <span class="number">0</span>; index &lt; size; index++)</span><br><span class="line">             <span class="keyword">if</span> (o.equals(elementData[index])) &#123;</span><br><span class="line">                 fastRemove(index);</span><br><span class="line">                 <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">             &#125;</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">fastRemove</span><span class="params">(<span class="keyword">int</span> index)</span> </span>&#123;</span><br><span class="line">     modCount++;</span><br><span class="line">     <span class="keyword">int</span> numMoved = size - index - <span class="number">1</span>;</span><br><span class="line">     <span class="keyword">if</span> (numMoved &gt; <span class="number">0</span>)</span><br><span class="line">         System.arraycopy(elementData, index+<span class="number">1</span>, elementData, index,</span><br><span class="line">                          numMoved);</span><br><span class="line">     elementData[--size] = <span class="keyword">null</span>; <span class="comment">// clear to let GC do its work</span></span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>当<code>Itr.next()</code>取出的是list最后第二项后，成员变量cursor+1后的值等于<code>size-1</code>。</p>
+<p>而调用<strong>list.remove()</strong>（remove() -&gt; fastRemove()）方法后，可以看到<strong>–size</strong>。</p>
+<p>所以此时<strong>Itr.cursor == size</strong>，<code>Itr.hasNext()</code>返回的是<code>false</code>，直接退出了循环，没有对list的最后一项进行判断。</p>
+<p><strong>但是不推荐怎么使用。</strong></p>
+<h2 id="其他正确的删除方式"><a href="#其他正确的删除方式" class="headerlink" title="其他正确的删除方式"></a>其他正确的删除方式</h2><p>除了上面删除几种方式外，还有如下几种<strong>正确</strong>的方式：</p>
+<h3 id="显示使用迭代器"><a href="#显示使用迭代器" class="headerlink" title="显示使用迭代器"></a>显示使用迭代器</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">String number;  </span><br><span class="line"><span class="keyword">for</span> (Iterator&lt;String&gt; iterator = list.iterator();iterator.hasNext();)&#123;</span><br><span class="line">      number = iterator.next();</span><br><span class="line">      <span class="keyword">if</span> (<span class="string">"1"</span>.equals(number)) &#123;</span><br><span class="line">          iterator.remove();</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">或</span><br><span class="line">Iterator&lt;String&gt; iterator = list.iterator();</span><br><span class="line"><span class="keyword">while</span>(iterator.hasNext())&#123;</span><br><span class="line">  number = iterator.next();</span><br><span class="line">      <span class="keyword">if</span> (<span class="string">"1"</span>.equals(number)) &#123;</span><br><span class="line">          iterator.remove();</span><br><span class="line">      &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Collection-removeIf-Predicate-lt-super-E-gt-filter"><a href="#Collection-removeIf-Predicate-lt-super-E-gt-filter" class="headerlink" title="Collection.removeIf(Predicate&lt;? super E&gt; filter)"></a>Collection.removeIf(Predicate&lt;? super E&gt; filter)</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">list.removeIf(number -&gt; number.equals(<span class="string">"1"</span>));</span><br></pre></td></tr></table></figure>
+<p>Collection接口内给出了默认实现：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Removes all of the elements of this collection that satisfy the given</span></span><br><span class="line"><span class="comment"> * predicate.  Errors or runtime exceptions thrown during iteration or by</span></span><br><span class="line"><span class="comment"> * the predicate are relayed to the caller.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@implSpec</span></span></span><br><span class="line"><span class="comment"> * The default implementation traverses all elements of the collection using</span></span><br><span class="line"><span class="comment"> * its &#123;<span class="doctag">@link</span> #iterator&#125;.  Each matching element is removed using</span></span><br><span class="line"><span class="comment"> * &#123;<span class="doctag">@link</span> Iterator#remove()&#125;.  If the collection's iterator does not</span></span><br><span class="line"><span class="comment"> * support removal then an &#123;<span class="doctag">@code</span> UnsupportedOperationException&#125; will be</span></span><br><span class="line"><span class="comment"> * thrown on the first matching element.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> filter a predicate which returns &#123;<span class="doctag">@code</span> true&#125; for elements to be</span></span><br><span class="line"><span class="comment"> *        removed</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> &#123;<span class="doctag">@code</span> true&#125; if any elements were removed</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> NullPointerException if the specified filter is null</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> UnsupportedOperationException if elements cannot be removed</span></span><br><span class="line"><span class="comment"> *         from this collection.  Implementations may throw this exception if a</span></span><br><span class="line"><span class="comment"> *         matching element cannot be removed or if, in general, removal is not</span></span><br><span class="line"><span class="comment"> *         supported.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 1.8</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">default</span> <span class="keyword">boolean</span> <span class="title">removeIf</span><span class="params">(Predicate&lt;? <span class="keyword">super</span> E&gt; filter)</span> </span>&#123;</span><br><span class="line">    Objects.requireNonNull(filter);</span><br><span class="line">    <span class="keyword">boolean</span> removed = <span class="keyword">false</span>;</span><br><span class="line">    <span class="keyword">final</span> Iterator&lt;E&gt; each = iterator();</span><br><span class="line">    <span class="keyword">while</span> (each.hasNext()) &#123;</span><br><span class="line">        <span class="keyword">if</span> (filter.test(each.next())) &#123;</span><br><span class="line">            each.remove();</span><br><span class="line">            removed = <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> removed;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>也是使用迭代器进行删除。</p>
+<p>但是Arraylist类重写了该实现，提高了删除效率：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">removeIf</span><span class="params">(Predicate&lt;? <span class="keyword">super</span> E&gt; filter)</span> </span>&#123;</span><br><span class="line">    Objects.requireNonNull(filter);</span><br><span class="line">    <span class="comment">// figure out which elements are to be removed</span></span><br><span class="line">    <span class="comment">// any exception thrown from the filter predicate at this stage</span></span><br><span class="line">    <span class="comment">// will leave the collection unmodified</span></span><br><span class="line">    <span class="keyword">int</span> removeCount = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">final</span> BitSet removeSet = <span class="keyword">new</span> BitSet(size);</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">int</span> expectedModCount = modCount;</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">int</span> size = <span class="keyword">this</span>.size;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; modCount == expectedModCount &amp;&amp; i &lt; size; i++) &#123;</span><br><span class="line">        <span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line">        <span class="keyword">final</span> E element = (E) elementData[i];</span><br><span class="line">        <span class="keyword">if</span> (filter.test(element)) &#123;</span><br><span class="line">            removeSet.set(i);</span><br><span class="line">            removeCount++;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (modCount != expectedModCount) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> ConcurrentModificationException();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// shift surviving elements left over the spaces left by removed elements</span></span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">boolean</span> anyToRemove = removeCount &gt; <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span> (anyToRemove) &#123;</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">int</span> newSize = size - removeCount;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>, j=<span class="number">0</span>; (i &lt; size) &amp;&amp; (j &lt; newSize); i++, j++) &#123;</span><br><span class="line">            i = removeSet.nextClearBit(i);</span><br><span class="line">            elementData[j] = elementData[i];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> k=newSize; k &lt; size; k++) &#123;</span><br><span class="line">            elementData[k] = <span class="keyword">null</span>;  <span class="comment">// Let gc do its work</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">this</span>.size = newSize;</span><br><span class="line">        <span class="keyword">if</span> (modCount != expectedModCount) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> ConcurrentModificationException();</span><br><span class="line">        &#125;</span><br><span class="line">        modCount++;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> anyToRemove;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
+<li><p>for( T : Iterable) 完全等同于</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (Iterator&lt;T&gt; iterator = list.iterator();iterator.hasNext();)&#123;</span><br><span class="line">        T number = iterator.next();</span><br><span class="line">       <span class="comment">//这里执行具体操作</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>能够正常遍历时删除的方式有</p>
+<ul>
+<li>for(int i =0; i &lt; list.size(); i ++)</li>
+<li>迭代器方式</li>
+<li>Collection.removeIf(Predicate&lt;? super E&gt; filter)</li>
+</ul>
+</li>
+<li><p>for( T : Iterable) 或 迭代器内使用List.remove()时，若仅删除最后第二项时，不会抛出异常</p>
+</li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://juejin.cn/post/6844903588716609543" target="_blank" rel="noopener">轻松看懂Java字节码</a></p>
+<p><a href="https://tech.meituan.com/2019/09/05/java-bytecode-enhancement.html" target="_blank" rel="noopener">字节码增强技术探索</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持是对我最大的鼓励！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Haitao Ni 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.png" alt="Haitao Ni 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+            <a href="/tags/forEach/" rel="tag"># forEach</a>
+          
+            <a href="/tags/for/" rel="tag"># for</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/4187858666/" rel="next" title="黄山攻略">
+                <i class="fa fa-chevron-left"></i> 黄山攻略
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/4080158305/" rel="prev" title="从ViewRootImpl开始分析事件分发过程">
+                从ViewRootImpl开始分析事件分发过程 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar" rel="external nofollow">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar/avatar.png" alt="Haitao Ni">
+            
+              <p class="site-author-name" itemprop="name">Haitao Ni</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">79</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">49</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">85</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:haitao_ni@nhtzj.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#示例代码说明"><span class="nav-number">2.</span> <span class="nav-text">示例代码说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Iterable-forEach-Consumer-lt-super-E-gt-action"><span class="nav-number">3.</span> <span class="nav-text">Iterable.forEach(Consumer&lt;? super E&gt; action)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#示例"><span class="nav-number">3.1.</span> <span class="nav-text">示例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#运行结果"><span class="nav-number">3.2.</span> <span class="nav-text">运行结果</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分析"><span class="nav-number">3.3.</span> <span class="nav-text">分析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#for-int-i-0-i-lt-list-size-i"><span class="nav-number">4.</span> <span class="nav-text">for(int i =0; i &lt; list.size(); i ++)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#示例-1"><span class="nav-number">4.1.</span> <span class="nav-text">示例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#结果"><span class="nav-number">4.2.</span> <span class="nav-text">结果</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#字节码分析"><span class="nav-number">4.3.</span> <span class="nav-text">字节码分析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#for-T-Iterable"><span class="nav-number">5.</span> <span class="nav-text">for( T : Iterable)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#示例-2"><span class="nav-number">5.1.</span> <span class="nav-text">示例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#结果-1"><span class="nav-number">5.2.</span> <span class="nav-text">结果</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分析-1"><span class="nav-number">5.3.</span> <span class="nav-text">分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#字节码分析-1"><span class="nav-number">5.4.</span> <span class="nav-text">字节码分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#反编译字节码文件"><span class="nav-number">5.4.1.</span> <span class="nav-text">反编译字节码文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Constant-pool"><span class="nav-number">5.4.2.</span> <span class="nav-text">Constant pool</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方法表集合分析"><span class="nav-number">5.4.3.</span> <span class="nav-text">方法表集合分析</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#特例"><span class="nav-number">5.5.</span> <span class="nav-text">特例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他正确的删除方式"><span class="nav-number">6.</span> <span class="nav-text">其他正确的删除方式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#显示使用迭代器"><span class="nav-number">6.1.</span> <span class="nav-text">显示使用迭代器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Collection-removeIf-Predicate-lt-super-E-gt-filter"><span class="nav-number">6.2.</span> <span class="nav-text">Collection.removeIf(Predicate&lt;? super E&gt; filter)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">7.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考"><span class="nav-number">8.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2023</span>
+
+
+  <div class="powered-by"><a class="theme-link" target="_blank" href="https://beian.miit.gov.cn/" rel="external nofollow" title="工业和信息化部ICP/IP地址/域名信息备案管理系统">浙ICP备17020869号</a></div>
+
+
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Haitao Ni</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'gaKW5YWAvf7NBOlU9eFbxN8O-gzGzoHsz',
+        appKey: 'susRHyMS8Fq1XyKXg0r9ad85',
+        placeholder: '填上邮箱可以收到我的回复哦 (*^ω^*)~~',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+
+//新增以下代码即可，可以移除.info下所有子节点。
+var infoEle = document.querySelector('#comments .info');
+if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0){
+  infoEle.childNodes.forEach(function(item) {
+    item.parentNode.removeChild(item);
+  });
+}
+
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("gaKW5YWAvf7NBOlU9eFbxN8O-gzGzoHsz", "susRHyMS8Fq1XyKXg0r9ad85");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+
+
+  
+
+  
+
+</body>
+</html>
